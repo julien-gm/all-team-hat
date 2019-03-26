@@ -23,26 +23,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <scope>${dependencies.scope}</scope>
-            <version>2.11.8</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.scalactic</groupId>
-            <artifactId>scalactic_2.11</artifactId>
-            <scope>test</scope>
-            <version>2.2.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
-            <scope>test</scope>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.9.8</version>
@@ -73,29 +53,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.antipathy</groupId>
-                <artifactId>mvn-scalafmt_2.11</artifactId>
-                <configuration>
-                    <configLocation>.scalafmt.conf</configLocation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

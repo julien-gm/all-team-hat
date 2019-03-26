@@ -62,7 +62,7 @@ public class TeamTest {
 
     @Test
     public void testNoHandlerScore() {
-        Assert.assertEquals(3.6, team.getNoHandlerScore(1.2), 0.0001);
+        Assert.assertEquals(6.0, team.getNoHandlerScore(1.2), 0.0001);
     }
 
     @Test

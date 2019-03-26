@@ -86,12 +86,12 @@ public class TeamsCalculatorTest {
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(7.15, teamCalculator.getTeamScore(team1), 0.0001);
-        Assert.assertEquals(8.55, teamCalculator.getTeamScore(team2), 0.0001);
+        Assert.assertEquals(8.15, teamCalculator.getTeamScore(team1), 0.0001);
+        Assert.assertEquals(9.95, teamCalculator.getTeamScore(team2), 0.0001);
     }
 
     @Test
     public void testCompute() {
-        Assert.assertEquals(15.7, teamCalculator.compute(teams), 0.0001);
+        Assert.assertEquals(18.1, teamCalculator.compute(teams), 0.0001);
     }
 }

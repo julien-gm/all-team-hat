@@ -36,11 +36,15 @@ public class Composition {
     }
 
     public Composition switchPlayer(Player player1, Player player2) {
-        if (!player1.getGender().equals(player2.getGender())) {
+        if (player1.isReal() && player2.isReal() && !player1.getGender().equals(player2.getGender())) {
             return new Composition(teams, teamCalculator);
         }
         final Team team1 = getTeamPlayer(player1);
         final Team team2 = getTeamPlayer(player2);
+        if ((!player1.isReal() && (team2.hasPlayer(Team.fakePlayer)))
+            || (!player2.isReal() && (team1.hasPlayer(Team.fakePlayer)))) {
+            return new Composition(teams, teamCalculator);
+        }
         List<Team> teams = this.teams.stream().filter(t -> !t.equals(team1) && !t.equals(team2)).collect(Collectors.toList());
         if (team1 != null && team2 != null && !team1.equals(team2)) {
             List<Player> playersTeam1 = getAllTheOthersPlayersFromThisTeam(player1, team1);

@@ -27,7 +27,7 @@ public class CompositionTest {
         List<Player> allPlayers = Arrays.asList(mapper.readerFor(Player[].class).with(bootstrapSchema).readValue(csvFile));
 
         TeamsGenerator teamsGenerator = new TeamsGenerator(allPlayers);
-        int nbTeams = 6;
+        int nbTeams = 3;
         TeamsCalculator teamsCalculator = teamsGenerator.getTeamsCalculator(nbTeams);
         Composition compo1 = new Composition(teamsGenerator.initTeams(nbTeams), teamsCalculator);
         Composition compo2 = compo1.shuffle();
