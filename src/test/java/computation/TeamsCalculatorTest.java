@@ -1,6 +1,5 @@
 package computation;
 
-import computation.TeamsCalculator;
 import domain.Player;
 import domain.Team;
 import org.junit.Assert;

@@ -1,10 +1,10 @@
 package domain;
 
+import computation.TeamsGenerator;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import computation.TeamsGenerator;
 
 public class Team {
 

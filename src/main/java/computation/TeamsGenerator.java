@@ -37,8 +37,8 @@ public class TeamsGenerator {
         }
         int playerNumber = initTeam(nbTeams, girlsTeams, 0, Player.Gender.F);
         initTeam(nbTeams, boysTeams, playerNumber, Player.Gender.M);
-        Composition girlsComposition = getLocalBestComposition(new Composition(girlsTeams, getTeamsCalculator(nbTeams)), 30);
-        Composition boysComposition = getLocalBestComposition(new Composition(boysTeams, getTeamsCalculator(nbTeams)), 30);
+        Composition girlsComposition = getLocalBestComposition(new Composition(girlsTeams, getTeamsCalculator(nbTeams)), 1);
+        Composition boysComposition = getLocalBestComposition(new Composition(boysTeams, getTeamsCalculator(nbTeams)), 1);
         fillTeams(nbTeams, numberOfPlayersByTeam, teams, girlsComposition, boysComposition);
         return teams;
     }
@@ -72,14 +72,14 @@ public class TeamsGenerator {
 
     private Composition getLocalBestComposition(Composition currentComposition, int run) {
         double localBestScore;
-        Composition localBestComposition = currentComposition.shuffle();
+        Composition localBestComposition = currentComposition;
         System.out.println("Initial score is: " + currentComposition.getScore());
         localBestScore = currentComposition.getScore();
         for (int optimizedNumber = 0; optimizedNumber < run; ++optimizedNumber) {
             currentComposition = getBestComposition(currentComposition);
             double score = currentComposition.getScore();
             if (score < localBestScore) {
-                System.out.println("new best score : " + score);
+                System.out.println("New local best score : " + score);
                 localBestScore = score;
                 localBestComposition = currentComposition;
             }
@@ -98,8 +98,11 @@ public class TeamsGenerator {
             Composition localBestComposition = getLocalBestComposition(currentComposition, LOCAL_NUMBER_OF_OPTIMZATION);
             double score = localBestComposition.getScore();
             if (score < bestScore) {
+                System.out.println("New best score ever: " + score);
                 bestComposition = localBestComposition;
+                bestScore = score;
             }
+            currentComposition = currentComposition.shuffle();
         }
         return bestComposition;
     }

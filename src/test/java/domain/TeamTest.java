@@ -1,7 +1,5 @@
 package domain;
 
-import domain.Player;
-import domain.Team;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

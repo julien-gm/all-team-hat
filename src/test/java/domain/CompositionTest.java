@@ -5,8 +5,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import computation.TeamsCalculator;
 import computation.TeamsGenerator;
-import domain.Composition;
-import domain.Player;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,9 +29,10 @@ public class CompositionTest {
         TeamsCalculator teamsCalculator = teamsGenerator.getTeamsCalculator(nbTeams);
         Composition compo1 = new Composition(teamsGenerator.initTeams(nbTeams), teamsCalculator);
         Composition compo2 = compo1.shuffle();
+
         Assert.assertNotEquals(
-            compo1.getTeams().stream().flatMap(t -> t.getPlayers().stream()).findFirst(),
-            compo2.getTeams().stream().flatMap(t -> t.getPlayers().stream()).findFirst()
+            compo1.getTeams().stream().mapToDouble(t -> t.getGirlScore(1.0)),
+            compo2.getTeams().stream().mapToDouble(t -> t.getGirlScore(1.0))
         );
     }
 }
