@@ -34,8 +34,8 @@ public class CalculatorJob {
         List<Player> allPlayers = Arrays.asList(mapper.readerFor(Player[].class).with(bootstrapSchema).readValue(csvFile));
 
         TeamsGenerator teamsGenerator = new TeamsGenerator(allPlayers);
-        Integer nbTeams = Integer.valueOf(commandline.getOptionValue("nbTeams", "6"));
-        Integer nbRuns = Integer.valueOf(commandline.getOptionValue("nbRuns", "20"));
+        int nbTeams = Integer.valueOf(commandline.getOptionValue("nbTeams", "6"));
+        int nbRuns = Integer.valueOf(commandline.getOptionValue("nbRuns", "20"));
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns);
         System.out.println(bestComposition);
     }

@@ -167,6 +167,26 @@ public class Player {
         this.gender = gender;
     }
 
+    public double getEnduranceScore(double expectedEndurance) {
+        return score(endurance, expectedEndurance);
+    }
+
+    public double getSpeedScore(double expectedSpeed) {
+        return score(speed, expectedSpeed);
+    }
+
+    public double getTechScore(double expectedTech) {
+        return score(tech, expectedTech);
+    }
+
+    public double getSportScore(double expectedEndurance, double expectedSpeed, double expectedTech) {
+        return getEnduranceScore(expectedEndurance) + getSpeedScore(expectedSpeed) + getTechScore(expectedTech);
+    }
+
+    private double score(double value, double expected) {
+        return Math.abs(value - expected);
+    }
+
     @JsonProperty("Sexe")
     public void setGender(String gender) {
         switch (gender) {
