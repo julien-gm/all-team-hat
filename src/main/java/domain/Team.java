@@ -142,4 +142,11 @@ public class Team {
         }
         return "\n";
     }
+
+    public double getStandardDeviation(double expectedEndurance, double expectedSpeed, double expectedTech) {
+        double teamSportAverage = this.getSportScore(expectedEndurance, expectedSpeed, expectedTech);
+        return this.players.stream().mapToDouble(
+                p -> Math.abs(teamSportAverage - p.getSportScore(expectedEndurance, expectedSpeed, expectedTech))
+        ).average().orElse(0);
+    }
 }

@@ -44,7 +44,8 @@ public class TeamsCalculator {
             team.getNoHandlerScore(expectedNumberOfNoHandlers) +
             team.getHandlerScore(expectedNumberOfHandlers) +
             team.getAgeScore(expectedAgeAverage) +
-            team.getClubScore(expectedClubsScore);
+            team.getClubScore(expectedClubsScore) +
+            team.getStandardDeviation(expectedEnduranceScore, expectedSpeedScore, expectedTechScore);
     }
 
     public double compute(List<Team> teams) {

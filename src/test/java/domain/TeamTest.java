@@ -64,6 +64,11 @@ public class TeamTest {
     }
 
     @Test
+    public void testStdDev() {
+        Assert.assertEquals(8.1, team.getStandardDeviation(7.2, 7.7, 7.5), 0.1);
+    }
+
+    @Test
     public void testClubScore() {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("", 3.0);
