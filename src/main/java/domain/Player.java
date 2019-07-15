@@ -1,229 +1,182 @@
 package domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Player {
+public class Player
+{
+	private String lastName;
 
-    @JsonProperty("Nom")
-    private String lastName;
+	private String firstName;
 
-    @JsonProperty("Prénom")
-    private String firstName;
+	private String nickName;
 
-    @JsonProperty("Pseudo")
-    private String nickName;
+	private String email;
 
-    @JsonProperty("email")
-    private String email;
-    private Handler handler;
-    @JsonProperty("Club")
-    private String club;
-    @JsonProperty("Age")
-    private int age;
-    @JsonProperty("Vitesse")
-    private double speed;
-    @JsonProperty("Technique")
-    private double tech;
-    @JsonProperty("Endurance")
-    private double endurance;
-    private Gender gender;
-    private boolean real = true;
+	private Handler handler;
 
-    public Player(String nickName, String club, String gender, String name, String firstName, String email, String handler, String age, String endurance, String speed, String tech, String comment) {
-        this.nickName = nickName;
-        this.club = club;
-        setGender(gender);
-        this.lastName = name;
-        this.firstName = firstName;
-        this.email = email;
-        setHandler(handler);
-        this.endurance = Double.valueOf(endurance.replace(",", "."));
-        this.speed = Double.valueOf(speed.replace(",", "."));
-        this.tech = Double.valueOf(tech.replace(",", "."));
-    }
+	private String club;
 
-    public Player() {
-    }
+	private int age;
 
-    public Player(String nickname) {
-        this.nickName = nickname;
-    }
+	private List<Double> skillsList = new ArrayList<>();
 
-    public Player(boolean real) {
-        this.real = real;
-        this.club = "not a player";
-    }
+	private Gender gender;
 
-    public boolean isReal() {
-        return real;
-    }
+	private boolean real = true;
 
-    public void setReal(boolean real) {
-        this.real = real;
-    }
+	/**
+	 * Default constructor
+	 */
+	public Player()
+	{
+	}
 
-    public double getAge() {
-        return age;
-    }
+	public Player(String nickname)
+	{
+		this.nickName = nickname;
+	}
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+	public Player(boolean real)
+	{
+		this.real = real;
+		this.club = "not a player";
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public boolean isReal()
+	{
+		return this.real;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setReal(boolean real)
+	{
+		this.real = real;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public double getAge()
+	{
+		return this.age;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setAge(int age)
+	{
+		this.age = age;
+	}
 
-    public String getNickName() {
-        return nickName;
-    }
+	public String getLastName()
+	{
+		return this.lastName;
+	}
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
+	public void setLastName(String lastName)
+	{
+		this.lastName = lastName;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getFirstName()
+	{
+		return this.firstName;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setFirstName(String firstName)
+	{
+		this.firstName = firstName;
+	}
 
-    public Handler getHandler() {
-        return handler;
-    }
+	public String getNickName()
+	{
+		return this.nickName;
+	}
 
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
+	public void setNickName(String nickName)
+	{
+		this.nickName = nickName;
+	}
 
-    @JsonProperty("handler ?")
-    public void setHandler(String handler) {
-        switch (handler) {
-            case "oui":
-                setHandler(Handler.YES);
-                break;
-            case "si besoin":
-                setHandler(Handler.MAYBE);
-                break;
-            default:
-                setHandler(Handler.NO);
-                break;
-        }
-    }
+	public String getEmail()
+	{
+		return this.email;
+	}
 
-    public String getClub() {
-        return club;
-    }
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
 
-    public void setClub(String club) {
-        this.club = club;
-    }
+	public Handler getHandler()
+	{
+		return this.handler;
+	}
 
-    public double getSpeed() {
-        return speed;
-    }
+	public void setHandler(Handler handler)
+	{
+		this.handler = handler;
+	}
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
+	public String getClub()
+	{
+		return this.club;
+	}
 
-    public double getTech() {
-        return tech;
-    }
+	public void setClub(String club)
+	{
+		this.club = club;
+	}
 
-    public void setTech(double tech) {
-        this.tech = tech;
-    }
+	public Gender getGender()
+	{
+		return this.gender;
+	}
 
-    public double getEndurance() {
-        return endurance;
-    }
+	public void setGender(Gender gender)
+	{
+		this.gender = gender;
+	}
 
-    public void setEndurance(double endurance) {
-        this.endurance = endurance;
-    }
+	public List<Double> getSkillsList()
+	{
+		return this.skillsList;
+	}
 
-    public Gender getGender() {
-        return gender;
-    }
+	public void setSkillsList(List<Double> skillsList)
+	{
+		this.skillsList = skillsList;
+	}
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
+	public List<Double> getSportScores(List<Double> expectedScores)
+	{
+		List<Double> scores = new ArrayList<>();
+		for (int i = 0; i < this.skillsList.size(); i++)
+		{
+			scores.add(this.score(this.skillsList.get(i), expectedScores.get(i)));
+		}
+		return scores;
+	}
 
-    public double getEnduranceScore(double expectedEndurance) {
-        return score(endurance, expectedEndurance);
-    }
+	private double score(double value, double expected)
+	{
+		return Math.abs(value - expected);
+	}
 
-    public double getSpeedScore(double expectedSpeed) {
-        return score(speed, expectedSpeed);
-    }
+	@Override
+	public String toString()
+	{
+		if (!this.isReal())
+		{
+			return "";
+		}
+		double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
+		return String.format("%s (%s %s) [%s](%s) score %.2f - %s", nickName, firstName, lastName, gender, handler,
+			sport, club);
+	}
 
-    public double getTechScore(double expectedTech) {
-        return score(tech, expectedTech);
-    }
+	public enum Handler
+	{
+		YES, MAYBE, NO
+	}
 
-    public double getSportScore(double expectedEndurance, double expectedSpeed, double expectedTech) {
-        return getEnduranceScore(expectedEndurance) + getSpeedScore(expectedSpeed) + getTechScore(expectedTech);
-    }
-
-    private double score(double value, double expected) {
-        return Math.abs(value - expected);
-    }
-
-    @JsonProperty("Sexe")
-    public void setGender(String gender) {
-        switch (gender) {
-            case "M":
-                setGender(Gender.M);
-                break;
-            default:
-                setGender(Gender.F);
-        }
-    }
-
-    @Override
-    public String toString() {
-        if (!isReal()) {
-            return "";
-        }
-        String handler;
-        if (this.handler == null) {
-            return "X";
-        }
-        switch (this.handler) {
-            case YES:
-                handler = "H";
-                break;
-            case MAYBE:
-                handler = "h";
-                break;
-            case NO:
-            default:
-                handler = "M";
-                break;
-        }
-        double sport = (endurance + tech + speed) / 3.0;
-        return String.format("%s (%s %s) [%s](%s) score %.2f [%.2f/%.2f/%.2f] - %s", nickName, firstName, lastName, gender, handler, sport, tech, endurance, speed, club);
-    }
-
-    public enum Handler {YES, MAYBE, NO}
-
-    public enum Gender {F, M}
+	public enum Gender
+	{
+		HOMME, FEMME
+	}
 }
