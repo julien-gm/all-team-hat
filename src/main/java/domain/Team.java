@@ -33,6 +33,17 @@ public class Team {
         return getScore(expectedSportScore, score) * 3;
     }
 
+    public double getSkillsScore(List<Double> expectedScores) {
+        List<Double> skillsScore = teamGenerator.getSkillAverages();
+        int index = 0;
+        double score = 0;
+        for (double expectedScore : expectedScores) {
+            score += getScore(expectedScore, skillsScore.get(index));
+            index++;
+        }
+        return score;
+    }
+
     public double getHandlerScore(double expectedHandlerNumber) {
         return getScore(expectedHandlerNumber, teamGenerator.getNbHandlers());
     }
