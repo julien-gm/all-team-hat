@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class TeamsGenerator {
 
-    private static final int LOCAL_NUMBER_OF_OPTIMZATION = 50;
+    private static final int LOCAL_NUMBER_OF_OPTIMIZATION = 50;
     private List<Player> players;
 
     public TeamsGenerator(List<Player> players) {
@@ -96,7 +96,7 @@ public class TeamsGenerator {
         double bestScore = currentComposition.getScore();
         Composition bestComposition = currentComposition;
         for (int tryNumber = 0; tryNumber < nbShuffles; ++tryNumber) {
-            Composition localBestComposition = getLocalBestComposition(currentComposition, LOCAL_NUMBER_OF_OPTIMZATION);
+            Composition localBestComposition = getLocalBestComposition(currentComposition, LOCAL_NUMBER_OF_OPTIMIZATION);
             double score = localBestComposition.getScore();
             if (score < bestScore) {
                 System.out.println("New best score ever: " + score);

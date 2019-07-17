@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 public class Team {
 
     public static final Player fakePlayer = new Player(false);
+    private static final int SPORT_SCORE_COEFF = 3;
+    private static final int HANDLER_SCORE_COEFF = 5;
+    private static final double AGE_SCORE_COEFF = 0.1;
 
     private final TeamsGenerator teamGenerator;
 
@@ -30,7 +33,7 @@ public class Team {
     public double getSportScore(List<Double> pExpectedScores) {
         double expectedSportScore = pExpectedScores.stream().mapToDouble(Double::doubleValue).sum();
         double score = teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).sum();
-        return getScore(expectedSportScore, score) * 3;
+        return getScore(expectedSportScore, score) * SPORT_SCORE_COEFF;
     }
 
     public double getSkillsScore(List<Double> expectedScores) {
@@ -49,11 +52,11 @@ public class Team {
     }
 
     public double getNoHandlerScore(double expectedNoHandlerNumber) {
-        return getScore(expectedNoHandlerNumber, teamGenerator.getNbNoHandlers()) * 5;
+        return getScore(expectedNoHandlerNumber, teamGenerator.getNbNoHandlers()) * HANDLER_SCORE_COEFF;
     }
 
     public double getAgeScore(double expectedAgeAverage) {
-        return getScore(expectedAgeAverage, teamGenerator.getAgeAverage()) / 10;
+        return getScore(expectedAgeAverage, teamGenerator.getAgeAverage()) * AGE_SCORE_COEFF;
     }
 
     private double getScore(double expectedScore, double actualScore) {
