@@ -15,10 +15,10 @@
     <dependencies>
 
         <dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-csv</artifactId>
-		    <version>1.7</version>
-		</dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.7</version>
+        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -36,7 +36,7 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
-        
+
     </dependencies>
 
     <build>
@@ -79,7 +79,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>CalculatorJob</mainClass>
+                            <mainClass>CalculatorUI</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
