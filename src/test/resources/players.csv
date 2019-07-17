@@ -1,4 +1,4 @@
-Pseudo,Club,Sexe,Nom,Prénom,email,handler ?,Age,Endurance,Vitesse,Technique
+Pseudo,Club,Sexe,Nom,Prénom,Email,Handler,Age,Endurance,Vitesse,Technique
 J1,Gônes,F,Nom1,Prenom1,mail1@orange.fr,oui,30,5,6,7
 J2,Shamrock,M,Nom2,Prenom2,mail2@gmail.com,oui,28,5,5,9
 J3,Gônes,M,Nom3,Prenom3,mail3@hotmail.com,non,32,8,7,3
