@@ -139,10 +139,9 @@ public class Team {
     }
 
     public double getStandardDeviation(List<Double> pExpectedScores) {
-        double teamSportAverage = getSportScore(pExpectedScores);
+        double teamSportAverage = getSkillsScore(pExpectedScores);
         return this.players.stream().mapToDouble(player -> Math.abs(
-                teamSportAverage -
-                        player.getSportScores(pExpectedScores).stream().mapToDouble(Double::doubleValue).average().orElse(0)
+                teamSportAverage - player.getSkillScore(pExpectedScores)
         )).average().orElse(0);
     }
 }

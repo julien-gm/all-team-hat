@@ -35,8 +35,12 @@ public class TeamTest {
 
     @Test
     public void testSportScore() {
-        // TODO le 0.5 ?
-        Assert.assertEquals(0.5, team.getSportScore(Arrays.asList(7.2, 7.7, 7.5)), 0.0001);
+        Assert.assertEquals(0.3, team.getSportScore(Arrays.asList(7.2, 7.7, 7.5)), 0.0001);
+    }
+
+    @Test
+    public void testSkillScore() {
+        Assert.assertEquals(0.5, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.0001);
     }
 
     @Test
@@ -51,7 +55,7 @@ public class TeamTest {
 
     @Test
     public void testStdDev() {
-        Assert.assertEquals(8.1, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.1);
+        Assert.assertEquals(0.831, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test

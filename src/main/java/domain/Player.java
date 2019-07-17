@@ -127,6 +127,10 @@ public class Player {
         return scores;
     }
 
+    public double getSkillScore(List<Double> pExpectedScores) {
+        return getSportScores(pExpectedScores).stream().mapToDouble(Double::doubleValue).sum();
+    }
+
     private double score(double value, double expected) {
         return Math.abs(value - expected);
     }
