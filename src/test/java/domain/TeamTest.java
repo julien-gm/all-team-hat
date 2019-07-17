@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class TeamTest {
 
     private static Team team;
@@ -16,17 +15,13 @@ public class TeamTest {
     @BeforeClass
     public static void setup() {
         Player p1 = new Player();
-        p1.setSpeed(7);
-        p1.setEndurance(7);
-        p1.setTech(7);
-        p1.setGender(Player.Gender.F);
+        p1.setSkillsList(Arrays.asList(7.0, 7.0, 7.0));
+        p1.setGender(Player.Gender.FEMME);
         p1.setHandler(Player.Handler.YES);
         p1.setClub("test");
         Player p2 = new Player();
-        p2.setSpeed(8);
-        p2.setEndurance(8);
-        p2.setTech(8);
-        p2.setGender(Player.Gender.M);
+        p2.setSkillsList(Arrays.asList(8.0, 8.0, 8.0));
+        p2.setGender(Player.Gender.HOMME);
         p2.setHandler(Player.Handler.MAYBE);
         p2.setClub("test");
         Player p3 = new Player(false);
@@ -39,18 +34,13 @@ public class TeamTest {
     }
 
     @Test
-    public void testEnduranceScore() {
-        Assert.assertEquals(0.3, team.getEnduranceScore(7.2), 0.0001);
+    public void testSportScore() {
+        Assert.assertEquals(0.3, team.getSportScore(Arrays.asList(7.2, 7.7, 7.5)), 0.0001);
     }
 
     @Test
-    public void testSpeedScore() {
-        Assert.assertEquals(0.2, team.getSpeedScore(7.7), 0.0001);
-    }
-
-    @Test
-    public void testTechScore() {
-        Assert.assertEquals(0.0, team.getTechScore(7.5), 0.0001);
+    public void testSkillScore() {
+        Assert.assertEquals(0.5, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.0001);
     }
 
     @Test
@@ -65,7 +55,7 @@ public class TeamTest {
 
     @Test
     public void testStdDev() {
-        Assert.assertEquals(8.1, team.getStandardDeviation(7.2, 7.7, 7.5), 0.1);
+        Assert.assertEquals(0.831, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test

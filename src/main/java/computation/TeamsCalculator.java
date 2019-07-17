@@ -7,11 +7,7 @@ import java.util.Map;
 
 public class TeamsCalculator {
 
-    private final double expectedTechScore;
-
-    private final double expectedEnduranceScore;
-
-    private final double expectedSpeedScore;
+    private final List<Double> expectedScores;
 
     private final double expectedNumberOfNoHandlers;
 
@@ -21,15 +17,9 @@ public class TeamsCalculator {
 
     private final Map<String, Double> expectedClubsScore;
 
-    TeamsCalculator(double expectedTechScore,
-                    double expectedEnduranceScore,
-                    double expectedSpeedScore,
-                    double expectedNumberOfNoHandlers,
-                    double expectedNumberOfHandlers, double expectedAgeAverage,
-                    Map<String, Double> expectedClubScore) {
-        this.expectedTechScore = expectedTechScore;
-        this.expectedEnduranceScore = expectedEnduranceScore;
-        this.expectedSpeedScore = expectedSpeedScore;
+    TeamsCalculator(List<Double> pExpectedScores, double expectedNumberOfNoHandlers, double expectedNumberOfHandlers,
+                    double expectedAgeAverage, Map<String, Double> expectedClubScore) {
+        expectedScores = pExpectedScores;
         this.expectedNumberOfNoHandlers = expectedNumberOfNoHandlers;
         this.expectedNumberOfHandlers = expectedNumberOfHandlers;
         this.expectedAgeAverage = expectedAgeAverage;
@@ -37,15 +27,11 @@ public class TeamsCalculator {
     }
 
     public double getTeamScore(Team team) {
-        return team.getSportScore(expectedEnduranceScore, expectedSpeedScore, expectedTechScore) +
-            team.getEnduranceScore(expectedEnduranceScore) +
-            team.getSpeedScore(expectedSpeedScore) +
-            team.getTechScore(expectedTechScore) +
-            team.getNoHandlerScore(expectedNumberOfNoHandlers) +
-            team.getHandlerScore(expectedNumberOfHandlers) +
-            team.getAgeScore(expectedAgeAverage) +
-            team.getClubScore(expectedClubsScore) +
-            team.getStandardDeviation(expectedEnduranceScore, expectedSpeedScore, expectedTechScore);
+        return team.getSportScore(expectedScores)
+                + team.getSkillsScore(expectedScores)
+                + team.getNoHandlerScore(expectedNumberOfNoHandlers)
+                + team.getHandlerScore(expectedNumberOfHandlers) + team.getAgeScore(expectedAgeAverage)
+                + team.getClubScore(expectedClubsScore) + team.getStandardDeviation(expectedScores);
     }
 
     public double compute(List<Team> teams) {

@@ -21,34 +21,26 @@ public class TeamsCalculatorTest {
     @BeforeClass
     public static void setup() {
         Player p1 = new Player();
-        p1.setSpeed(7);
-        p1.setEndurance(7);
-        p1.setTech(7);
-        p1.setGender(Player.Gender.F);
+        p1.setSkillsList(Arrays.asList(7.0, 7.0, 7.0));
+        p1.setGender(Player.Gender.FEMME);
         p1.setHandler(Player.Handler.YES);
         p1.setAge(29);
         p1.setClub("c1");
         Player p2 = new Player();
-        p2.setSpeed(8);
-        p2.setEndurance(8);
-        p2.setTech(8);
-        p2.setGender(Player.Gender.M);
+        p2.setSkillsList(Arrays.asList(8.0, 8.0, 8.0));
+        p2.setGender(Player.Gender.HOMME);
         p2.setHandler(Player.Handler.MAYBE);
         p2.setAge(30);
         p2.setClub("c2");
         Player p3 = new Player();
-        p3.setTech(5);
-        p3.setEndurance(7);
-        p3.setSpeed(6);
-        p3.setGender(Player.Gender.F);
+        p3.setSkillsList(Arrays.asList(6.0, 7.0, 5.0));
+        p3.setGender(Player.Gender.FEMME);
         p3.setHandler(Player.Handler.YES);
         p3.setAge(27);
         p3.setClub("c1");
         Player p4 = new Player();
-        p4.setTech(10);
-        p4.setEndurance(9);
-        p4.setSpeed(8);
-        p4.setGender(Player.Gender.M);
+        p4.setSkillsList(Arrays.asList(8.0, 9.0, 10.0));
+        p4.setGender(Player.Gender.HOMME);
         p4.setHandler(Player.Handler.NO);
         p4.setAge(26);
         p4.setClub("c2");
@@ -73,24 +65,17 @@ public class TeamsCalculatorTest {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("c1", 1.0);
         expectedClubScore.put("c2", 1.0);
-        teamCalculator = new TeamsCalculator(
-            7.7,
-            7.6,
-            7.9,
-            0.4,
-            1.2,
-            28,
-            expectedClubScore);
+        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 28, expectedClubScore);
     }
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(8.85, teamCalculator.getTeamScore(team1), 0.0001);
-        Assert.assertEquals(12.35, teamCalculator.getTeamScore(team2), 0.0001);
+        Assert.assertEquals(8.95, teamCalculator.getTeamScore(team1), 0.0001);
+        Assert.assertEquals(12.95, teamCalculator.getTeamScore(team2), 0.0001);
     }
 
     @Test
     public void testCompute() {
-        Assert.assertEquals(21.2, teamCalculator.compute(teams), 0.0001);
+        Assert.assertEquals(21.9, teamCalculator.compute(teams), 0.0001);
     }
 }

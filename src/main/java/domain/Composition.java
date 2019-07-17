@@ -42,7 +42,7 @@ public class Composition {
         final Team team1 = getTeamPlayer(player1);
         final Team team2 = getTeamPlayer(player2);
         if ((!player1.isReal() && (team2.hasPlayer(Team.fakePlayer)))
-            || (!player2.isReal() && (team1.hasPlayer(Team.fakePlayer)))) {
+                || (!player2.isReal() && (team1.hasPlayer(Team.fakePlayer)))) {
             return new Composition(teams, teamCalculator);
         }
         List<Team> teams = this.teams.stream().filter(t -> !t.equals(team1) && !t.equals(team2)).collect(Collectors.toList());

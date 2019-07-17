@@ -9,7 +9,12 @@ import java.util.stream.Collectors;
 public class Team {
 
     public static final Player fakePlayer = new Player(false);
+    private static final int SPORT_SCORE_COEFF = 3;
+    private static final int HANDLER_SCORE_COEFF = 5;
+    private static final double AGE_SCORE_COEFF = 0.1;
+
     private final TeamsGenerator teamGenerator;
+
     private List<Player> players;
 
     public Team(List<Player> players) {
@@ -25,22 +30,21 @@ public class Team {
         return getScore(expectedGirlNumber, teamGenerator.getNbGirls());
     }
 
-    public double getSportScore(double expectedEnduranceNumber, double expectedSpeedNumber, double expectedTechNumber) {
-        double expectedSportScore = expectedEnduranceNumber + expectedSpeedNumber + expectedTechNumber;
-        double score = teamGenerator.getEnduranceAverage() + teamGenerator.getSpeedAverage() + teamGenerator.getTechAverage();
-        return getScore(expectedSportScore, score) * 3;
+    public double getSportScore(List<Double> pExpectedScores) {
+        double expectedSportScore = pExpectedScores.stream().mapToDouble(Double::doubleValue).sum();
+        double score = teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).sum();
+        return getScore(expectedSportScore, score) * SPORT_SCORE_COEFF;
     }
 
-    public double getEnduranceScore(double expectedEnduranceNumber) {
-        return getScore(expectedEnduranceNumber, teamGenerator.getEnduranceAverage());
-    }
-
-    public double getSpeedScore(double expectedSpeedNumber) {
-        return getScore(expectedSpeedNumber, teamGenerator.getSpeedAverage());
-    }
-
-    public double getTechScore(double expectedTechNumber) {
-        return getScore(expectedTechNumber, teamGenerator.getTechAverage());
+    public double getSkillsScore(List<Double> expectedScores) {
+        List<Double> skillsScore = teamGenerator.getSkillAverages();
+        int index = 0;
+        double score = 0;
+        for (double expectedScore : expectedScores) {
+            score += getScore(expectedScore, skillsScore.get(index));
+            index++;
+        }
+        return score;
     }
 
     public double getHandlerScore(double expectedHandlerNumber) {
@@ -48,11 +52,11 @@ public class Team {
     }
 
     public double getNoHandlerScore(double expectedNoHandlerNumber) {
-        return getScore(expectedNoHandlerNumber, teamGenerator.getNbNoHandlers()) * 5;
+        return getScore(expectedNoHandlerNumber, teamGenerator.getNbNoHandlers()) * HANDLER_SCORE_COEFF;
     }
 
     public double getAgeScore(double expectedAgeAverage) {
-        return getScore(expectedAgeAverage, teamGenerator.getAgeAverage()) / 10;
+        return getScore(expectedAgeAverage, teamGenerator.getAgeAverage()) * AGE_SCORE_COEFF;
     }
 
     private double getScore(double expectedScore, double actualScore) {
@@ -85,7 +89,8 @@ public class Team {
                 String clubToCheck = expectedClubScore.getKey();
                 if (!clubToCheck.isEmpty()) {
                     if (clubsInfo.containsKey(clubToCheck)) {
-                        clubScore += Math.max(1, Math.pow(1.0 + clubsInfo.get(clubToCheck).size() - expectedClubScore.getValue(), 2));
+                        clubScore += Math.max(1,
+                                Math.pow(1.0 + clubsInfo.get(clubToCheck).size() - expectedClubScore.getValue(), 2));
                     } else {
                         clubScore += 1;
                     }
@@ -116,22 +121,15 @@ public class Team {
     @Override
     public String toString() {
         TeamsGenerator teamsGenerator = new TeamsGenerator(players);
-        return String.format("Girls: %d/%d, H/M: %d/%d, Age : %.2f, Sport: %.2f - Tech: %.2f, Endurance: %.2f, Speed: %.2f\n",
-            teamsGenerator.getNbGirls(),
-            this.getNbPlayers(),
-            teamsGenerator.getNbHandlers(),
-            teamsGenerator.getNbNoHandlers(),
-            teamsGenerator.getAgeAverage(),
-            (teamsGenerator.getTechAverage() + teamsGenerator.getEnduranceAverage() + teamsGenerator.getSpeedAverage()) / 3,
-            teamsGenerator.getTechAverage(),
-            teamsGenerator.getEnduranceAverage(),
-            teamsGenerator.getSpeedAverage()
-        ) + getClubStats();
+        return String.format("Girls: %d/%d, H/M: %d/%d, Age : %.2f, Sport: %.2f\n", teamsGenerator.getNbGirls(),
+                this.getNbPlayers(), teamsGenerator.getNbHandlers(), teamsGenerator.getNbNoHandlers(),
+                teamsGenerator.getAgeAverage(),
+                teamsGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).sum()) + getClubStats();
     }
 
     private String getClubStats() {
         if (!this.players.isEmpty()) {
-            StringBuilder sb = new StringBuilder("");
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<Player>> entry : getClubsInfo().entrySet()) {
                 int size = entry.getValue().size();
                 if (size > 1) {
@@ -143,10 +141,10 @@ public class Team {
         return "\n";
     }
 
-    public double getStandardDeviation(double expectedEndurance, double expectedSpeed, double expectedTech) {
-        double teamSportAverage = this.getSportScore(expectedEndurance, expectedSpeed, expectedTech);
-        return this.players.stream().mapToDouble(
-                p -> Math.abs(teamSportAverage - p.getSportScore(expectedEndurance, expectedSpeed, expectedTech))
-        ).average().orElse(0);
+    public double getStandardDeviation(List<Double> pExpectedScores) {
+        double teamSportAverage = getSkillsScore(pExpectedScores);
+        return this.players.stream().mapToDouble(player -> Math.abs(
+                teamSportAverage - player.getSkillScore(pExpectedScores)
+        )).average().orElse(0);
     }
 }

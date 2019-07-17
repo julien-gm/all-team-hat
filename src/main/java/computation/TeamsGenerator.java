@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class TeamsGenerator {
 
-    private static final int LOCAL_NUMBER_OF_OPTIMZATION = 50;
+    private static final int LOCAL_NUMBER_OF_OPTIMIZATION = 50;
     private List<Player> players;
 
     public TeamsGenerator(List<Player> players) {
@@ -35,11 +35,11 @@ public class TeamsGenerator {
             boysTeams.add(new Team(new ArrayList<>()));
             teams.add(new Team(new ArrayList<>()));
         }
-        int playerNumber = initTeam(nbTeams, girlsTeams, 0, Player.Gender.F);
-        initTeam(nbTeams, boysTeams, playerNumber, Player.Gender.M);
-        Composition girlsComposition = getLocalBestComposition(new Composition(girlsTeams, getTeamsCalculator(nbTeams)), 1);
-        Composition boysComposition = getLocalBestComposition(new Composition(boysTeams, getTeamsCalculator(nbTeams)), 1);
-        fillTeams(nbTeams, numberOfPlayersByTeam, teams, girlsComposition, boysComposition);
+        int playerNumber = initTeam(nbTeams, girlsTeams, 0, Player.Gender.FEMME);
+        initTeam(nbTeams, boysTeams, playerNumber, Player.Gender.HOMME);
+        Composition girlsCompo = getLocalBestComposition(new Composition(girlsTeams, getTeamsCalculator(nbTeams)), 1);
+        Composition boysCompos = getLocalBestComposition(new Composition(boysTeams, getTeamsCalculator(nbTeams)), 1);
+        fillTeams(nbTeams, numberOfPlayersByTeam, teams, girlsCompo, boysCompos);
         return teams;
     }
 
@@ -52,7 +52,8 @@ public class TeamsGenerator {
         return playerNumber;
     }
 
-    private void fillTeams(int nbTeams, int numberOfPlayersByTeam, List<Team> teams, Composition girlsComposition, Composition boysComposition) {
+    private void fillTeams(int nbTeams, int numberOfPlayersByTeam, List<Team> teams, Composition girlsComposition,
+                           Composition boysComposition) {
         int playerNumber;
         for (playerNumber = 0; playerNumber < nbTeams * numberOfPlayersByTeam; playerNumber++) {
             int numberOfGirls = girlsComposition.getNumberOfPlayers();
@@ -95,7 +96,7 @@ public class TeamsGenerator {
         double bestScore = currentComposition.getScore();
         Composition bestComposition = currentComposition;
         for (int tryNumber = 0; tryNumber < nbShuffles; ++tryNumber) {
-            Composition localBestComposition = getLocalBestComposition(currentComposition, LOCAL_NUMBER_OF_OPTIMZATION);
+            Composition localBestComposition = getLocalBestComposition(currentComposition, LOCAL_NUMBER_OF_OPTIMIZATION);
             double score = localBestComposition.getScore();
             if (score < bestScore) {
                 System.out.println("New best score ever: " + score);
@@ -113,7 +114,8 @@ public class TeamsGenerator {
         double localBestScore = bestComposition.getScore();
         for (Player player : players) {
             Team playerTeam = currentComposition.getTeamFromPlayer(player);
-            for (Player switchPlayer : teams.stream().filter(t -> !t.equals(playerTeam)).flatMap(t -> t.getPlayers().stream()).collect(Collectors.toList())) {
+            for (Player switchPlayer : teams.stream().filter(t -> !t.equals(playerTeam))
+                    .flatMap(t -> t.getPlayers().stream()).collect(Collectors.toList())) {
                 Composition newComposition = currentComposition.switchPlayer(player, switchPlayer);
                 if (newComposition != null) {
                     double newScore = newComposition.getScore();
@@ -129,36 +131,37 @@ public class TeamsGenerator {
     }
 
     public TeamsCalculator getTeamsCalculator(int nbTeams) {
-        double enduranceAverage = getEnduranceAverage();
-        double techAverage = getTechAverage();
-        double speedAverage = getSpeedAverage();
+        List<Double> skillsAverage = getSkillAverages();
         long nbHandlers = getNbHandlers();
         long nbNoHandlers = getNbNoHandlers();
         double ageAverage = getAgeAverage();
         Map<String, Double> expectedClubScore = new HashMap<>();
-        for (Map.Entry<String, List<Player>> entry : this.players.stream().collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
+        for (Map.Entry<String, List<Player>> entry : this.players.stream()
+                .collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
             expectedClubScore.put(entry.getKey(), (double) entry.getValue().size() / nbTeams);
         }
-        return new TeamsCalculator(
-            enduranceAverage,
-            techAverage,
-            speedAverage,
-            nbNoHandlers,
-            nbHandlers,
-            ageAverage,
-            expectedClubScore);
+        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, ageAverage, expectedClubScore);
     }
 
-    public double getSpeedAverage() {
-        return getAverage(Player::getSpeed);
-    }
-
-    public double getEnduranceAverage() {
-        return getAverage(Player::getEndurance);
-    }
-
-    public double getTechAverage() {
-        return getAverage(Player::getTech);
+    public List<Double> getSkillAverages() {
+        List<Player> realPlayers = players.stream().filter(Player::isReal).collect(Collectors.toList());
+        Player firstRealPlayer = realPlayers.get(0);
+        List<Double> averageScores = new ArrayList<>();
+        if (firstRealPlayer != null) {
+            double[] skillAverage = new double[firstRealPlayer.getSkillsList().size()];
+            for (Player player : realPlayers) {
+                int skillIndex = 0;
+                for (double skill : player.getSkillsList()) {
+                    skillAverage[skillIndex] += skill;
+                    skillIndex++;
+                }
+            }
+            long nbRealPlayers = realPlayers.size();
+            for (double skillSum : skillAverage) {
+                averageScores.add(skillSum / nbRealPlayers);
+            }
+        }
+        return averageScores;
     }
 
     public double getAgeAverage() {
@@ -170,7 +173,7 @@ public class TeamsGenerator {
     }
 
     public long getNbGirls() {
-        return players.stream().filter(player -> Player.Gender.F.equals(player.getGender())).count();
+        return players.stream().filter(player -> Player.Gender.FEMME.equals(player.getGender())).count();
     }
 
     public long getNbHandlers() {

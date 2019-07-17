@@ -15,14 +15,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.9.8</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-csv</artifactId>
-            <version>2.8.8</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -41,6 +36,7 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -83,7 +79,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>CalculatorJob</mainClass>
+                            <mainClass>CalculatorUI</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

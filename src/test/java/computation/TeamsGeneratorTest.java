@@ -21,42 +21,32 @@ public class TeamsGeneratorTest {
     @BeforeClass
     public static void setup() {
         p1 = new Player();
-        p1.setSpeed(7);
-        p1.setEndurance(7);
-        p1.setTech(7);
-        p1.setGender(Player.Gender.F);
+        p1.setSkillsList(Arrays.asList(7.0, 7.0, 7.0));
+        p1.setGender(Player.Gender.FEMME);
         p1.setHandler(Player.Handler.YES);
         p1.setClub("c1");
         p1.setNickName("p1");
         p2 = new Player();
-        p2.setSpeed(8);
-        p2.setEndurance(8);
-        p2.setTech(8);
-        p2.setGender(Player.Gender.M);
+        p2.setSkillsList(Arrays.asList(8.0, 8.0, 8.0));
+        p2.setGender(Player.Gender.HOMME);
         p2.setHandler(Player.Handler.MAYBE);
         p2.setClub("c2");
         p2.setNickName("p2");
         p3 = new Player();
-        p3.setSpeed(7);
-        p3.setEndurance(7);
-        p3.setTech(7);
-        p3.setGender(Player.Gender.M);
+        p3.setSkillsList(Arrays.asList(7.0, 7.0, 7.0));
+        p3.setGender(Player.Gender.HOMME);
         p3.setHandler(Player.Handler.YES);
         p3.setClub("c1");
         p3.setNickName("p3");
         p4 = new Player();
-        p4.setSpeed(9);
-        p4.setEndurance(9);
-        p4.setTech(9);
-        p4.setGender(Player.Gender.F);
+        p4.setSkillsList(Arrays.asList(9.0, 9.0, 9.0));
+        p4.setGender(Player.Gender.FEMME);
         p4.setHandler(Player.Handler.NO);
         p4.setClub("c1");
         p4.setNickName("p4");
         p5 = new Player();
-        p5.setSpeed(8);
-        p5.setEndurance(8);
-        p5.setTech(8);
-        p5.setGender(Player.Gender.M);
+        p5.setSkillsList(Arrays.asList(8.0, 8.0, 8.0));
+        p5.setGender(Player.Gender.HOMME);
         p5.setHandler(Player.Handler.MAYBE);
         p5.setClub("c3");
         p5.setNickName("p5");
@@ -83,17 +73,7 @@ public class TeamsGeneratorTest {
     }
 
     @Test
-    public void testEnduranceAverage() {
-        Assert.assertEquals(7.8, teamGenerator.getEnduranceAverage(), 0.0);
-    }
-
-    @Test
-    public void testSpeedAverage() {
-        Assert.assertEquals(7.8, teamGenerator.getSpeedAverage(), 0.0);
-    }
-
-    @Test
-    public void testTechAverage() {
-        Assert.assertEquals(7.8, teamGenerator.getTechAverage(), 0.0);
+    public void testSportAverage() {
+        Assert.assertEquals(7.8, teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).average().orElse(0), 0.0);
     }
 }

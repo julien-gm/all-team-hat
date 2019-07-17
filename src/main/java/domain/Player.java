@@ -1,49 +1,32 @@
 package domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Player {
-
-    @JsonProperty("Nom")
     private String lastName;
 
-    @JsonProperty("Prénom")
     private String firstName;
 
-    @JsonProperty("Pseudo")
     private String nickName;
 
-    @JsonProperty("email")
     private String email;
+
     private Handler handler;
-    @JsonProperty("Club")
+
     private String club;
-    @JsonProperty("Age")
+
     private int age;
-    @JsonProperty("Vitesse")
-    private double speed;
-    @JsonProperty("Technique")
-    private double tech;
-    @JsonProperty("Endurance")
-    private double endurance;
+
+    private List<Double> skillsList = new ArrayList<>();
+
     private Gender gender;
+
     private boolean real = true;
 
-    public Player(String nickName, String club, String gender, String name, String firstName, String email, String handler, String age, String endurance, String speed, String tech, String comment) {
-        this.nickName = nickName;
-        this.club = club;
-        setGender(gender);
-        this.lastName = name;
-        this.firstName = firstName;
-        this.email = email;
-        setHandler(handler);
-        this.endurance = Double.valueOf(endurance.replace(",", "."));
-        this.speed = Double.valueOf(speed.replace(",", "."));
-        this.tech = Double.valueOf(tech.replace(",", "."));
-    }
-
+    /**
+     * Default constructor
+     */
     public Player() {
     }
 
@@ -57,7 +40,7 @@ public class Player {
     }
 
     public boolean isReal() {
-        return real;
+        return this.real;
     }
 
     public void setReal(boolean real) {
@@ -65,7 +48,7 @@ public class Player {
     }
 
     public double getAge() {
-        return age;
+        return this.age;
     }
 
     public void setAge(int age) {
@@ -73,7 +56,7 @@ public class Player {
     }
 
     public String getLastName() {
-        return lastName;
+        return this.lastName;
     }
 
     public void setLastName(String lastName) {
@@ -81,7 +64,7 @@ public class Player {
     }
 
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
     public void setFirstName(String firstName) {
@@ -89,7 +72,7 @@ public class Player {
     }
 
     public String getNickName() {
-        return nickName;
+        return this.nickName;
     }
 
     public void setNickName(String nickName) {
@@ -97,7 +80,7 @@ public class Player {
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {
@@ -105,125 +88,68 @@ public class Player {
     }
 
     public Handler getHandler() {
-        return handler;
+        return this.handler;
     }
 
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
 
-    @JsonProperty("handler ?")
-    public void setHandler(String handler) {
-        switch (handler) {
-            case "oui":
-                setHandler(Handler.YES);
-                break;
-            case "si besoin":
-                setHandler(Handler.MAYBE);
-                break;
-            default:
-                setHandler(Handler.NO);
-                break;
-        }
-    }
-
     public String getClub() {
-        return club;
+        return this.club;
     }
 
     public void setClub(String club) {
         this.club = club;
     }
 
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public double getTech() {
-        return tech;
-    }
-
-    public void setTech(double tech) {
-        this.tech = tech;
-    }
-
-    public double getEndurance() {
-        return endurance;
-    }
-
-    public void setEndurance(double endurance) {
-        this.endurance = endurance;
-    }
-
     public Gender getGender() {
-        return gender;
+        return this.gender;
     }
 
     public void setGender(Gender gender) {
         this.gender = gender;
     }
 
-    public double getEnduranceScore(double expectedEndurance) {
-        return score(endurance, expectedEndurance);
+    public List<Double> getSkillsList() {
+        return this.skillsList;
     }
 
-    public double getSpeedScore(double expectedSpeed) {
-        return score(speed, expectedSpeed);
+    public void setSkillsList(List<Double> skillsList) {
+        this.skillsList = skillsList;
     }
 
-    public double getTechScore(double expectedTech) {
-        return score(tech, expectedTech);
+    public List<Double> getSportScores(List<Double> expectedScores) {
+        List<Double> scores = new ArrayList<>();
+        for (int i = 0; i < this.skillsList.size(); i++) {
+            scores.add(this.score(this.skillsList.get(i), expectedScores.get(i)));
+        }
+        return scores;
     }
 
-    public double getSportScore(double expectedEndurance, double expectedSpeed, double expectedTech) {
-        return getEnduranceScore(expectedEndurance) + getSpeedScore(expectedSpeed) + getTechScore(expectedTech);
+    public double getSkillScore(List<Double> pExpectedScores) {
+        return getSportScores(pExpectedScores).stream().mapToDouble(Double::doubleValue).sum();
     }
 
     private double score(double value, double expected) {
         return Math.abs(value - expected);
     }
 
-    @JsonProperty("Sexe")
-    public void setGender(String gender) {
-        switch (gender) {
-            case "M":
-                setGender(Gender.M);
-                break;
-            default:
-                setGender(Gender.F);
-        }
-    }
-
     @Override
     public String toString() {
-        if (!isReal()) {
+        if (!this.isReal()) {
             return "";
         }
-        String handler;
-        if (this.handler == null) {
-            return "X";
-        }
-        switch (this.handler) {
-            case YES:
-                handler = "H";
-                break;
-            case MAYBE:
-                handler = "h";
-                break;
-            case NO:
-            default:
-                handler = "M";
-                break;
-        }
-        double sport = (endurance + tech + speed) / 3.0;
-        return String.format("%s (%s %s) [%s](%s) score %.2f [%.2f/%.2f/%.2f] - %s", nickName, firstName, lastName, gender, handler, sport, tech, endurance, speed, club);
+        double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
+        return String.format("%s (%s %s) [%s](%s) score %.2f - %s", nickName, firstName, lastName, gender, handler,
+                sport, club);
     }
 
-    public enum Handler {YES, MAYBE, NO}
+    public enum Handler {
+        YES, MAYBE, NO
+    }
 
-    public enum Gender {F, M}
+    public enum Gender {
+        HOMME, FEMME
+    }
 }
