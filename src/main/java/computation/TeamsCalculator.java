@@ -27,11 +27,11 @@ public class TeamsCalculator {
     }
 
     public double getTeamScore(Team team) {
-        return team.getSportScore(expectedScores)
-                + team.getSkillsScore(expectedScores)
+        return team.getSkillsScore(expectedScores)
                 + team.getNoHandlerScore(expectedNumberOfNoHandlers)
-                + team.getHandlerScore(expectedNumberOfHandlers) + team.getAgeScore(expectedAgeAverage)
-                + team.getClubScore(expectedClubsScore) + team.getStandardDeviation(expectedScores);
+                + team.getHandlerScore(expectedNumberOfHandlers)
+                + team.getClubScore(expectedClubsScore)
+                + team.getStandardDeviation(expectedScores);
     }
 
     public double compute(List<Team> teams) {

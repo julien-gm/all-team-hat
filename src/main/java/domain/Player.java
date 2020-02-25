@@ -16,7 +16,7 @@ public class Player {
 
     private String club;
 
-    private int age;
+    private int age = 0;
 
     private List<Double> skillsList = new ArrayList<>();
 

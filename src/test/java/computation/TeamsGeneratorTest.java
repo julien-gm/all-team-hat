@@ -66,8 +66,8 @@ public class TeamsGeneratorTest {
         List<Team> teams = teamGenerator.initTeams(nbOfTeam);
         Assert.assertEquals(3, teamGenerator.getNumberOfPlayersByTeam(nbOfTeam));
         Assert.assertEquals(nbOfTeam, teams.size());
-        Team expectedFirstTeam = new Team(Arrays.asList(p1, p5, p2));
-        Team expectedSecondTeam = new Team(Arrays.asList(p4, p3, Team.fakePlayer));
+        Team expectedFirstTeam = new Team(Arrays.asList(p1, p2, p3));
+        Team expectedSecondTeam = new Team(Arrays.asList(p4, p5, Team.fakePlayer));
         Assert.assertEquals(expectedFirstTeam, teams.get(0));
         Assert.assertEquals(expectedSecondTeam, teams.get(1));
     }

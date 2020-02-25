@@ -46,21 +46,7 @@ public class TeamsCalculatorTest {
         p4.setClub("c2");
 
         team1 = new Team(Arrays.asList(p1, p2));
-        // Girl 1 : 0.2
-        // Endurance 7.5 : 0.2
-        // Tech 7.5 : 0.1
-        // Speed 7.5 : 0.4
-        // domain.Handler 1 : 0.2
-        // No handler 0 : 0.4
-        // TOTAL : 1.5
         team2 = new Team(Arrays.asList(p3, p4));
-        // Girl 1 : 0.2
-        // Tech 7.5 : 0.2
-        // Endurance 8 : 0.4
-        // Speed 7 : 0.9
-        // domain.Handler 1 : 0.2
-        // No handler 1 : 0.6
-        // TOTAL : 2.5
         teams = Arrays.asList(team1, team2);
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("c1", 1.0);
@@ -70,12 +56,12 @@ public class TeamsCalculatorTest {
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(8.95, teamCalculator.getTeamScore(team1), 0.0001);
-        Assert.assertEquals(12.95, teamCalculator.getTeamScore(team2), 0.0001);
+        Assert.assertEquals(10.88, teamCalculator.getTeamScore(team1), 0.01);
+        Assert.assertEquals(10.7, teamCalculator.getTeamScore(team2), 0.01);
     }
 
     @Test
     public void testCompute() {
-        Assert.assertEquals(21.9, teamCalculator.compute(teams), 0.0001);
+        Assert.assertEquals(21.58, teamCalculator.compute(teams), 0.01);
     }
 }

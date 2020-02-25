@@ -1,0 +1,13 @@
+Pseudo,Club,Sexe,Nom,Prénom,Email,Handler,Age,Endurance,Vitesse,Technique,Taille
+J1,Gônes,F,Nom1,Prenom1,mail1@orange.fr,oui,29,5,6,7,170
+J2,Shamrock,M,Nom2,Prenom2,mail2@gmail.com,oui,30,5,5,9,160
+J3,Gônes,M,Nom3,Prenom3,mail3@hotmail.com,non,33,8,5,3,180
+J4,Sharks,F,Nom4,Prenom4,mail4@gmail.com,non,39,5,5,6,190
+J5,Ziggles,M,Nom5,Prenom5,mail5@gmail.com,non,45,4,5,6,150
+J6,Moustix,F,Nom6,Prenom6,mail6@gmail.com,non,33,9,10,8,200
+J7,Gônes,F,Nom1,Prenom1,mail1@orange.fr,oui,31,5,6,4,130
+J8,Shamrock,M,Nom2,Prenom2,mail2@gmail.com,oui,26,7,5,9,120
+J9,Gônes,M,Nom3,Prenom3,mail3@hotmail.com,non,14,8,6,3,140
+J10,Sharks,F,Nom4,Prenom4,mail4@gmail.com,non,35,5,5,6,150
+J11,Ziggles,M,Nom5,Prenom5,mail5@gmail.com,non,24,4,5,6,110
+J12,Moustix,F,Nom6,Prenom6,mail6@gmail.com,non,26,6,7,8,160
