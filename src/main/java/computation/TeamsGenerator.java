@@ -65,6 +65,9 @@ public class TeamsGenerator {
                 teams.get(playerNumber % nbTeams).add(Team.fakePlayer);
             }
         }
+        for (Team team : teams) {
+            team.initSkills();
+        }
     }
 
     private List<Player> getPlayersFromGender(Player.Gender gender) {
@@ -162,6 +165,27 @@ public class TeamsGenerator {
             }
         }
         return averageScores;
+    }
+
+    public List<Double> getSkillStdDev() {
+        List<Player> realPlayers = players.stream().filter(Player::isReal).collect(Collectors.toList());
+        Player firstRealPlayer = realPlayers.get(0);
+        List<Double> averagesScores = getSkillAverages();
+        List<Double> stdDevScores = new ArrayList<>();
+        if (firstRealPlayer != null) {
+            double[] skillScoreDistance = new double[firstRealPlayer.getSkillsList().size()];
+            for (Player player : realPlayers) {
+                int skillIndex = 0;
+                for (double skill : player.getSkillsList()) {
+                    skillScoreDistance[skillIndex] += Math.abs(skill - averagesScores.get(skillIndex));
+                    skillIndex++;
+                }
+            }
+            for (double skillStdDev : skillScoreDistance) {
+                stdDevScores.add(skillStdDev);
+            }
+        }
+        return stdDevScores;
     }
 
     public double getAgeAverage() {

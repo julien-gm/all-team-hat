@@ -2,6 +2,7 @@ package domain;
 
 import computation.TeamsGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,9 +18,12 @@ public class Team {
 
     private List<Player> players;
 
+    private List<Skill> skills;
+
     public Team(List<Player> players) {
         this.players = players;
         this.teamGenerator = new TeamsGenerator(players);
+        initSkills();
     }
 
     private int getNbPlayers() {
@@ -36,15 +40,48 @@ public class Team {
         return getScore(expectedSportScore, score) * SPORT_SCORE_COEFF;
     }
 
-    public double getSkillsScore(List<Double> expectedScores) {
-        List<Double> skillsScore = teamGenerator.getSkillAverages();
-        int index = 0;
-        double score = 0;
-        for (double expectedScore : expectedScores) {
-            score += getScore(expectedScore, skillsScore.get(index));
-            index++;
+    public double getSkillsScore(List<Double> expectedValues) {
+        double skillsScore = 0;
+        int skillIndex = 0;
+        for (Skill skill : skills) {
+            double skillValue = skill.getValue();
+            double stdDev = skill.getStdDev();
+            Double expectedValue = expectedValues.get(skillIndex);
+            double score = getScore(expectedValue, skillValue, stdDev);
+            double skillsScore1 = score / stdDev;
+            skillsScore += skillsScore1;
+            skillIndex++;
         }
-        return score;
+        return skillsScore;
+    }
+
+    public void initSkills() {
+        skills = new ArrayList<>();
+        if (players.size() > 0) {
+            Player firstPlayer = players.get(0);
+            for (int skillIndex = 0; skillIndex < firstPlayer.getSkillsList().size(); skillIndex++) {
+                skills.add(getSkillTeam(skillIndex));
+            }
+        }
+    }
+    
+    private double getSkillScoreAverageForTeam(int skillIndex) {
+        double sumSkillScore = 0.0;
+        List<Player> realPlayers = players.stream().filter(Player::isReal).collect(Collectors.toList());
+        for (Player p : realPlayers) {
+            sumSkillScore += p.getSkillsList().get(skillIndex);
+        }
+        return sumSkillScore / realPlayers.size();
+    }
+
+    private Skill getSkillTeam(int skillIndex) {
+        double averageSkillScoreForTeam = getSkillScoreAverageForTeam(skillIndex);
+        double stdDevSkill = 0.0;
+        List<Player> listRealPlayers = players.stream().filter(Player::isReal).collect(Collectors.toList());
+        for (Player p : listRealPlayers) {
+            stdDevSkill += Math.abs(p.getSkillsList().get(skillIndex) - averageSkillScoreForTeam);
+        }
+        return new Skill(averageSkillScoreForTeam, stdDevSkill / listRealPlayers.size());
     }
 
     public double getHandlerScore(double expectedHandlerNumber) {
@@ -61,6 +98,10 @@ public class Team {
 
     private double getScore(double expectedScore, double actualScore) {
         return Math.abs(expectedScore - actualScore);
+    }
+
+    private double getScore(double expectedScore, double actualScore, double stdDev) {
+        return (Math.abs(expectedScore - actualScore) / stdDev) / (expectedScore / 10);
     }
 
     public void add(Player player) {
@@ -121,10 +162,18 @@ public class Team {
     @Override
     public String toString() {
         TeamsGenerator teamsGenerator = new TeamsGenerator(players);
-        return String.format("Girls: %d/%d, H/M: %d/%d, Age : %.2f, Sport: %.2f\n", teamsGenerator.getNbGirls(),
-                this.getNbPlayers(), teamsGenerator.getNbHandlers(), teamsGenerator.getNbNoHandlers(),
-                teamsGenerator.getAgeAverage(),
-                teamsGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).sum()) + getClubStats();
+        return String.format(
+                "Girls: %d/%d, H/M: %d/%d, Skills: %.2f\n",
+                teamsGenerator.getNbGirls(),
+                this.getNbPlayers(),
+                teamsGenerator.getNbHandlers(),
+                teamsGenerator.getNbNoHandlers(),
+                getSkillScore()
+        ) + getClubStats();
+    }
+
+    private double getSkillScore() {
+        return players.stream().filter(Player::isReal).mapToDouble(p -> p.getSkillScore(teamGenerator.getSkillAverages())).sum();
     }
 
     private String getClubStats() {
@@ -146,5 +195,13 @@ public class Team {
         return this.players.stream().mapToDouble(player -> Math.abs(
                 teamSportAverage - player.getSkillScore(pExpectedScores)
         )).average().orElse(0);
+    }
+
+    public double getAgeAverage() {
+        return players.stream().mapToDouble(Player::getAge).average().orElse(0.0);
+    }
+
+    public double getSkillsAverage() {
+        return skills.stream().mapToDouble(Skill::getValue).average().orElse(0.0);
     }
 }

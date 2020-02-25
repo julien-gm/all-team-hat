@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PlayersParser {
 
-    private static final int NUMBER_OF_COLUMNS_TO_SKIP = 8;
+    private static final int NUMBER_OF_COLUMNS_TO_SKIP = 7;
     private static Iterable<? extends CSVRecord> parser;
 
     public PlayersParser(FileReader file) throws IOException {
@@ -32,7 +32,7 @@ public class PlayersParser {
             player.setFirstName(record.get("Prénom"));
             player.setEmail(record.get("Email"));
             player.setClub(record.get("Club"));
-            player.setAge(Integer.parseInt(record.get("Age")));
+            // player.setAge(Integer.parseInt(record.get("Age")));
             player.setGender(record.get("Sexe").startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get("Handler");
             player.setHandler(
