@@ -4,7 +4,7 @@ import computation.TeamsCalculator;
 import computation.TeamsGenerator;
 import org.junit.Assert;
 import org.junit.Test;
-import utils.PlayersParser;
+import utils.FilePlayersParser;
 
 import java.io.File;
 import java.io.FileReader;
@@ -16,9 +16,9 @@ public class CompositionTest {
     @Test
     public void testShuffle() throws IOException {
         File csvFile = new File("src/test/resources/players.csv");
-        PlayersParser playersParser = new PlayersParser(new FileReader(csvFile));
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
 
-        TeamsGenerator teamsGenerator = playersParser.getTeamsGeneratorFromFile();
+        TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         int nbTeams = 3;
         TeamsCalculator teamsCalculator =
                 teamsGenerator.getTeamsCalculator(nbTeams);
@@ -35,9 +35,9 @@ public class CompositionTest {
     @Test
     public void testScore() throws IOException {
         File csvFile = new File("src/test/resources/players.csv");
-        PlayersParser playersParser = new PlayersParser(new FileReader(csvFile));
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
 
-        TeamsGenerator teamsGenerator = playersParser.getTeamsGeneratorFromFile();
+        TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         Composition composition = teamsGenerator.computeBestComposition(2, 20);
         List<Team> teams = composition.getTeams();
         Assert.assertEquals(2, teams.size());
@@ -63,9 +63,9 @@ public class CompositionTest {
     @Test
     public void testScoreWithSize() throws IOException {
         File csvFile = new File("src/test/resources/players_withsize.csv");
-        PlayersParser playersParser = new PlayersParser(new FileReader(csvFile));
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
 
-        TeamsGenerator teamsGenerator = playersParser.getTeamsGeneratorFromFile();
+        TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         Composition composition = teamsGenerator.computeBestComposition(2, 20);
         List<Team> teams = composition.getTeams();
         Assert.assertEquals(2, teams.size());

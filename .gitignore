@@ -26,3 +26,7 @@ hs_err_pid*
 # IDE
 .idea/
 all-team-hat.iml
+
+# Project files
+tokens/
+src/main/resources/credentials.json
