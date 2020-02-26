@@ -1,6 +1,6 @@
 import computation.TeamsGenerator;
 import domain.Composition;
-import utils.PlayersParser;
+import utils.FilePlayersParser;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -35,8 +35,8 @@ public class CalculatorUI {
             preferences.put(LAST_USED_FILE, csvFileChooser.getSelectedFile().getPath());
 
             File csvFile = csvFileChooser.getSelectedFile();
-            PlayersParser playersParser = new PlayersParser(new FileReader(csvFile));
-            TeamsGenerator teamsGenerator = playersParser.getTeamsGeneratorFromFile();
+            FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
+            TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
 
             int nbTeams = numberOfTeams.getText().matches("[0-9]+") ? Integer.valueOf(numberOfTeams.getText()) : 6;
             int nbRuns = numberOfRuns.getText().matches("[0-9]+") ? Integer.valueOf(numberOfRuns.getText()) : 20;

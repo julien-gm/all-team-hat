@@ -12,16 +12,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class PlayersParser {
+
+public class FilePlayersParser implements PlayersParserInterface {
 
     private static final int NUMBER_OF_COLUMNS_TO_SKIP = 7;
     private static Iterable<? extends CSVRecord> parser;
 
-    public PlayersParser(FileReader file) throws IOException {
+    public FilePlayersParser(FileReader file) throws IOException {
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
     }
 
-    public TeamsGenerator getTeamsGeneratorFromFile() {
+    public TeamsGenerator getTeamsGenerator() {
         List<Player> allPlayers = new ArrayList<>();
 
         for (CSVRecord record : parser) {
