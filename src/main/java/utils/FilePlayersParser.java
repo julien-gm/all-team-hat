@@ -1,6 +1,7 @@
 package utils;
 
 import computation.TeamsGenerator;
+import domain.Composition;
 import domain.Player;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -51,5 +52,10 @@ public class FilePlayersParser implements PlayersParserInterface {
             allPlayers.add(player);
         }
         return new TeamsGenerator(allPlayers);
+    }
+
+    @Override
+    public void write(Composition bestComposition) {
+        System.out.println(bestComposition);
     }
 }

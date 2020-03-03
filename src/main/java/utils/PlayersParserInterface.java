@@ -1,9 +1,12 @@
 package utils;
 
 import computation.TeamsGenerator;
+import domain.Composition;
 
 
 public interface PlayersParserInterface {
 
-    public TeamsGenerator getTeamsGenerator();
+    TeamsGenerator getTeamsGenerator();
+
+    void write(Composition bestComposition);
 }

@@ -88,6 +88,10 @@ public class Team {
         return getScore(expectedHandlerNumber, teamGenerator.getNbHandlers());
     }
 
+    public double getMixedHandlerScore(double expectedHandlerNumber) {
+        return getScore(expectedHandlerNumber, teamGenerator.getNbHandlers() + 2 * teamGenerator.getNbMaybeHandlers());
+    }
+
     public double getNoHandlerScore(double expectedNoHandlerNumber) {
         return getScore(expectedNoHandlerNumber, teamGenerator.getNbNoHandlers()) * HANDLER_SCORE_COEFF;
     }

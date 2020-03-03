@@ -51,17 +51,17 @@ public class TeamsCalculatorTest {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("c1", 1.0);
         expectedClubScore.put("c2", 1.0);
-        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 28, expectedClubScore);
+        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0.5, 28, expectedClubScore);
     }
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(10.88, teamCalculator.getTeamScore(team1), 0.01);
-        Assert.assertEquals(10.7, teamCalculator.getTeamScore(team2), 0.01);
+        Assert.assertEquals(13.03, teamCalculator.getTeamScore(team1), 0.01);
+        Assert.assertEquals(10.85, teamCalculator.getTeamScore(team2), 0.01);
     }
 
     @Test
     public void testCompute() {
-        Assert.assertEquals(21.58, teamCalculator.compute(teams), 0.01);
+        Assert.assertEquals(23.88, teamCalculator.compute(teams), 0.01);
     }
 }
