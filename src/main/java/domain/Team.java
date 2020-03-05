@@ -11,7 +11,9 @@ public class Team {
 
     public static final Player fakePlayer = new Player(false);
     private static final int SPORT_SCORE_COEFF = 3;
-    private static final int HANDLER_SCORE_COEFF = 5;
+    private static final int SKILL_SCORE_COEFF = 3;
+    private static final int HANDLER_SCORE_COEFF = 8;
+    private static final double CLUB_SCORE_COEFF = 0.3;
     private static final double AGE_SCORE_COEFF = 0.1;
 
     private final TeamsGenerator teamGenerator;
@@ -52,7 +54,7 @@ public class Team {
             skillsScore += skillsScore1;
             skillIndex++;
         }
-        return skillsScore;
+        return skillsScore * SKILL_SCORE_COEFF;
     }
 
     public void initSkills() {
@@ -89,7 +91,7 @@ public class Team {
     }
 
     public double getMixedHandlerScore(double expectedHandlerNumber) {
-        return getScore(expectedHandlerNumber, teamGenerator.getNbHandlers() + 2 * teamGenerator.getNbMaybeHandlers());
+        return getScore(expectedHandlerNumber, teamGenerator.getNbHandlers() + 2 * teamGenerator.getNbMaybeHandlers()) * HANDLER_SCORE_COEFF;
     }
 
     public double getNoHandlerScore(double expectedNoHandlerNumber) {
@@ -126,7 +128,7 @@ public class Team {
         return (this.players == null) ? (team.players != null) : this.players.equals(team.players);
     }
 
-    public int getClubScore(Map<String, Double> expectedClubsScore) {
+    public double getClubScore(Map<String, Double> expectedClubsScore) {
         if (!this.players.isEmpty()) {
             int clubScore = 1;
             Map<String, List<Player>> clubsInfo = getClubsInfo();
@@ -141,7 +143,7 @@ public class Team {
                     }
                 }
             }
-            return clubScore;
+            return clubScore * CLUB_SCORE_COEFF;
         }
         return 1;
     }
@@ -207,5 +209,9 @@ public class Team {
 
     public double getSkillsAverage() {
         return skills.stream().mapToDouble(Skill::getValue).average().orElse(0.0);
+    }
+
+    public double getTeamMateScore() {
+        return players.stream().mapToDouble(p -> (p.hasTeamMate() && !players.contains(p.getTeamMate())) ? 10 : 0).sum();
     }
 }

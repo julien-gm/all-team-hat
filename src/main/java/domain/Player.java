@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
+
+    private Player teamMate;
+
     private String lastName;
 
     private String firstName;
@@ -119,6 +122,14 @@ public class Player {
         this.skillsList = skillsList;
     }
 
+    public Player getTeamMate() {
+        return teamMate;
+    }
+
+    public void setTeamMate(Player teamMate) {
+        this.teamMate = teamMate;
+    }
+
     public List<Double> getSportScores(List<Double> expectedScores) {
         List<Double> scores = new ArrayList<>();
         for (int i = 0; i < this.skillsList.size(); i++) {
@@ -129,6 +140,10 @@ public class Player {
 
     public double getSkillScore(List<Double> pExpectedScores) {
         return getSportScores(pExpectedScores).stream().mapToDouble(Double::doubleValue).sum();
+    }
+
+    public boolean hasTeamMate() {
+        return teamMate != null && teamMate != Team.fakePlayer;
     }
 
     private double score(double value, double expected) {
