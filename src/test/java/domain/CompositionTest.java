@@ -44,7 +44,7 @@ public class CompositionTest {
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
         System.out.println(composition);
-        Assert.assertEquals(75.1, composition.getScore(), 0.1);
+        Assert.assertEquals(83.1, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
         Assert.assertEquals(t1.getAgeScore(ageExpected), t2.getAgeScore(ageExpected), 1.2);
@@ -72,7 +72,7 @@ public class CompositionTest {
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
         System.out.println(composition);
-        Assert.assertEquals(118.5, composition.getScore(), 0.1);
+        Assert.assertEquals(126.5, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
         Assert.assertEquals(t1.getAgeScore(ageExpected), t2.getAgeScore(ageExpected), 1.2);
@@ -83,7 +83,7 @@ public class CompositionTest {
         Assert.assertEquals(s1, s2, 0.6);
         double sa1 = t1.getSkillsAverage();
         double sa2 = t2.getSkillsAverage();
-        Assert.assertEquals(sa1, sa2, 6.0);
+        Assert.assertEquals(sa1, sa2, 12.0);
         double expectedHandlerScore = teamsGenerator.getNbHandlers();
         Assert.assertEquals(t1.getHandlerScore(expectedHandlerScore), t2.getHandlerScore(expectedHandlerScore), 0.1);
     }

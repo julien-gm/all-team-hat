@@ -20,6 +20,7 @@ public class CalculatorJob {
         options.addOption("file", true, "file to parse");
         options.addOption("sheet", true, "Google Spreadsheet id to parse");
         options.addOption("range", true, "Sheet name and range to lookup for player");
+        options.addOption("day", true, "Day to generate team for");
         options.addOption("nbTeams", true, "number of team to create");
         options.addOption("nbRuns", true, "number of shuffle to run");
         CommandLine commandline = commandParser.parse(options, args, false);
@@ -27,7 +28,8 @@ public class CalculatorJob {
         if (commandline.hasOption("sheet")) {
             String sheetId = commandline.getOptionValue("sheet", "1oRkdNy4vHwiSSEo7nTlfZxN4aQepo0Eex0fgaLna0FQ");
             String range = commandline.getOptionValue("range", "Inscriptions!A10:M84");
-            playersParser = new SheetsPlayersParser(sheetId, range);
+            int day = Integer.parseInt(commandline.getOptionValue("day", "1"));
+            playersParser = new SheetsPlayersParser(sheetId, range, day);
         } else {
             String file = commandline.getOptionValue("file", "players.csv");
             playersParser = new FilePlayersParser(new FileReader(file));
@@ -37,6 +39,6 @@ public class CalculatorJob {
         int nbTeams = Integer.valueOf(commandline.getOptionValue("nbTeams", "6"));
         int nbRuns = Integer.valueOf(commandline.getOptionValue("nbRuns", "20"));
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns);
-        System.out.println(bestComposition);
+        playersParser.write(bestComposition);
     }
 }

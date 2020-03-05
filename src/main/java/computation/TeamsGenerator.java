@@ -95,7 +95,6 @@ public class TeamsGenerator {
         List<Team> teams = initTeams(nbTeams);
         TeamsCalculator teamCalculator = getTeamsCalculator(nbTeams);
         Composition currentComposition = new Composition(teams, teamCalculator);
-        System.out.println(currentComposition);
         double bestScore = currentComposition.getScore();
         Composition bestComposition = currentComposition;
         for (int tryNumber = 0; tryNumber < nbShuffles; ++tryNumber) {
@@ -137,13 +136,14 @@ public class TeamsGenerator {
         List<Double> skillsAverage = getSkillAverages();
         long nbHandlers = getNbHandlers();
         long nbNoHandlers = getNbNoHandlers();
+        long nbMaybeHandlers = getNbMaybeHandlers();
         double ageAverage = getAgeAverage();
         Map<String, Double> expectedClubScore = new HashMap<>();
         for (Map.Entry<String, List<Player>> entry : this.players.stream()
                 .collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
             expectedClubScore.put(entry.getKey(), (double) entry.getValue().size() / nbTeams);
         }
-        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, ageAverage, expectedClubScore);
+        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, ageAverage, expectedClubScore);
     }
 
     public List<Double> getSkillAverages() {
@@ -210,5 +210,9 @@ public class TeamsGenerator {
 
     private long getNbHandlersByKind(Player.Handler handling) {
         return players.stream().filter(player -> handling.equals(player.getHandler())).count();
+    }
+
+    public long getNbMaybeHandlers() {
+        return getNbHandlersByKind(Player.Handler.MAYBE);
     }
 }
