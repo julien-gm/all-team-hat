@@ -35,7 +35,7 @@ public class TeamTest {
 
     @Test
     public void testSkillScore() {
-        Assert.assertEquals(2.7, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
+        Assert.assertEquals(8.11, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test
@@ -45,18 +45,18 @@ public class TeamTest {
 
     @Test
     public void testNoHandlerScore() {
-        Assert.assertEquals(6.0, team.getNoHandlerScore(1.2), 0.0001);
+        Assert.assertEquals(9.6, team.getNoHandlerScore(1.2), 0.0001);
     }
 
     @Test
     public void testStdDev() {
-        Assert.assertEquals(1.7, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
+        Assert.assertEquals(7.11, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test
     public void testClubScore() {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("", 3.0);
-        Assert.assertEquals(1.0, team.getClubScore(expectedClubScore), 0.0001);
+        Assert.assertEquals(0.3, team.getClubScore(expectedClubScore), 0.0001);
     }
 }

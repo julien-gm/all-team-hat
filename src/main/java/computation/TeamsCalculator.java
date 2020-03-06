@@ -34,7 +34,8 @@ public class TeamsCalculator {
                 + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfNoHandlers + expectedNumberOfMixedHandlers/2)
                 + team.getClubScore(expectedClubsScore)
-                + team.getStandardDeviation(expectedScores);
+                + team.getStandardDeviation(expectedScores)
+                + team.getTeamMateScore();
     }
 
     public double compute(List<Team> teams) {

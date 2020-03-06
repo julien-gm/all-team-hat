@@ -47,6 +47,7 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private static final int NUM_COL_FIRST_SKILL = 7;
     private static final int NUM_COL_LAST_SKILL = 11;
     private static final int NUM_COL_EXCLUDE_PLAYER = 13;
+    private static final int NUM_COL_TEAMMATE = 14;
 
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -147,6 +148,12 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                             playerDay = Integer.parseInt(value.toString());
                         } catch (Exception ignored) {
                         }
+                        try {
+                            allPlayers.stream().filter(
+                                    p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString())
+                            ).findFirst().ifPresent(player::setTeamMate);
+                        } catch (Exception ignored) {
+                        }
                         if (playerDay == filterDay) {
                             allPlayers.add(player);
                         } else {
@@ -186,8 +193,8 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                         List<Object> teamValues = new ArrayList<>();
                         teamValues.add(numPlayer);
                         teamValues.add(p.getNickName());
-                        teamValues.add(p.getFirstName());
-                        teamValues.add(p.getLastName());
+                        teamValues.add(p.getClub());
+                        teamValues.add(p.getFirstName() + " " + p.getLastName());
                         teamValues.add(p.getHandler().toString());
                         teamValues.add(p.getGender().toString());
                         teamValues.addAll(p.getSkillsList());
