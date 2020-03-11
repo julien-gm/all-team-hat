@@ -5,6 +5,7 @@ import domain.Player;
 import domain.Team;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,8 @@ public class TeamsGenerator {
         }
         int playerNumber = initTeam(nbTeams, girlsTeams, 0, Player.Gender.FEMME);
         initTeam(nbTeams, boysTeams, playerNumber, Player.Gender.HOMME);
-        Composition girlsCompo = getLocalBestComposition(new Composition(girlsTeams, getTeamsCalculator(nbTeams)), 1);
-        Composition boysCompos = getLocalBestComposition(new Composition(boysTeams, getTeamsCalculator(nbTeams)), 1);
+        Composition girlsCompo = new Composition(girlsTeams, getTeamsCalculator(nbTeams));
+        Composition boysCompos = new Composition(boysTeams, getTeamsCalculator(nbTeams));
         fillTeams(nbTeams, numberOfPlayersByTeam, teams, girlsCompo, boysCompos);
         return teams;
     }
@@ -55,8 +56,8 @@ public class TeamsGenerator {
     private void fillTeams(int nbTeams, int numberOfPlayersByTeam, List<Team> teams, Composition girlsComposition,
                            Composition boysComposition) {
         int playerNumber;
+        int numberOfGirls = girlsComposition.getNumberOfPlayers();
         for (playerNumber = 0; playerNumber < nbTeams * numberOfPlayersByTeam; playerNumber++) {
-            int numberOfGirls = girlsComposition.getNumberOfPlayers();
             if (playerNumber < numberOfGirls) {
                 teams.get(playerNumber % nbTeams).add(girlsComposition.getPlayer(playerNumber));
             } else if (playerNumber < boysComposition.getNumberOfPlayers() + numberOfGirls) {
@@ -71,7 +72,10 @@ public class TeamsGenerator {
     }
 
     private List<Player> getPlayersFromGender(Player.Gender gender) {
-        return players.stream().filter(p -> p.getGender().equals(gender)).collect(Collectors.toList());
+        return players.stream()
+                .filter(p -> p.getGender().equals(gender))
+                .sorted(Comparator.comparingInt(Player::getRevertDay))
+                .collect(Collectors.toList());
     }
 
     private Composition getLocalBestComposition(Composition currentComposition, int run) {
@@ -137,13 +141,12 @@ public class TeamsGenerator {
         long nbHandlers = getNbHandlers();
         long nbNoHandlers = getNbNoHandlers();
         long nbMaybeHandlers = getNbMaybeHandlers();
-        double ageAverage = getAgeAverage();
         Map<String, Double> expectedClubScore = new HashMap<>();
         for (Map.Entry<String, List<Player>> entry : this.players.stream()
                 .collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
             expectedClubScore.put(entry.getKey(), (double) entry.getValue().size() / nbTeams);
         }
-        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, ageAverage, expectedClubScore);
+        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, expectedClubScore);
     }
 
     public List<Double> getSkillAverages() {

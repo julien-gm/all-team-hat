@@ -46,9 +46,6 @@ public class CompositionTest {
         System.out.println(composition);
         Assert.assertEquals(182.8, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
-        double ageExpected = teamsGenerator.getAgeAverage();
-        Assert.assertEquals(t1.getAgeScore(ageExpected), t2.getAgeScore(ageExpected), 1.2);
-        Assert.assertEquals(t1.getAgeAverage(), t2.getAgeAverage(), 1.2);
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
         double s2 = t2.getSkillsScore(skills);
@@ -75,8 +72,6 @@ public class CompositionTest {
         Assert.assertEquals(226.1, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
-        Assert.assertEquals(t1.getAgeScore(ageExpected), t2.getAgeScore(ageExpected), 1.2);
-        Assert.assertEquals(t1.getAgeAverage(), t2.getAgeAverage(), 1.2);
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
         double s2 = t2.getSkillsScore(skills);
