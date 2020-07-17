@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class FilePlayersParser implements PlayersParserInterface {
 
     private static final int NUMBER_OF_COLUMNS_TO_SKIP = 7;
@@ -37,8 +36,8 @@ public class FilePlayersParser implements PlayersParserInterface {
             // player.setAge(Integer.parseInt(record.get("Age")));
             player.setGender(record.get("Sexe").startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get("Handler");
-            player.setHandler(
-                    handler.equals("oui") ? Player.Handler.YES : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
+            player.setHandler(handler.equals("oui") ? Player.Handler.YES
+                    : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
 
             // Getting skills
             // Skipping the first 8 columns that we just read

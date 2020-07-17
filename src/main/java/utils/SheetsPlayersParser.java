@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-
 public class SheetsPlayersParser implements PlayersParserInterface {
 
     // TODO set it in a config file or as option at runtime
@@ -55,8 +54,8 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private static final String OUTPUT_SPREAD_SHEET_ID = "1MQ6api6PXTWROIlPdy0YmbG5MXft3Lg6TOpNdV5f8No";
 
     /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
+     * Global instance of the scopes required by this quickstart. If modifying these scopes, delete your previously
+     * saved tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
@@ -65,7 +64,6 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private String inputSpreadsheetId;
     private String range;
     private Sheets sheets;
-
 
     public SheetsPlayersParser(String sheetId, String range, int filterDay) {
         this.inputSpreadsheetId = sheetId;
@@ -84,35 +82,30 @@ public class SheetsPlayersParser implements PlayersParserInterface {
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
-                .build();
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,
+                clientSecrets, SCOPES)
+                        .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                        .setAccessType("offline").build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
-    
+
     private void setSheets() {
         try {
             // Build a new authorized API client service.
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             this.sheets = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
+                    .setApplicationName(APPLICATION_NAME).build();
 
         } catch (IOException | GeneralSecurityException e) {
             System.err.println(e.getMessage());
         }
     }
 
-
     public TeamsGenerator getTeamsGenerator() {
         List<Player> allPlayers = new ArrayList<>();
         try {
-            ValueRange response = this.sheets.spreadsheets().values()
-                    .get(inputSpreadsheetId, range)
-                    .execute();
+            ValueRange response = this.sheets.spreadsheets().values().get(inputSpreadsheetId, range).execute();
 
             List<List<Object>> values = response.getValues();
             if (values == null || values.isEmpty()) {
@@ -122,13 +115,14 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                     if (isPlayer(row)) {
                         Player player = new Player(row.get(NUM_COL_PSEUDO).toString());
                         player.setClub(row.get(NUM_COL_CLUB).toString());
-                        player.setGender(row.get(NUM_COL_GENDER).toString().startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
+                        player.setGender(row.get(NUM_COL_GENDER).toString().startsWith("F") ? Player.Gender.FEMME
+                                : Player.Gender.HOMME);
                         player.setLastName(row.get(NUM_COL_LAST_NAME).toString());
                         player.setFirstName(row.get(NUM_COL_FIRST_NAME).toString());
                         player.setEmail(row.get(NUM_COL_EMAIL).toString());
                         String handler = row.get(NUM_COL_HANDLER).toString();
-                        player.setHandler(
-                                handler.equals("oui") ? Player.Handler.YES : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
+                        player.setHandler(handler.equals("oui") ? Player.Handler.YES
+                                : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
 
                         // Getting skills
                         // Skipping the first 8 columns that we just read
@@ -149,9 +143,9 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                         } catch (Exception ignored) {
                         }
                         try {
-                            allPlayers.stream().filter(
-                                    p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString())
-                            ).findFirst().ifPresent(player::setTeamMate);
+                            allPlayers.stream()
+                                    .filter(p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString()))
+                                    .findFirst().ifPresent(player::setTeamMate);
                         } catch (Exception ignored) {
                         }
                         if (playerDay == filterDay) {
@@ -160,7 +154,8 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                             System.out.printf("Skipping player %s for day %d\n", player, filterDay);
                         }
                     } else {
-                        System.err.printf("%s has no valid email: %s\n", row.get(NUM_COL_PSEUDO), row.get(NUM_COL_EMAIL));
+                        System.err.printf("%s has no valid email: %s\n", row.get(NUM_COL_PSEUDO),
+                                row.get(NUM_COL_EMAIL));
                     }
                 }
                 System.out.println("Computing " + allPlayers.size() + " players.");
@@ -212,7 +207,7 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getHandler() == Player.Handler.MAYBE).count());
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getHandler() == Player.Handler.YES).count());
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getGender() == Player.Gender.FEMME).count());
-                
+
                 char col = 'G';
                 for (int skillNumber = 0; skillNumber < skillSize; skillNumber++) {
                     teamAverage.add("=AVERAGEA(" + col + firstLineTeam + ":" + col + lastLineTeam + ")");
@@ -223,20 +218,17 @@ public class SheetsPlayersParser implements PlayersParserInterface {
             }
             List<ValueRange> data = new ArrayList<>();
             String title = "results-" + filterDay + "!A1:" + ('A' + values.get(0).size() - 1) + values.size();
-            data.add(new ValueRange()
-                    .setRange(title)
-                    .setValues(values));
+            data.add(new ValueRange().setRange(title).setValues(values));
 
             CopySheetToAnotherSpreadsheetRequest requestBody = new CopySheetToAnotherSpreadsheetRequest();
             requestBody.setDestinationSpreadsheetId(OUTPUT_SPREAD_SHEET_ID);
 
-
-            sheets.spreadsheets().sheets().copyTo(title, 0, requestBody);//setProperties(new SheetProperties().setTitle(title));
-            BatchUpdateValuesRequest body = new BatchUpdateValuesRequest()
-                    .setValueInputOption("USER_ENTERED")
+            sheets.spreadsheets().sheets().copyTo(title, 0, requestBody);// setProperties(new
+                                                                         // SheetProperties().setTitle(title));
+            BatchUpdateValuesRequest body = new BatchUpdateValuesRequest().setValueInputOption("USER_ENTERED")
                     .setData(data);
-            BatchUpdateValuesResponse result =
-                    sheets.spreadsheets().values().batchUpdate(OUTPUT_SPREAD_SHEET_ID, body).execute();
+            BatchUpdateValuesResponse result = sheets.spreadsheets().values().batchUpdate(OUTPUT_SPREAD_SHEET_ID, body)
+                    .execute();
             System.out.printf("%d cells updated.\n", result.getTotalUpdatedCells());
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -246,9 +238,7 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private String createNewSpreadsheet() throws IOException {
         Spreadsheet spreadsheet = new Spreadsheet()
                 .setProperties(new SpreadsheetProperties().setTitle("Teams generator"));
-        spreadsheet = sheets.spreadsheets().create(spreadsheet)
-                .setFields("spreadsheetId")
-                .execute();
+        spreadsheet = sheets.spreadsheets().create(spreadsheet).setFields("spreadsheetId").execute();
         return spreadsheet.getSpreadsheetId();
     }
 }

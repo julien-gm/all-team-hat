@@ -28,8 +28,8 @@ public class CalculatorUI {
                     new File(preferences.get(LAST_USED_FILE, new File(".").getAbsolutePath())));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
             csvFileChooser.setFileFilter(filter);
-            final Object[] message = {"List of players: ", csvFileChooser, "Number of teams:", numberOfTeams,
-                    "Number of runs:", numberOfRuns};
+            final Object[] message = { "List of players: ", csvFileChooser, "Number of teams:", numberOfTeams,
+                    "Number of runs:", numberOfRuns };
             JOptionPane.showInputDialog(message);
 
             preferences.put(LAST_USED_FILE, csvFileChooser.getSelectedFile().getPath());

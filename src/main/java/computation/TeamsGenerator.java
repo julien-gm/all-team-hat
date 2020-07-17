@@ -53,7 +53,7 @@ public class TeamsGenerator {
     }
 
     private void fillTeams(int nbTeams, int numberOfPlayersByTeam, List<Team> teams, Composition girlsComposition,
-                           Composition boysComposition) {
+            Composition boysComposition) {
         int playerNumber;
         for (playerNumber = 0; playerNumber < nbTeams * numberOfPlayersByTeam; playerNumber++) {
             int numberOfGirls = girlsComposition.getNumberOfPlayers();
@@ -98,7 +98,8 @@ public class TeamsGenerator {
         double bestScore = currentComposition.getScore();
         Composition bestComposition = currentComposition;
         for (int tryNumber = 0; tryNumber < nbShuffles; ++tryNumber) {
-            Composition localBestComposition = getLocalBestComposition(currentComposition, LOCAL_NUMBER_OF_OPTIMIZATION);
+            Composition localBestComposition = getLocalBestComposition(currentComposition,
+                    LOCAL_NUMBER_OF_OPTIMIZATION);
             double score = localBestComposition.getScore();
             if (score < bestScore) {
                 System.out.println("New best score ever: " + score);
@@ -143,7 +144,8 @@ public class TeamsGenerator {
                 .collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
             expectedClubScore.put(entry.getKey(), (double) entry.getValue().size() / nbTeams);
         }
-        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, ageAverage, expectedClubScore);
+        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, ageAverage,
+                expectedClubScore);
     }
 
     public List<Double> getSkillAverages() {
