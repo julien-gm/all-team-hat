@@ -10,11 +10,9 @@ import java.util.stream.Collectors;
 public class Team {
 
     public static final Player fakePlayer = new Player(false);
-    private static final int SPORT_SCORE_COEFF = 3;
-    private static final int SKILL_SCORE_COEFF = 3;
+    private static final int SKILL_SCORE_COEFF = 5;
     private static final int HANDLER_SCORE_COEFF = 8;
     private static final double CLUB_SCORE_COEFF = 0.3;
-    private static final double AGE_SCORE_COEFF = 0.1;
 
     private final TeamsGenerator teamGenerator;
 
@@ -34,12 +32,6 @@ public class Team {
 
     public double getGirlScore(double expectedGirlNumber) {
         return getScore(expectedGirlNumber, teamGenerator.getNbGirls());
-    }
-
-    public double getSportScore(List<Double> pExpectedScores) {
-        double expectedSportScore = pExpectedScores.stream().mapToDouble(Double::doubleValue).sum();
-        double score = teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).sum();
-        return getScore(expectedSportScore, score) * SPORT_SCORE_COEFF;
     }
 
     public double getSkillsScore(List<Double> expectedValues) {
@@ -97,10 +89,6 @@ public class Team {
 
     public double getNoHandlerScore(double expectedNoHandlerNumber) {
         return getScore(expectedNoHandlerNumber, teamGenerator.getNbNoHandlers()) * HANDLER_SCORE_COEFF;
-    }
-
-    public double getAgeScore(double expectedAgeAverage) {
-        return getScore(expectedAgeAverage, teamGenerator.getAgeAverage()) * AGE_SCORE_COEFF;
     }
 
     private double getScore(double expectedScore, double actualScore) {
@@ -162,7 +150,7 @@ public class Team {
         return players;
     }
 
-    public boolean hasPlayer(Player player) {
+    boolean hasPlayer(Player player) {
         return players.stream().anyMatch(player1 -> player1.equals(player));
     }
 
@@ -200,11 +188,7 @@ public class Team {
                 .orElse(0);
     }
 
-    public double getAgeAverage() {
-        return players.stream().mapToDouble(Player::getAge).average().orElse(0.0);
-    }
-
-    public double getSkillsAverage() {
+    double getSkillsAverage() {
         return skills.stream().mapToDouble(Skill::getValue).average().orElse(0.0);
     }
 

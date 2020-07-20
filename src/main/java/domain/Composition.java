@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class Composition {
 
-    private static final int NUMBER_OF_SHUFFLE = 100;
+    private static final int SHUFFLE_COEFF = 2;
     private final TeamsCalculator teamCalculator;
 
     private List<Team> teams;
@@ -20,7 +20,15 @@ public class Composition {
     public Composition(List<Team> teams, TeamsCalculator teamCalculator) {
         this.teams = teams;
         this.teamCalculator = teamCalculator;
-        score = teamCalculator.compute(teams);
+        score = 0;
+        for (int day : getDays()) {
+            score += teamCalculator.compute(teams, day);
+        }
+    }
+
+    private List<Integer> getDays() {
+        Stream<Player> players = teams.stream().flatMap(t -> t.getPlayers().stream());
+        return players.mapToInt(Player::getDay).distinct().boxed().collect(Collectors.toList());
     }
 
     public double getScore() {
@@ -36,7 +44,7 @@ public class Composition {
     }
 
     public Composition switchPlayer(Player player1, Player player2) {
-        if (player1.isReal() && player2.isReal() && !player1.getGender().equals(player2.getGender())) {
+        if (!player1.getGender().equals(player2.getGender()) || !player1.playsTheSamesDay(player2)) {
             return new Composition(teams, teamCalculator);
         }
         final Team team1 = getTeamPlayer(player1);
@@ -103,7 +111,7 @@ public class Composition {
 
     public Composition shuffle() {
         Composition tmpComposition = new Composition(teams, teamCalculator);
-        for (int i = 0; i < NUMBER_OF_SHUFFLE; ++i) {
+        for (int i = 0; i < SHUFFLE_COEFF * getNumberOfPlayers(); ++i) {
             Player p1 = getRandomPlayer();
             Player p2 = getRandomPlayer();
             tmpComposition = tmpComposition.switchPlayer(p1, p2);

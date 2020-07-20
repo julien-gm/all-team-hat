@@ -45,7 +45,7 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private static final int NUM_COL_HANDLER = 6;
     private static final int NUM_COL_FIRST_SKILL = 7;
     private static final int NUM_COL_LAST_SKILL = 11;
-    private static final int NUM_COL_EXCLUDE_PLAYER = 13;
+    private static final int NUM_COL_DAY_PLAYER = 13;
     private static final int NUM_COL_TEAMMATE = 14;
 
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
@@ -59,16 +59,14 @@ public class SheetsPlayersParser implements PlayersParserInterface {
      */
     private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
-    private final int filterDay;
 
     private String inputSpreadsheetId;
     private String range;
     private Sheets sheets;
 
-    public SheetsPlayersParser(String sheetId, String range, int filterDay) {
+    public SheetsPlayersParser(String sheetId, String range) {
         this.inputSpreadsheetId = sheetId;
         this.range = range;
-        this.filterDay = filterDay;
         System.out.println(range);
         this.setSheets();
     }
@@ -136,23 +134,9 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                                 System.out.println(e.getMessage());
                             }
                         }
-                        int playerDay = filterDay;
-                        try {
-                            Object value = row.get(NUM_COL_EXCLUDE_PLAYER);
-                            playerDay = Integer.parseInt(value.toString());
-                        } catch (Exception ignored) {
-                        }
-                        try {
-                            allPlayers.stream()
-                                    .filter(p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString()))
-                                    .findFirst().ifPresent(player::setTeamMate);
-                        } catch (Exception ignored) {
-                        }
-                        if (playerDay == filterDay) {
-                            allPlayers.add(player);
-                        } else {
-                            System.out.printf("Skipping player %s for day %d\n", player, filterDay);
-                        }
+                        setPlayerDay(row, player);
+                        setTeamMate(allPlayers, row, player);
+                        allPlayers.add(player);
                     } else {
                         System.err.printf("%s has no valid email: %s\n", row.get(NUM_COL_PSEUDO),
                                 row.get(NUM_COL_EMAIL));
@@ -164,6 +148,21 @@ public class SheetsPlayersParser implements PlayersParserInterface {
             System.err.println(e.getMessage());
         }
         return new TeamsGenerator(allPlayers);
+    }
+
+    private void setPlayerDay(List row, Player player) {
+        try {
+            player.setDay(Integer.parseInt(row.get(NUM_COL_DAY_PLAYER).toString()));
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void setTeamMate(List<Player> allPlayers, List row, Player player) {
+        try {
+            allPlayers.stream().filter(p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString()))
+                    .findFirst().ifPresent(player::setTeamMate);
+        } catch (Exception ignored) {
+        }
     }
 
     private boolean isPlayer(List row) {
@@ -187,7 +186,7 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                     if (p.isReal()) {
                         List<Object> teamValues = new ArrayList<>();
                         teamValues.add(numPlayer);
-                        teamValues.add(p.getNickName());
+                        teamValues.add(p.getNickName() + (p.getDay() != 0 ? " (" + p.getDay() + ")" : ""));
                         teamValues.add(p.getClub());
                         teamValues.add(p.getFirstName() + " " + p.getLastName());
                         teamValues.add(p.getHandler().toString());
@@ -202,7 +201,9 @@ public class SheetsPlayersParser implements PlayersParserInterface {
 
                 List<Object> teamAverage = new ArrayList<>();
                 teamAverage.add("");
-                teamAverage.add(team.getPlayers().stream().filter(Player::isReal).count());
+                teamAverage.add(team.getPlayers().stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(1))
+                        .count() + " - "
+                        + team.getPlayers().stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(2)).count());
                 teamAverage.add("=D" + (lastLineTeam + 1) + "/2+E" + (lastLineTeam + 1));
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getHandler() == Player.Handler.MAYBE).count());
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getHandler() == Player.Handler.YES).count());
@@ -210,14 +211,14 @@ public class SheetsPlayersParser implements PlayersParserInterface {
 
                 char col = 'G';
                 for (int skillNumber = 0; skillNumber < skillSize; skillNumber++) {
-                    teamAverage.add("=AVERAGEA(" + col + firstLineTeam + ":" + col + lastLineTeam + ")");
+                    teamAverage.add("=ARRONDI(AVERAGEA(" + col + firstLineTeam + ":" + col + lastLineTeam + ");2)");
                     col++;
                 }
 
                 values.add(teamAverage);
             }
             List<ValueRange> data = new ArrayList<>();
-            String title = "results-" + filterDay + "!A1:" + ('A' + values.get(0).size() - 1) + values.size();
+            String title = "results!A1:" + ('A' + values.get(0).size() - 1) + values.size();
             data.add(new ValueRange().setRange(title).setValues(values));
 
             CopySheetToAnotherSpreadsheetRequest requestBody = new CopySheetToAnotherSpreadsheetRequest();

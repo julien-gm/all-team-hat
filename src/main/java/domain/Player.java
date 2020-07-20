@@ -25,6 +25,8 @@ public class Player {
 
     private Gender gender;
 
+    private int day;
+
     private boolean real = true;
 
     /**
@@ -40,6 +42,7 @@ public class Player {
     public Player(boolean real) {
         this.real = real;
         this.club = "not a player";
+        this.gender = Gender.HOMME;
     }
 
     public boolean isReal() {
@@ -128,6 +131,30 @@ public class Player {
 
     public void setTeamMate(Player teamMate) {
         this.teamMate = teamMate;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public int getRevertDay() {
+        return -day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public boolean playsTheSameDay(Player p) {
+        return playsTheSameDay(p.getDay());
+    }
+
+    public boolean playsTheSamesDay(Player p) {
+        return p.getDay() == this.getDay();
+    }
+
+    public boolean playsTheSameDay(int day) {
+        return this.getDay() == 0 || day == 0 || this.getDay() == day;
     }
 
     public List<Double> getSportScores(List<Double> expectedScores) {
