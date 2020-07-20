@@ -42,7 +42,8 @@ public class TeamsCalculator {
     private List<Team> filterPlayerForDay(List<Team> teams, int day) {
         List<Team> newTeams = new ArrayList<>();
         for (Team team : teams) {
-            newTeams.add(new Team(team.getPlayers().stream().filter(p -> p.playsTheSameDay(day)).collect(Collectors.toList())));
+            newTeams.add(new Team(
+                    team.getPlayers().stream().filter(p -> p.playsTheSameDay(day)).collect(Collectors.toList())));
         }
         return newTeams;
     }

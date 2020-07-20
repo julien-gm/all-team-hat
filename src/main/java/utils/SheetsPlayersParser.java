@@ -159,9 +159,8 @@ public class SheetsPlayersParser implements PlayersParserInterface {
 
     private void setTeamMate(List<Player> allPlayers, List row, Player player) {
         try {
-            allPlayers.stream().filter(
-                    p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString())
-            ).findFirst().ifPresent(player::setTeamMate);
+            allPlayers.stream().filter(p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString()))
+                    .findFirst().ifPresent(player::setTeamMate);
         } catch (Exception ignored) {
         }
     }
@@ -202,8 +201,9 @@ public class SheetsPlayersParser implements PlayersParserInterface {
 
                 List<Object> teamAverage = new ArrayList<>();
                 teamAverage.add("");
-                teamAverage.add(team.getPlayers().stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(1)).count()
-                        + " - " + team.getPlayers().stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(2)).count());
+                teamAverage.add(team.getPlayers().stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(1))
+                        .count() + " - "
+                        + team.getPlayers().stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(2)).count());
                 teamAverage.add("=D" + (lastLineTeam + 1) + "/2+E" + (lastLineTeam + 1));
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getHandler() == Player.Handler.MAYBE).count());
                 teamAverage.add(team.getPlayers().stream().filter(p -> p.getHandler() == Player.Handler.YES).count());

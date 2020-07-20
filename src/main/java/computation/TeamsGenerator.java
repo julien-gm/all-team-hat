@@ -72,10 +72,8 @@ public class TeamsGenerator {
     }
 
     private List<Player> getPlayersFromGender(Player.Gender gender) {
-        return players.stream()
-                .filter(p -> p.getGender().equals(gender))
-                .sorted(Comparator.comparingInt(Player::getRevertDay))
-                .collect(Collectors.toList());
+        return players.stream().filter(p -> p.getGender().equals(gender))
+                .sorted(Comparator.comparingInt(Player::getRevertDay)).collect(Collectors.toList());
     }
 
     private Composition getLocalBestComposition(Composition currentComposition, int run) {
