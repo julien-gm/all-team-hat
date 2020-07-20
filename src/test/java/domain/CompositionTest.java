@@ -20,16 +20,12 @@ public class CompositionTest {
 
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         int nbTeams = 3;
-        TeamsCalculator teamsCalculator =
-                teamsGenerator.getTeamsCalculator(nbTeams);
-        Composition compo1 = new
-                Composition(teamsGenerator.initTeams(nbTeams), teamsCalculator);
+        TeamsCalculator teamsCalculator = teamsGenerator.getTeamsCalculator(nbTeams);
+        Composition compo1 = new Composition(teamsGenerator.initTeams(nbTeams), teamsCalculator);
         Composition compo2 = compo1.shuffle();
 
-        Assert.assertNotEquals(
-                compo1.getTeams().stream().mapToDouble(t -> t.getGirlScore(1.0)),
-                compo2.getTeams().stream().mapToDouble(t -> t.getGirlScore(1.0))
-        );
+        Assert.assertNotEquals(compo1.getTeams().stream().mapToDouble(t -> t.getGirlScore(1.0)),
+                compo2.getTeams().stream().mapToDouble(t -> t.getGirlScore(1.0)));
     }
 
     @Test

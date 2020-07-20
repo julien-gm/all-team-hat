@@ -53,7 +53,8 @@ public class Composition {
                 || (!player2.isReal() && (team1.hasPlayer(Team.fakePlayer)))) {
             return new Composition(teams, teamCalculator);
         }
-        List<Team> teams = this.teams.stream().filter(t -> !t.equals(team1) && !t.equals(team2)).collect(Collectors.toList());
+        List<Team> teams = this.teams.stream().filter(t -> !t.equals(team1) && !t.equals(team2))
+                .collect(Collectors.toList());
         if (team1 != null && team2 != null && !team1.equals(team2)) {
             List<Player> playersTeam1 = getAllTheOthersPlayersFromThisTeam(player1, team1);
             playersTeam1.add(player2);
@@ -78,7 +79,7 @@ public class Composition {
     }
 
     private List<Player> getAllTheOthersPlayersFromThisTeam(Player player, Team team) {
-        final boolean[] found = {false};
+        final boolean[] found = { false };
         return team.getPlayers().stream().filter(p -> {
             if (!found[0] && p.equals(player)) {
                 found[0] = true;
@@ -93,7 +94,9 @@ public class Composition {
         StringBuilder result = new StringBuilder(String.format("Score obtenu : %.2f\n", getScore()));
         int teamNumber = 1;
         for (Team team : getTeams()) {
-            result.append(String.format("###########################\nteam %d\n%s - score: [%.2f]\n###########################\n", teamNumber, team, teamCalculator.getTeamScore(team)));
+            result.append(String.format(
+                    "###########################\nteam %d\n%s - score: [%.2f]\n###########################\n",
+                    teamNumber, team, teamCalculator.getTeamScore(team)));
             teamNumber++;
             int playerNumber = 1;
             for (Player player : team.getPlayers()) {

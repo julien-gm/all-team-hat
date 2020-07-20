@@ -74,6 +74,7 @@ public class TeamsGeneratorTest {
 
     @Test
     public void testSportAverage() {
-        Assert.assertEquals(7.8, teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).average().orElse(0), 0.0);
+        Assert.assertEquals(7.8,
+                teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).average().orElse(0), 0.0);
     }
 }
