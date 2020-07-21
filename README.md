@@ -1,4 +1,6 @@
-![Java CI](https://github.com/julien-gm/all-team-hat/workflows/Java%20CI/badge.svg?branch=master)
+![Maven Test](https://github.com/julien-gm/all-team-hat/workflows/Maven%20Test/badge.svg?branch=master)
+![Validate format](https://github.com/julien-gm/all-team-hat/workflows/Maven%20Test/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/julien-gm/all-team-hat/branch/master/graph/badge.svg)](https://codecov.io/gh/julien-gm/all-team-hat)
 
 # all-team-hat
 Generates as much as possible the most balanced distribution of players between n teams
