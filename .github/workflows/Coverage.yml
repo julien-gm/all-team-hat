@@ -10,10 +10,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Retrieve codecov bash script
+        run: curl -s https://codecov.io/bash -o codecov.sh
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-      - name: Retrieve codecov bash script
-        run: curl -s https://codecov.io/bash -o codecov.bash
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v1
         with:
