@@ -1,6 +1,6 @@
 ![Maven test](https://github.com/julien-gm/all-team-hat/workflows/Maven%20test/badge.svg?branche=master)
 ![Validate format](https://github.com/julien-gm/all-team-hat/workflows/Validate%20format/badge.svg?branche=master)
-![.github/workflows/Coverage.yml](https://github.com/julien-gm/all-team-hat/workflows/.github/workflows/Coverage.yml/badge.svg??branche=master)
+![Coverage](https://github.com/julien-gm/all-team-hat/workflows/Coverage/badge.svg?branche=master)
 [![codecov](https://codecov.io/gh/julien-gm/all-team-hat/branch/master/graph/badge.svg)](https://codecov.io/gh/julien-gm/all-team-hat)
 
 # all-team-hat
