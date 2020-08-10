@@ -1,11 +1,11 @@
 package domain;
 
-import computation.TeamsGenerator;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import computation.TeamsGenerator;
 
 public class Team {
 
@@ -150,7 +150,7 @@ public class Team {
         return players;
     }
 
-    boolean hasPlayer(Player player) {
+    public boolean hasPlayer(Player player) {
         return players.stream().anyMatch(player1 -> player1.equals(player));
     }
 
@@ -188,7 +188,7 @@ public class Team {
                 .orElse(0);
     }
 
-    double getSkillsAverage() {
+    public double getSkillsAverage() {
         return skills.stream().mapToDouble(Skill::getValue).average().orElse(0.0);
     }
 

@@ -1,13 +1,12 @@
-import computation.TeamsGenerator;
-import domain.Composition;
-import utils.FilePlayersParser;
+import java.io.*;
+import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.prefs.Preferences;
+
+import computation.TeamsGenerator;
+import domain.Composition;
+import utils.FilePlayersParser;
 
 public class CalculatorUI {
 

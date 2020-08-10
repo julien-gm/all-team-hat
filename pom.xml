@@ -94,7 +94,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>CalculatorUI</mainClass>
+                            <mainClass>CalculatorJob</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,17 +1,18 @@
 package utils;
 
-import computation.TeamsGenerator;
-import domain.Composition;
-import domain.Player;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+
+import computation.TeamsGenerator;
+import domain.Composition;
+import domain.Player;
 
 public class FilePlayersParser implements PlayersParserInterface {
 
@@ -22,6 +23,7 @@ public class FilePlayersParser implements PlayersParserInterface {
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
     }
 
+    @Override
     public TeamsGenerator getTeamsGenerator() {
         List<Player> allPlayers = new ArrayList<>();
 
@@ -30,7 +32,7 @@ public class FilePlayersParser implements PlayersParserInterface {
             // and they can be in any order (as long as the skills are last)
             Player player = new Player(record.get("Pseudo"));
             player.setLastName(record.get("Nom"));
-            player.setFirstName(record.get("Prénom"));
+            player.setFirstName(record.get("Prenom"));
             player.setEmail(record.get("Email"));
             player.setClub(record.get("Club"));
             // player.setAge(Integer.parseInt(record.get("Age")));
