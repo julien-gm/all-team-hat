@@ -36,25 +36,25 @@ import java.util.regex.Pattern;
 public class SheetsPlayersParser implements PlayersParserInterface {
 
     // TODO set it in a config file or as option at runtime
-    private static final int NUM_COL_PSEUDO = 0;
-    private static final int NUM_COL_CLUB = 1;
-    private static final int NUM_COL_GENDER = 2;
-    private static final int NUM_COL_LAST_NAME = 3;
-    private static final int NUM_COL_FIRST_NAME = 4;
-    private static final int NUM_COL_EMAIL = 5;
-    private static final int NUM_COL_HANDLER = 6;
-    private static final int NUM_COL_FIRST_SKILL = 7;
-    private static final int NUM_COL_LAST_SKILL = 11;
-    private static final int NUM_COL_DAY_PLAYER = 13;
-    private static final int NUM_COL_TEAMMATE = 14;
+    private static final int NUM_COL_PSEUDO = 1;
+    private static final int NUM_COL_CLUB = 3;
+    private static final int NUM_COL_GENDER = 4;
+    private static final int NUM_COL_LAST_NAME = 5;
+    private static final int NUM_COL_FIRST_NAME = 6;
+    private static final int NUM_COL_EMAIL = 7;
+    private static final int NUM_COL_HANDLER = 8;
+    private static final int NUM_COL_FIRST_SKILL = 9;
+    private static final int NUM_COL_LAST_SKILL = 13;
+    private static final int NUM_COL_DAY_PLAYER = 0;
+    private static final int NUM_COL_TEAMMATE = 0;
 
-    private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
+    private static final String APPLICATION_NAME = "All Team Hat";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String OUTPUT_SPREAD_SHEET_ID = "1MQ6api6PXTWROIlPdy0YmbG5MXft3Lg6TOpNdV5f8No";
 
     /**
-     * Global instance of the scopes required by this quickstart. If modifying these scopes, delete your previously
+     * Global instance of the scopes required by this project. If modifying these scopes, delete your previously
      * saved tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);

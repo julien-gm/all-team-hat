@@ -26,7 +26,7 @@ public class CalculatorJob {
         PlayersParserInterface playersParser;
         if (commandline.hasOption("sheet")) {
             String sheetId = commandline.getOptionValue("sheet", "1oRkdNy4vHwiSSEo7nTlfZxN4aQepo0Eex0fgaLna0FQ");
-            String range = commandline.getOptionValue("range", "Inscriptions!A10:M84");
+            String range = commandline.getOptionValue("range", "Inscriptions!A8:Q88");
             playersParser = new SheetsPlayersParser(sheetId, range);
         } else {
             String file = commandline.getOptionValue("file", "players.csv");
