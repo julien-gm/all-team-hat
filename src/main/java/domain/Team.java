@@ -34,16 +34,20 @@ public class Team {
         return getScore(expectedGirlNumber, teamGenerator.getNbGirls());
     }
 
+    private double getSkillScoreValue(Skill skill, double expectedValue, double skillValue) {
+        double stdDev = skill.getStdDev();
+        double score = getScore(expectedValue, skillValue, stdDev);
+        return score / stdDev;
+    }
+
     public double getSkillsScore(List<Double> expectedValues) {
         double skillsScore = 0;
         int skillIndex = 0;
         for (Skill skill : skills) {
             double skillValue = skill.getValue();
-            double stdDev = skill.getStdDev();
-            Double expectedValue = expectedValues.get(skillIndex);
-            double score = getScore(expectedValue, skillValue, stdDev);
-            double skillsScore1 = score / stdDev;
-            skillsScore += skillsScore1;
+            if (skillValue > 0) {
+                skillsScore += getSkillScoreValue(skill, expectedValues.get(skillIndex), skillValue);
+            }
             skillIndex++;
         }
         return skillsScore * SKILL_SCORE_COEFF;
