@@ -39,11 +39,13 @@ public class Team {
         int skillIndex = 0;
         for (Skill skill : skills) {
             double skillValue = skill.getValue();
-            double stdDev = skill.getStdDev();
-            Double expectedValue = expectedValues.get(skillIndex);
-            double score = getScore(expectedValue, skillValue, stdDev);
-            double skillsScore1 = score / stdDev;
-            skillsScore += skillsScore1;
+            if (skillValue > 0) {
+                double stdDev = skill.getStdDev();
+                Double expectedValue = expectedValues.get(skillIndex);
+                double score = getScore(expectedValue, skillValue, stdDev);
+                double skillsScore1 = score / stdDev;
+                skillsScore += skillsScore1;
+            }
             skillIndex++;
         }
         return skillsScore * SKILL_SCORE_COEFF;

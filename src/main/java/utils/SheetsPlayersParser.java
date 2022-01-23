@@ -54,14 +54,14 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private static final String OUTPUT_SPREAD_SHEET_ID = "1MQ6api6PXTWROIlPdy0YmbG5MXft3Lg6TOpNdV5f8No";
 
     /**
-     * Global instance of the scopes required by this project. If modifying these scopes, delete your previously
-     * saved tokens/ folder.
+     * Global instance of the scopes required by this project. If modifying these scopes, delete your previously saved
+     * tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
-    private String inputSpreadsheetId;
-    private String range;
+    private final String inputSpreadsheetId;
+    private final String range;
     private Sheets sheets;
 
     public SheetsPlayersParser(String sheetId, String range) {
@@ -109,15 +109,18 @@ public class SheetsPlayersParser implements PlayersParserInterface {
             if (values == null || values.isEmpty()) {
                 System.out.println("No data found.");
             } else {
-                for (List row : values) {
-                    if (isPlayer(row)) {
+                for (List<Object> row : values) {
+                    if (!isPlayer(row)) {
+                        System.err.printf("%s is not a valid player: %s\n", row.get(NUM_COL_PSEUDO),
+                                row.get(NUM_COL_EMAIL));
+                    } else {
                         Player player = new Player(row.get(NUM_COL_PSEUDO).toString());
                         player.setClub(row.get(NUM_COL_CLUB).toString());
                         player.setGender(row.get(NUM_COL_GENDER).toString().startsWith("F") ? Player.Gender.FEMME
                                 : Player.Gender.HOMME);
                         player.setLastName(row.get(NUM_COL_LAST_NAME).toString());
                         player.setFirstName(row.get(NUM_COL_FIRST_NAME).toString());
-                        player.setEmail(row.get(NUM_COL_EMAIL).toString());
+                        player.setEmail(getEmail(row));
                         String handler = row.get(NUM_COL_HANDLER).toString();
                         player.setHandler(handler.equals("oui") ? Player.Handler.YES
                                 : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
@@ -131,15 +134,13 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                                 skillValue = Double.parseDouble(row.get(i++).toString());
                                 player.getSkillsList().add(skillValue);
                             } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                                player.getSkillsList().add(0.0);
                                 System.out.println(e.getMessage());
                             }
                         }
                         setPlayerDay(row, player);
                         setTeamMate(allPlayers, row, player);
                         allPlayers.add(player);
-                    } else {
-                        System.err.printf("%s has no valid email: %s\n", row.get(NUM_COL_PSEUDO),
-                                row.get(NUM_COL_EMAIL));
                     }
                 }
                 System.out.println("Computing " + allPlayers.size() + " players.");
@@ -150,28 +151,36 @@ public class SheetsPlayersParser implements PlayersParserInterface {
         return new TeamsGenerator(allPlayers);
     }
 
-    private void setPlayerDay(List row, Player player) {
-        try {
-            player.setDay(Integer.parseInt(row.get(NUM_COL_DAY_PLAYER).toString()));
-        } catch (Exception ignored) {
+    private void setPlayerDay(List<Object> row, Player player) {
+        if (NUM_COL_DAY_PLAYER != 0) {
+            try {
+                player.setDay(Integer.parseInt(row.get(NUM_COL_DAY_PLAYER).toString()));
+            } catch (Exception ignored) {
+            }
         }
     }
 
-    private void setTeamMate(List<Player> allPlayers, List row, Player player) {
-        try {
-            allPlayers.stream().filter(p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString()))
-                    .findFirst().ifPresent(player::setTeamMate);
-        } catch (Exception ignored) {
+    private void setTeamMate(List<Player> allPlayers, List<Object> row, Player player) {
+        if (NUM_COL_TEAMMATE != 0) {
+            try {
+                allPlayers.stream().filter(p -> p.getNickName().equalsIgnoreCase(row.get(NUM_COL_TEAMMATE).toString()))
+                        .findFirst().ifPresent(player::setTeamMate);
+            } catch (Exception ignored) {
+            }
         }
     }
 
-    private boolean isPlayer(List row) {
-        return isValidEmail(row.get(5).toString());
+    private String getEmail(List<Object> row) {
+        return row.get(NUM_COL_EMAIL).toString().trim();
+    }
+
+    private boolean isPlayer(List<Object> row) {
+        return isValidEmail(getEmail(row));
     }
 
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return (email != null) && Pattern.compile(emailRegex).matcher(email).matches();
+        return (email != null) && Pattern.compile(emailRegex).matcher(email.trim()).matches();
     }
 
     public void write(Composition compo) {
@@ -218,17 +227,19 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                 values.add(teamAverage);
             }
             List<ValueRange> data = new ArrayList<>();
-            String title = "results!A1:" + ('A' + values.get(0).size() - 1) + values.size();
-            data.add(new ValueRange().setRange(title).setValues(values));
+            String title = "results";
+            String range = title + "!A1:" + ('A' + values.get(0).size() - 1) + values.size();
+            data.add(new ValueRange().setRange(range).setValues(values));
 
+            String outputSheetId = createNewSpreadsheet();
             CopySheetToAnotherSpreadsheetRequest requestBody = new CopySheetToAnotherSpreadsheetRequest();
-            requestBody.setDestinationSpreadsheetId(OUTPUT_SPREAD_SHEET_ID);
+            requestBody.setDestinationSpreadsheetId(outputSheetId);
 
-            sheets.spreadsheets().sheets().copyTo(title, 0, requestBody);// setProperties(new
-                                                                         // SheetProperties().setTitle(title));
+            sheets.spreadsheets().sheets().copyTo(title, 0, requestBody);
+            // setProperties(new SheetProperties().setTitle(title));
             BatchUpdateValuesRequest body = new BatchUpdateValuesRequest().setValueInputOption("USER_ENTERED")
                     .setData(data);
-            BatchUpdateValuesResponse result = sheets.spreadsheets().values().batchUpdate(OUTPUT_SPREAD_SHEET_ID, body)
+            BatchUpdateValuesResponse result = sheets.spreadsheets().values().batchUpdate(outputSheetId, body)
                     .execute();
             System.out.printf("%d cells updated.\n", result.getTotalUpdatedCells());
         } catch (IOException e) {
