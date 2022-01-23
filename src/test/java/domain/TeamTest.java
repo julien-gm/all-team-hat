@@ -39,6 +39,11 @@ public class TeamTest {
     }
 
     @Test
+    public void testSkillsScore() {
+        Assert.assertEquals(13.53, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
+    }
+
+    @Test
     public void testHandlerScore() {
         Assert.assertEquals(0.7, team.getHandlerScore(0.3), 0.0001);
     }
