@@ -15,10 +15,19 @@ import java.util.List;
 
 public class FilePlayersParser implements PlayersParserInterface {
 
-    private static final int NUMBER_OF_COLUMNS_TO_SKIP = 7;
+    private static final int NUMBER_OF_COLUMNS_TO_SKIP = 11;
+    private static final int NUMBER_OF_SKILLS = 3;
     private static Iterable<? extends CSVRecord> parser;
+    private final int columnToSkip;
+    private final int numberOfSkill;
 
     public FilePlayersParser(FileReader file) throws IOException {
+        this(file, NUMBER_OF_COLUMNS_TO_SKIP, NUMBER_OF_SKILLS);
+    }
+
+    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill) throws IOException {
+        this.columnToSkip = columnToSkip;
+        this.numberOfSkill = numberOfSkill;
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
     }
 
@@ -31,22 +40,30 @@ public class FilePlayersParser implements PlayersParserInterface {
             Player player = new Player(record.get("Pseudo"));
             player.setLastName(record.get("Nom"));
             player.setFirstName(record.get("Prénom"));
-            player.setEmail(record.get("Email"));
+            player.setEmail(record.get("Adresse e-mail"));
             player.setClub(record.get("Club"));
-            // player.setAge(Integer.parseInt(record.get("Age")));
+            player.setAge(Integer.parseInt(record.get("Age")));
             player.setGender(record.get("Sexe").startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
-            String handler = record.get("Handler");
-            player.setHandler(handler.equals("oui") ? Player.Handler.YES
-                    : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
+            String handler = record.get("Handler?");
+            player.setHandler(handler.equals("Oui") ? Player.Handler.YES
+                    : handler.equals("Non") ? Player.Handler.NO : Player.Handler.MAYBE);
 
             // Getting skills
             // Skipping the first 8 columns that we just read
             Iterator<String> iterator = record.iterator();
-            for (int i = 0; i < NUMBER_OF_COLUMNS_TO_SKIP; i++) {
+            for (int i = 0; i < this.columnToSkip; i++) {
                 iterator.next();
             }
-            while (iterator.hasNext()) {
-                player.getSkillsList().add(Double.parseDouble(iterator.next()));
+            int skillNumber = 0;
+            while (iterator.hasNext() && skillNumber < this.numberOfSkill) {
+                String value = iterator.next();
+                player.getSkillsList().add(Double.parseDouble(value));
+                skillNumber++;
+            }
+            setTeamMate(allPlayers, record, player);
+            String day = record.get("Jour");
+            if (!day.equals("")) {
+                player.setDay(Integer.parseInt(day));
             }
             allPlayers.add(player);
         }
@@ -56,5 +73,19 @@ public class FilePlayersParser implements PlayersParserInterface {
     @Override
     public void write(Composition bestComposition) {
         System.out.println(bestComposition);
+    }
+
+    private void setTeamMate(List<Player> allPlayers, CSVRecord record, Player player) {
+        try {
+            String nickName = record.get("Quels sont le nom et prénom de ton binôme?");
+            if (nickName != null && !nickName.equals("")) {
+                allPlayers.stream().filter(p -> p.getNickName().equalsIgnoreCase(nickName)).findFirst()
+                        .ifPresent(player::setTeamMate);
+            }
+            if (player.getTeamMate() != null) {
+                System.out.println(player.getNickName() + " teammate is " + player.getTeamMate().getNickName());
+            }
+        } catch (Exception ignored) {
+        }
     }
 }

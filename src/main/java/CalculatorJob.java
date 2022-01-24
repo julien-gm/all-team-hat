@@ -25,7 +25,7 @@ public class CalculatorJob {
         CommandLine commandline = commandParser.parse(options, args, false);
         PlayersParserInterface playersParser;
         if (commandline.hasOption("sheet")) {
-            String sheetId = commandline.getOptionValue("sheet", "1oRkdNy4vHwiSSEo7nTlfZxN4aQepo0Eex0fgaLna0FQ");
+            String sheetId = commandline.getOptionValue("sheet", "18JPdGOZwmIk9NYdi6KdcYTxEkDaOv3771VaR678jw2E");
             String range = commandline.getOptionValue("range", "Inscriptions!A8:Q88");
             playersParser = new SheetsPlayersParser(sheetId, range);
         } else {
@@ -34,9 +34,11 @@ public class CalculatorJob {
         }
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
 
-        int nbTeams = Integer.valueOf(commandline.getOptionValue("nbTeams", "6"));
-        int nbRuns = Integer.valueOf(commandline.getOptionValue("nbRuns", "20"));
+        int nbTeams = Integer.parseInt(commandline.getOptionValue("nbTeams", "6"));
+        int nbRuns = Integer.parseInt(commandline.getOptionValue("nbRuns", "20"));
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns);
         playersParser.write(bestComposition);
+        System.out.println(bestComposition.getScoreForDay(1));
+        System.out.println(bestComposition.getScoreForDay(2));
     }
 }

@@ -200,4 +200,22 @@ public class Team {
         return players.stream().mapToDouble(p -> (p.hasTeamMate() && !players.contains(p.getTeamMate())) ? 10 : 0)
                 .sum();
     }
+
+    private List<Integer> getDays() {
+        return players.stream().mapToInt(Player::getDay).distinct().boxed().collect(Collectors.toList());
+    }
+
+    public double getRightNumberOfPlayersScore(double expectedNumberOfPlayers) {
+        double score = 0;
+        for (int day : getDays()) {
+            if (day != 0) {
+                score += Math.abs(getPlayersForDay(day).size() - expectedNumberOfPlayers) * 300;
+            }
+        }
+        return score;
+    }
+
+    public List<Player> getPlayersForDay(int day) {
+        return players.stream().filter(p -> p.playsTheSameDay(day) && p.isReal()).collect(Collectors.toList());
+    }
 }

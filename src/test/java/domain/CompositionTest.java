@@ -56,7 +56,7 @@ public class CompositionTest {
     @Test
     public void testScoreWithSize() throws IOException {
         File csvFile = new File("src/test/resources/players_withsize.csv");
-        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), 7, 4);
 
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         Composition composition = teamsGenerator.computeBestComposition(2, 20);
@@ -64,10 +64,10 @@ public class CompositionTest {
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        System.out.println(composition);
-        Assert.assertEquals(166.1, composition.getScore(), 0.1);
+        Assert.assertEquals(140.4, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
+        Assert.assertEquals(30.4, ageExpected, 0.1);
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
         double s2 = t2.getSkillsScore(skills);
@@ -77,5 +77,24 @@ public class CompositionTest {
         Assert.assertEquals(sa1, sa2, 12.0);
         double expectedHandlerScore = teamsGenerator.getNbHandlers();
         Assert.assertEquals(t1.getHandlerScore(expectedHandlerScore), t2.getHandlerScore(expectedHandlerScore), 0.1);
+    }
+
+    @Test
+    public void testScoreWithDay() throws IOException {
+        File csvFile = new File("src/test/resources/players_with_day.csv");
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), 8, 3);
+
+        TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
+        Composition composition = teamsGenerator.computeBestComposition(2, 20);
+        List<Team> teams = composition.getTeams();
+        Assert.assertEquals(2, teams.size());
+        Team t1 = teams.get(0);
+        Team t2 = teams.get(1);
+        System.out.println(composition);
+
+        Assert.assertEquals(4, t1.getPlayersForDay(1).size());
+        Assert.assertEquals(4, t1.getPlayersForDay(2).size());
+        Assert.assertEquals(4, t2.getPlayersForDay(1).size());
+        Assert.assertEquals(4, t2.getPlayersForDay(2).size());
     }
 }
