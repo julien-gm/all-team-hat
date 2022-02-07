@@ -18,6 +18,7 @@ public class TeamTest {
         p1.setSkillsList(Arrays.asList(7.0, 7.0, 7.0));
         p1.setGender(Player.Gender.FEMME);
         p1.setHandler(Player.Handler.YES);
+        p1.setDay(1);
         p1.setClub("test");
         Player p2 = new Player();
         p2.setSkillsList(Arrays.asList(8.0, 8.0, 8.0));
@@ -51,6 +52,12 @@ public class TeamTest {
     @Test
     public void testNoHandlerScore() {
         Assert.assertEquals(9.6, team.getNoHandlerScore(1.2), 0.0001);
+    }
+
+    @Test
+    public void testGetPlayersForDay() {
+        Assert.assertEquals(2, team.getPlayersForDay(1).size(), 0.0001);
+        Assert.assertEquals(1, team.getPlayersForDay(2).size(), 0.0001);
     }
 
     @Test

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class FilePlayersParser implements PlayersParserInterface {
 
-    private static final int NUMBER_OF_COLUMNS_TO_SKIP = 11;
+    private static final int NUMBER_OF_COLUMNS_TO_SKIP = 9;
     private static final int NUMBER_OF_SKILLS = 3;
     private static Iterable<? extends CSVRecord> parser;
     private final int columnToSkip;
@@ -61,9 +61,11 @@ public class FilePlayersParser implements PlayersParserInterface {
                 skillNumber++;
             }
             setTeamMate(allPlayers, record, player);
-            String day = record.get("Jour");
-            if (!day.equals("")) {
-                player.setDay(Integer.parseInt(day));
+            if (record.isSet("Jour")) {
+                String day = record.get("Jour");
+                if (!day.equals("")) {
+                    player.setDay(Integer.parseInt(day));
+                }
             }
             allPlayers.add(player);
         }

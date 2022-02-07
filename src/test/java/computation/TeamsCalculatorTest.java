@@ -52,4 +52,35 @@ public class TeamsCalculatorTest {
         Assert.assertEquals(53.11, teamCalculator.getTeamScore(team1), 0.01);
         Assert.assertEquals(18.16, teamCalculator.getTeamScore(team2), 0.01);
     }
+
+    private Player createDefaultPlayer() {
+        Player player = new Player();
+        player.setClub("toto");
+        player.setGender(Player.Gender.HOMME);
+        player.setHandler(Player.Handler.NO);
+        player.setSkillsList(Arrays.asList(Math.random() * 10, Math.random() * 10, Math.random() * 10));
+        return player;
+    }
+
+    @Test
+    public void testTeamScoreWithDays() {
+        Player p1 = createDefaultPlayer();
+        p1.setDay(2);
+        Player p2 = createDefaultPlayer();
+        p2.setDay(1);
+        Player p3 = createDefaultPlayer();
+        Team t1 = new Team(Arrays.asList(p1, p2, p3));
+        Assert.assertTrue(teamCalculator.getTeamScore(t1) < 2000);
+    }
+
+    @Test
+    public void testTeamScoreWithDaysKO() {
+        Player p1 = createDefaultPlayer();
+        p1.setDay(2);
+        Player p2 = createDefaultPlayer();
+        p2.setDay(2);
+        Player p3 = createDefaultPlayer();
+        Team t1 = new Team(Arrays.asList(p1, p2, p3));
+        Assert.assertFalse(teamCalculator.getTeamScore(t1) < 200);
+    }
 }

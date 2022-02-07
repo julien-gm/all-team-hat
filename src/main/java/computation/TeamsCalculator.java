@@ -2,7 +2,6 @@ package computation;
 
 import domain.Team;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,7 +16,7 @@ public class TeamsCalculator {
 
     private final double expectedNumberOfMixedHandlers;
 
-    private final double expectedNumberOfPlayers;
+    public final double expectedNumberOfPlayers;
 
     private final Map<String, Double> expectedClubsScore;
 
@@ -33,30 +32,67 @@ public class TeamsCalculator {
     }
 
     public double getTeamScore(Team team) {
+        if (team.getDays().size() == 1) {
+            return getTeamScoreByDay(team, 0);
+        }
+        double scoreDay1 = getTeamScoreByDay(team, 1);
+        double scoreDay2 = getTeamScoreByDay(team, 2);
+        return ((scoreDay1 + scoreDay2) / 2) + (2 * Math.abs(scoreDay1 - scoreDay2));
+    }
+
+    public double getTeamScoreByDay(Team globalTeam, int day) {
+        Team team = filterTeamForDay(globalTeam, day);
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
-                + team.getHandlerScore(expectedNumberOfHandlers) + team.getClubScore(expectedClubsScore)
-                + team.getStandardDeviation(expectedScores) + team.getTeamMateScore()
-                + team.getRightNumberOfPlayersScore(expectedNumberOfPlayers);
+                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviation(expectedScores)
+                + team.getClubScore(expectedClubsScore);
     }
 
-    public double getTeamScoreByDay(Team team, int day) {
-        return getTeamScore(filterTeamForDay(team, day));
+    public double compute(List<Team> teams) {
+        double sumScore = 0;
+        for (int day = 1; day <= 2; day++) {
+            int finalDay = day;
+            sumScore += teams.stream().mapToDouble(t -> computeForDay(teams, finalDay)).min().orElse(0);
+        }
+        return sumScore;
     }
 
-    public double compute(List<Team> teams, int day) {
-        return filterPlayerForDay(teams, day).stream().mapToDouble(this::getTeamScore).sum();
+    public double computeForDay(List<Team> teams, int day) {
+        return teams.stream().map(t -> filterTeamForDay(t, day)).mapToDouble(this::getTeamScore).sum();
     }
 
     private Team filterTeamForDay(Team team, int day) {
         return new Team(team.getPlayers().stream().filter(p -> p.playsTheSameDay(day)).collect(Collectors.toList()));
     }
 
-    private List<Team> filterPlayerForDay(List<Team> teams, int day) {
-        List<Team> newTeams = new ArrayList<>();
+    public boolean numberOfPlayersPerTeamIsValidForDay(int day, List<Team> teams) {
         for (Team team : teams) {
-            newTeams.add(filterTeamForDay(team, day));
+            int nbPlayers = team.getPlayersForDay(day).size();
+            if (nbPlayers < (expectedNumberOfPlayers - 1) || nbPlayers > expectedNumberOfPlayers) {
+                return false;
+            }
         }
-        return newTeams;
+        return true;
+    }
+
+    public boolean numberOfClubsPerTeamIsValidForDay(int day, List<Team> teams) {
+        int nbException = 0;
+        int maxException = 6;
+        for (Team team : teams) {
+            for (Map.Entry<String, Double> expectedClubScore : expectedClubsScore.entrySet()) {
+                String clubName = expectedClubScore.getKey();
+                double nbPlayersForClub = expectedClubScore.getValue();
+                double nbPlayersForThisClubForDay = team.getPlayersForDay(day).stream()
+                        .filter(p -> p.getClub().equals(clubName)).count();
+
+                if (nbPlayersForThisClubForDay >= nbPlayersForClub) {
+                    nbException += (nbPlayersForThisClubForDay - nbPlayersForClub);
+                    if (nbException > maxException) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

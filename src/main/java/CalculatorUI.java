@@ -24,12 +24,15 @@ public class CalculatorUI {
 
             final JTextField numberOfTeams = new JTextField();
             final JTextField numberOfRuns = new JTextField();
+            final JTextField numberOfTeammateFailure = new JTextField();
+            final JTextField invalidTeamPenaltyField = new JTextField();
             final JFileChooser csvFileChooser = new JFileChooser(
                     new File(preferences.get(LAST_USED_FILE, new File(".").getAbsolutePath())));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
             csvFileChooser.setFileFilter(filter);
             final Object[] message = { "List of players: ", csvFileChooser, "Number of teams:", numberOfTeams,
-                    "Number of runs:", numberOfRuns };
+                    "Number of runs:", numberOfRuns, "Teammate failure penalty: ", numberOfTeammateFailure,
+                    "Invalid team penalty: ", invalidTeamPenaltyField, };
             JOptionPane.showInputDialog(message);
 
             preferences.put(LAST_USED_FILE, csvFileChooser.getSelectedFile().getPath());
@@ -38,14 +41,21 @@ public class CalculatorUI {
             FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
             TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
 
-            int nbTeams = numberOfTeams.getText().matches("[0-9]+") ? Integer.valueOf(numberOfTeams.getText()) : 6;
-            int nbRuns = numberOfRuns.getText().matches("[0-9]+") ? Integer.valueOf(numberOfRuns.getText()) : 20;
-            Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns);
+            int nbTeams = getTextFieldAsInt(numberOfTeams, 6);
+            int nbRuns = getTextFieldAsInt(numberOfRuns, 20);
+            int teammatePenalty = getTextFieldAsInt(numberOfTeammateFailure, 50);
+            int invalidTeamPenalty = getTextFieldAsInt(invalidTeamPenaltyField, 200);
+            Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
+                    teammatePenalty);
             System.out.println(bestComposition);
 
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | UnsupportedLookAndFeelException e) {
             System.err.println("An error occurred: " + e.getMessage());
         }
+    }
+
+    private static int getTextFieldAsInt(JTextField textField, int defaultValue) {
+        return textField.getText().matches("[0-9]+") ? Integer.parseInt(textField.getText()) : defaultValue;
     }
 }

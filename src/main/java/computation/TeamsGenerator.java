@@ -44,8 +44,8 @@ public class TeamsGenerator {
         }
         int playerNumber = initTeam(nbTeams, girlsTeams, 0, Player.Gender.FEMME);
         initTeam(nbTeams, boysTeams, playerNumber, Player.Gender.HOMME);
-        Composition girlsCompo = new Composition(girlsTeams, getTeamsCalculator(nbTeams));
-        Composition boysCompos = new Composition(boysTeams, getTeamsCalculator(nbTeams));
+        Composition girlsCompo = new Composition(girlsTeams);
+        Composition boysCompos = new Composition(boysTeams);
         fillTeams(nbTeams, numberOfPlayersByTeam, teams, girlsCompo, boysCompos);
         return teams;
     }
@@ -63,7 +63,7 @@ public class TeamsGenerator {
             Composition boysComposition) {
         int playerNumber;
         int numberOfGirls = girlsComposition.getNumberOfPlayers();
-        for (playerNumber = 0; playerNumber < nbTeams * numberOfPlayersByTeam; playerNumber++) {
+        for (playerNumber = 0; playerNumber < nbTeams * (numberOfPlayersByTeam + 1); playerNumber++) {
             if (playerNumber < numberOfGirls) {
                 teams.get(playerNumber % nbTeams).add(girlsComposition.getPlayer(playerNumber));
             } else if (playerNumber < boysComposition.getNumberOfPlayers() + numberOfGirls) {
@@ -72,12 +72,6 @@ public class TeamsGenerator {
                 teams.get(playerNumber % nbTeams).add(Team.fakePlayer);
             }
         }
-        for (int i = 0; i < nbTeams * 2; i++) {
-            teams.get(i % nbTeams).add(Team.fakePlayer);
-        }
-        for (Team team : teams) {
-            team.initSkills();
-        }
     }
 
     private List<Player> getPlayersFromGender(Player.Gender gender) {
@@ -85,35 +79,44 @@ public class TeamsGenerator {
                 .sorted(Comparator.comparingInt(Player::getRevertDay)).collect(Collectors.toList());
     }
 
-    private Composition getLocalBestComposition(Composition currentComposition, int run) {
+    private Composition getLocalBestComposition(Composition currentComposition) {
         double localBestScore;
         Composition localBestComposition = currentComposition;
-        System.out.println("Initial score is: " + currentComposition.getScore());
         localBestScore = currentComposition.getScore();
-        for (int optimizedNumber = 0; optimizedNumber < run; ++optimizedNumber) {
+        for (int optimizedNumber = 0; optimizedNumber < LOCAL_NUMBER_OF_OPTIMIZATION; ++optimizedNumber) {
+            System.out.print('.');
             currentComposition = getBestComposition(currentComposition);
-            double score = currentComposition.getScore();
-            if (score < localBestScore) {
-                System.out.println("New local best score : " + score);
-                localBestScore = score;
-                localBestComposition = currentComposition;
+            if (currentComposition != null) {
+                double score = currentComposition.getScore();
+                if (score < localBestScore) {
+                    localBestScore = score;
+                    localBestComposition = currentComposition;
+                }
+            } else {
+                System.out.print(
+                        String.format("\nNo more valid composition for this run after %d tries", optimizedNumber));
+                break;
             }
         }
+        System.out.println(String.format("\nNew local best score : %.2f", localBestScore));
         return localBestComposition;
     }
 
-    public Composition computeBestComposition(int nbTeams, int nbShuffles) {
+    public Composition computeBestComposition(int nbTeams, int nbShuffles, int invalidTeamPenalty,
+            int teammatePenalty) {
         List<Team> teams = initTeams(nbTeams);
         TeamsCalculator teamCalculator = getTeamsCalculator(nbTeams);
-        Composition currentComposition = new Composition(teams, teamCalculator);
+        Composition currentComposition = new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty)
+                .shuffle();
         double bestScore = currentComposition.getScore();
         Composition bestComposition = currentComposition;
         for (int tryNumber = 0; tryNumber < nbShuffles; ++tryNumber) {
-            Composition localBestComposition = getLocalBestComposition(currentComposition,
-                    LOCAL_NUMBER_OF_OPTIMIZATION);
+            System.out.println(
+                    String.format("Run number #%d, initial score: %.2f", tryNumber + 1, currentComposition.getScore()));
+            Composition localBestComposition = getLocalBestComposition(currentComposition);
             double score = localBestComposition.getScore();
             if (score < bestScore) {
-                System.out.println("New best score ever: " + score);
+                System.out.println(String.format("New best score ever: %.2f", score));
                 bestComposition = localBestComposition;
                 bestScore = score;
             }
@@ -123,9 +126,9 @@ public class TeamsGenerator {
     }
 
     private Composition getBestComposition(Composition currentComposition) {
-        Composition bestComposition = currentComposition;
+        Composition bestComposition = null;
         List<Team> teams = currentComposition.getTeams();
-        double localBestScore = bestComposition.getScore();
+        double localBestScore = currentComposition.getScore();
         for (Player player : players) {
             Team playerTeam = currentComposition.getTeamFromPlayer(player);
             for (Player switchPlayer : teams.stream().filter(t -> !t.equals(playerTeam))
@@ -150,9 +153,9 @@ public class TeamsGenerator {
         long nbNoHandlers = getNbNoHandlers();
         long nbMaybeHandlers = getNbMaybeHandlers();
         Map<String, Double> expectedClubScore = new HashMap<>();
-        for (Map.Entry<String, List<Player>> entry : this.players.stream()
+        for (Map.Entry<String, List<Player>> entry : this.players.stream().filter(p -> p.playsTheSameDay(1))
                 .collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
-            expectedClubScore.put(entry.getKey(), (double) getExpectedPlayersByTeam(nbTeams));
+            expectedClubScore.put(entry.getKey(), Math.ceil((double) entry.getValue().size() / nbTeams) + 1);
         }
         return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, expectedClubScore,
                 getExpectedPlayersByTeam(nbTeams));
