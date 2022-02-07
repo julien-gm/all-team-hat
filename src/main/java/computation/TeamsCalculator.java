@@ -17,38 +17,46 @@ public class TeamsCalculator {
 
     private final double expectedNumberOfMixedHandlers;
 
+    private final double expectedNumberOfPlayers;
+
     private final Map<String, Double> expectedClubsScore;
 
     TeamsCalculator(List<Double> pExpectedScores, double expectedNumberOfNoHandlers, double expectedNumberOfHandlers,
-            double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore) {
+            double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore,
+            double expectedNumberOfPlayers) {
         expectedScores = pExpectedScores;
         this.expectedNumberOfNoHandlers = expectedNumberOfNoHandlers;
         this.expectedNumberOfHandlers = expectedNumberOfHandlers;
         this.expectedNumberOfMixedHandlers = expectedNumberOfMaybeHandlers;
         this.expectedClubsScore = expectedClubScore;
+        this.expectedNumberOfPlayers = expectedNumberOfPlayers;
     }
 
     public double getTeamScore(Team team) {
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
                 + team.getHandlerScore(expectedNumberOfHandlers) + team.getClubScore(expectedClubsScore)
-                + team.getStandardDeviation(expectedScores) + team.getTeamMateScore();
+                + team.getStandardDeviation(expectedScores) + team.getTeamMateScore()
+                + team.getRightNumberOfPlayersScore(expectedNumberOfPlayers);
+    }
+
+    public double getTeamScoreByDay(Team team, int day) {
+        return getTeamScore(filterTeamForDay(team, day));
     }
 
     public double compute(List<Team> teams, int day) {
         return filterPlayerForDay(teams, day).stream().mapToDouble(this::getTeamScore).sum();
     }
 
+    private Team filterTeamForDay(Team team, int day) {
+        return new Team(team.getPlayers().stream().filter(p -> p.playsTheSameDay(day)).collect(Collectors.toList()));
+    }
+
     private List<Team> filterPlayerForDay(List<Team> teams, int day) {
         List<Team> newTeams = new ArrayList<>();
         for (Team team : teams) {
-            newTeams.add(new Team(
-                    team.getPlayers().stream().filter(p -> p.playsTheSameDay(day)).collect(Collectors.toList())));
+            newTeams.add(filterTeamForDay(team, day));
         }
         return newTeams;
-    }
-
-    public double compute(List<Team> teams) {
-        return teams.stream().mapToDouble(this::getTeamScore).sum();
     }
 }

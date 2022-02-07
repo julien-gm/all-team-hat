@@ -25,6 +25,12 @@ public class TeamsGenerator {
         return (int) Math.ceil(players.size() / (double) nbTeam);
     }
 
+    public int getExpectedPlayersByTeam(int nbTeam) {
+        long nbPlayerDay1 = players.stream().filter(p -> p.playsTheSameDay(1)).count();
+        long nbPlayerDay2 = players.stream().filter(p -> p.playsTheSameDay(2)).count();
+        return (int) Math.ceil(Math.max(nbPlayerDay1, nbPlayerDay2) / (double) nbTeam);
+    }
+
     public List<Team> initTeams(int nbTeams) {
         int numberOfPlayersByTeam = getNumberOfPlayersByTeam(nbTeams);
         List<Team> girlsTeams = new ArrayList<>(numberOfPlayersByTeam);
@@ -65,6 +71,9 @@ public class TeamsGenerator {
             } else {
                 teams.get(playerNumber % nbTeams).add(Team.fakePlayer);
             }
+        }
+        for (int i = 0; i < nbTeams * 2; i++) {
+            teams.get(i % nbTeams).add(Team.fakePlayer);
         }
         for (Team team : teams) {
             team.initSkills();
@@ -143,9 +152,10 @@ public class TeamsGenerator {
         Map<String, Double> expectedClubScore = new HashMap<>();
         for (Map.Entry<String, List<Player>> entry : this.players.stream()
                 .collect(Collectors.groupingBy(Player::getClub)).entrySet()) {
-            expectedClubScore.put(entry.getKey(), (double) entry.getValue().size() / nbTeams);
+            expectedClubScore.put(entry.getKey(), (double) getExpectedPlayersByTeam(nbTeams));
         }
-        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, expectedClubScore);
+        return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, expectedClubScore,
+                getExpectedPlayersByTeam(nbTeams));
     }
 
     public List<Double> getSkillAverages() {

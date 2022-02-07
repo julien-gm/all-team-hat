@@ -8,13 +8,11 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TeamsCalculatorTest {
 
     private static TeamsCalculator teamCalculator;
-    private static List<Team> teams;
     private static Team team1;
     private static Team team2;
 
@@ -43,21 +41,15 @@ public class TeamsCalculatorTest {
 
         team1 = new Team(Arrays.asList(p1, p2));
         team2 = new Team(Arrays.asList(p3, p4));
-        teams = Arrays.asList(team1, team2);
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("c1", 1.0);
         expectedClubScore.put("c2", 1.0);
-        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0, expectedClubScore);
+        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0, expectedClubScore, 2);
     }
 
     @Test
     public void testTeamScore() {
         Assert.assertEquals(53.11, teamCalculator.getTeamScore(team1), 0.01);
         Assert.assertEquals(18.16, teamCalculator.getTeamScore(team2), 0.01);
-    }
-
-    @Test
-    public void testCompute() {
-        Assert.assertEquals(71.27, teamCalculator.compute(teams), 0.01);
     }
 }

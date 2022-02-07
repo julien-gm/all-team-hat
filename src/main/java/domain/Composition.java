@@ -22,7 +22,10 @@ public class Composition {
         this.teamCalculator = teamCalculator;
         score = 0;
         for (int day : getDays()) {
-            score += teamCalculator.compute(teams, day);
+            if (day != 0 || getDays().size() == 1) {
+                double tmpScore = teamCalculator.compute(teams, day);
+                score = Math.max(score, tmpScore);
+            }
         }
     }
 
@@ -35,6 +38,10 @@ public class Composition {
         return score;
     }
 
+    public double getScoreForDay(int day) {
+        return teamCalculator.compute(teams, day);
+    }
+
     public Team getTeamFromPlayer(Player player) {
         return teams.stream().filter(team -> team.hasPlayer(player)).findFirst().orElse(null);
     }
@@ -44,7 +51,7 @@ public class Composition {
     }
 
     public Composition switchPlayer(Player player1, Player player2) {
-        if (!player1.getGender().equals(player2.getGender()) || !player1.playsTheSamesDay(player2)) {
+        if (!player1.getGender().equals(player2.getGender())) {
             return new Composition(teams, teamCalculator);
         }
         final Team team1 = getTeamPlayer(player1);
@@ -97,6 +104,10 @@ public class Composition {
             result.append(String.format(
                     "###########################\nteam %d\n%s - score: [%.2f]\n###########################\n",
                     teamNumber, team, teamCalculator.getTeamScore(team)));
+            for (int day : getDays()) {
+                result.append("Score for day ").append(day).append(" is : ")
+                        .append(teamCalculator.getTeamScoreByDay(team, day)).append("\n");
+            }
             teamNumber++;
             int playerNumber = 1;
             for (Player player : team.getPlayers()) {

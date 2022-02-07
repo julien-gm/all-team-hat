@@ -183,8 +183,8 @@ public class Player {
             return "";
         }
         double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
-        return String.format("%s (%s %s) [%s](%s) score %.2f - %s", nickName, firstName, lastName, gender, handler,
-                sport, club);
+        return String.format("%s (%s %s) [%s](%s) score %.2f - %s (%d)", nickName, firstName, lastName, gender, handler,
+                sport, club, day);
     }
 
     public enum Handler {
