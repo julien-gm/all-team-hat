@@ -70,7 +70,7 @@ public class TeamsCalculatorTest {
         p2.setDay(1);
         Player p3 = createDefaultPlayer();
         Team t1 = new Team(Arrays.asList(p1, p2, p3));
-        Assert.assertTrue(teamCalculator.getTeamScore(t1) < 2000);
+        Assert.assertTrue(teamCalculator.getTeamScore(t1) > 0);
     }
 
     @Test
