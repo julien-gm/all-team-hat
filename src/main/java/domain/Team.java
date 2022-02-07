@@ -16,7 +16,7 @@ public class Team {
 
     private final TeamsGenerator teamGenerator;
 
-    private List<Player> players;
+    private final List<Player> players;
 
     private List<Skill> skills;
 
@@ -118,7 +118,7 @@ public class Team {
         }
 
         final Team team = (Team) obj;
-        return (this.players == null) ? (team.players != null) : this.players.equals(team.players);
+        return (this.players == null) ? (team.players != null) : this.getRealPlayers().equals(team.getRealPlayers());
     }
 
     public double getClubScore(Map<String, Double> expectedClubsScore) {
@@ -142,7 +142,8 @@ public class Team {
     }
 
     private Map<String, List<Player>> getClubsInfo() {
-        return this.players.stream().collect(Collectors.groupingBy(Player::getClub));
+        return this.players.stream().filter(Player::isReal).filter(p -> p.playsTheSameDay(1))
+                .collect(Collectors.groupingBy(Player::getClub));
     }
 
     @Override
@@ -196,26 +197,20 @@ public class Team {
         return skills.stream().mapToDouble(Skill::getValue).average().orElse(0.0);
     }
 
-    public double getTeamMateScore() {
-        return players.stream().mapToDouble(p -> (p.hasTeamMate() && !players.contains(p.getTeamMate())) ? 10 : 0)
+    public double getTeamMateScore(int penalty) {
+        return players.stream().mapToDouble(p -> (p.hasTeamMate() && !players.contains(p.getTeamMate())) ? penalty : 0)
                 .sum();
     }
 
-    private List<Integer> getDays() {
+    public List<Integer> getDays() {
         return players.stream().mapToInt(Player::getDay).distinct().boxed().collect(Collectors.toList());
-    }
-
-    public double getRightNumberOfPlayersScore(double expectedNumberOfPlayers) {
-        double score = 0;
-        for (int day : getDays()) {
-            if (day != 0) {
-                score += Math.abs(getPlayersForDay(day).size() - expectedNumberOfPlayers) * 300;
-            }
-        }
-        return score;
     }
 
     public List<Player> getPlayersForDay(int day) {
         return players.stream().filter(p -> p.playsTheSameDay(day) && p.isReal()).collect(Collectors.toList());
+    }
+
+    public List<Player> getRealPlayers() {
+        return players.stream().filter(Player::isReal).collect(Collectors.toList());
     }
 }

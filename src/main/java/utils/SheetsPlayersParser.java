@@ -67,7 +67,6 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     public SheetsPlayersParser(String sheetId, String range) {
         this.inputSpreadsheetId = sheetId;
         this.range = range;
-        System.out.println(range);
         this.setSheets();
     }
 
@@ -143,7 +142,7 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                         allPlayers.add(player);
                     }
                 }
-                System.out.println("Computing " + allPlayers.size() + " players.");
+                System.out.println(String.format("Computing %d  players.", allPlayers.size()));
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());

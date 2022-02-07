@@ -10,23 +10,27 @@ import java.util.stream.Stream;
 
 public class Composition {
 
-    private static final int SHUFFLE_COEFF = 2;
-    private final TeamsCalculator teamCalculator;
+    private int teammatePenalty = 50;
 
-    private List<Team> teams;
+    private int invalidTeamPenalty = 200;
 
-    private double score;
+    private TeamsCalculator teamCalculator = null;
 
-    public Composition(List<Team> teams, TeamsCalculator teamCalculator) {
+    private final List<Team> teams;
+
+    private final double score;
+
+    public Composition(List<Team> teams) {
+        this.teams = teams;
+        score = 0;
+    }
+
+    public Composition(List<Team> teams, TeamsCalculator teamCalculator, int invalidTeamPenalty, int teammatePenalty) {
         this.teams = teams;
         this.teamCalculator = teamCalculator;
-        score = 0;
-        for (int day : getDays()) {
-            if (day != 0 || getDays().size() == 1) {
-                double tmpScore = teamCalculator.compute(teams, day);
-                score = Math.max(score, tmpScore);
-            }
-        }
+        this.invalidTeamPenalty = invalidTeamPenalty;
+        this.teammatePenalty = teammatePenalty;
+        score = teamCalculator.compute(teams);
     }
 
     private List<Integer> getDays() {
@@ -35,11 +39,13 @@ public class Composition {
     }
 
     public double getScore() {
-        return score;
-    }
-
-    public double getScoreForDay(int day) {
-        return teamCalculator.compute(teams, day);
+        if (isValid())
+            return score;
+        int teamMateScore = 0;
+        for (Team t : teams) {
+            teamMateScore += t.getTeamMateScore(teammatePenalty);
+        }
+        return score + invalidTeamPenalty + teamMateScore;
     }
 
     public Team getTeamFromPlayer(Player player) {
@@ -52,13 +58,13 @@ public class Composition {
 
     public Composition switchPlayer(Player player1, Player player2) {
         if (!player1.getGender().equals(player2.getGender())) {
-            return new Composition(teams, teamCalculator);
+            return new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty);
         }
         final Team team1 = getTeamPlayer(player1);
         final Team team2 = getTeamPlayer(player2);
         if ((!player1.isReal() && (team2.hasPlayer(Team.fakePlayer)))
                 || (!player2.isReal() && (team1.hasPlayer(Team.fakePlayer)))) {
-            return new Composition(teams, teamCalculator);
+            return new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty);
         }
         List<Team> teams = this.teams.stream().filter(t -> !t.equals(team1) && !t.equals(team2))
                 .collect(Collectors.toList());
@@ -71,14 +77,14 @@ public class Composition {
             Team newTeam2 = new Team(playersTeam2);
             teams.add(newTeam1);
             teams.add(newTeam2);
-            return new Composition(teams, teamCalculator);
+            return new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty);
         }
         if (team1 != null) {
             teams.add(team1);
         } else {
             teams.add(team2);
         }
-        return new Composition(teams, teamCalculator);
+        return new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty);
     }
 
     private Team getTeamPlayer(Player player1) {
@@ -104,10 +110,6 @@ public class Composition {
             result.append(String.format(
                     "###########################\nteam %d\n%s - score: [%.2f]\n###########################\n",
                     teamNumber, team, teamCalculator.getTeamScore(team)));
-            for (int day : getDays()) {
-                result.append("Score for day ").append(day).append(" is : ")
-                        .append(teamCalculator.getTeamScoreByDay(team, day)).append("\n");
-            }
             teamNumber++;
             int playerNumber = 1;
             for (Player player : team.getPlayers()) {
@@ -121,12 +123,18 @@ public class Composition {
     }
 
     public Composition shuffle() {
-        Composition tmpComposition = new Composition(teams, teamCalculator);
-        for (int i = 0; i < SHUFFLE_COEFF * getNumberOfPlayers(); ++i) {
+        Composition tmpComposition = new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty);
+        int nbRun = 0;
+        while (nbRun < (getNumberOfPlayers() * 2)
+        // || !teamCalculator.numberOfPlayersPerTeamIsValidForDay(1, tmpComposition.teams)
+        // || !teamCalculator.numberOfPlayersPerTeamIsValidForDay(2, tmpComposition.teams)
+        ) {
             Player p1 = getRandomPlayer();
             Player p2 = getRandomPlayer();
             tmpComposition = tmpComposition.switchPlayer(p1, p2);
+            nbRun++;
         }
+
         return tmpComposition;
     }
 
@@ -138,11 +146,40 @@ public class Composition {
     }
 
     public int getNumberOfPlayers() {
-        return (int) this.teams.stream().mapToLong(t -> t.getPlayers().size()).sum();
+        return (int) this.teams.stream().mapToLong(t -> t.getRealPlayers().size()).sum();
     }
 
     public Player getPlayer(int playerNumber) {
         Supplier<Stream<Player>> playerStream = () -> this.teams.stream().flatMap(t -> t.getPlayers().stream());
         return playerStream.get().skip(playerNumber).findFirst().orElse(null);
+    }
+
+    public double getScoreForDay(int day) {
+        return teamCalculator.computeForDay(teams, day);
+    }
+
+    public boolean isValid() {
+        for (int day = 1; day <= 2; day++) {
+            if (!teamCalculator.numberOfPlayersPerTeamIsValidForDay(day, teams)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean teamMatesMatches() {
+        int nbException = 0;
+        int maxException = 2;
+        for (Team team : teams) {
+            for (Player player : team.getRealPlayers()) {
+                if (player.hasTeamMate() && !team.hasPlayer(player.getTeamMate())) {
+                    nbException++;
+                    if (nbException > maxException) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

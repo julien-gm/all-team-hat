@@ -37,6 +37,7 @@ public class TeamsGeneratorTest {
         p3.setGender(Player.Gender.HOMME);
         p3.setHandler(Player.Handler.YES);
         p3.setClub("c1");
+        p3.setDay(2);
         p3.setNickName("p3");
         p4 = new Player();
         p4.setSkillsList(Arrays.asList(9.0, 9.0, 9.0));
@@ -49,6 +50,7 @@ public class TeamsGeneratorTest {
         p5.setGender(Player.Gender.HOMME);
         p5.setHandler(Player.Handler.MAYBE);
         p5.setClub("c3");
+        p5.setDay(1);
         p5.setNickName("p5");
         teamGenerator = new TeamsGenerator(Arrays.asList(p1, p2, p3, p4, p5));
     }
@@ -61,13 +63,19 @@ public class TeamsGeneratorTest {
     }
 
     @Test
+    public void testGetExpectedPlayersByTeam() {
+        Assert.assertEquals(2, teamGenerator.getExpectedPlayersByTeam(2));
+        Assert.assertEquals(4, teamGenerator.getExpectedPlayersByTeam(1));
+    }
+
+    @Test
     public void testInitTeams() {
         int nbOfTeam = 2;
         List<Team> teams = teamGenerator.initTeams(nbOfTeam);
         Assert.assertEquals(3, teamGenerator.getNumberOfPlayersByTeam(nbOfTeam));
         Assert.assertEquals(nbOfTeam, teams.size());
-        Team expectedFirstTeam = new Team(Arrays.asList(p1, p2, p3));
-        Team expectedSecondTeam = new Team(Arrays.asList(p4, p5, Team.fakePlayer));
+        Team expectedFirstTeam = new Team(Arrays.asList(p1, p3, p5));
+        Team expectedSecondTeam = new Team(Arrays.asList(p4, p2));
         Assert.assertEquals(expectedFirstTeam, teams.get(0));
         Assert.assertEquals(expectedSecondTeam, teams.get(1));
     }

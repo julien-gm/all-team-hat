@@ -22,6 +22,8 @@ public class CalculatorJob {
         options.addOption("range", true, "Sheet name and range to lookup for player");
         options.addOption("nbTeams", true, "number of team to create");
         options.addOption("nbRuns", true, "number of shuffle to run");
+        options.addOption("invalidTeamPenalty", true, "penalty added when a generated team is invalid");
+        options.addOption("teammatePenalty", true, "penalty added when a player doesn't plays with its teammate");
         CommandLine commandline = commandParser.parse(options, args, false);
         PlayersParserInterface playersParser;
         if (commandline.hasOption("sheet")) {
@@ -36,7 +38,10 @@ public class CalculatorJob {
 
         int nbTeams = Integer.parseInt(commandline.getOptionValue("nbTeams", "6"));
         int nbRuns = Integer.parseInt(commandline.getOptionValue("nbRuns", "20"));
-        Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns);
+        int invalidTeamPenalty = Integer.parseInt(commandline.getOptionValue("invalidTeamPenalty", "200"));
+        int teammatePenalty = Integer.parseInt(commandline.getOptionValue("teammatePenalty", "50"));
+        Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
+                teammatePenalty);
         playersParser.write(bestComposition);
         System.out.println(bestComposition.getScoreForDay(1));
         System.out.println(bestComposition.getScoreForDay(2));
