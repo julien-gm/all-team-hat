@@ -36,12 +36,12 @@ public class TeamTest {
 
     @Test
     public void testSkillScore() {
-        Assert.assertEquals(13.53, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
+        Assert.assertEquals(328.67, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test
     public void testSkillsScore() {
-        Assert.assertEquals(13.53, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
+        Assert.assertEquals(328.67, team.getSkillsScore(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class TeamTest {
 
     @Test
     public void testNoHandlerScore() {
-        Assert.assertEquals(9.6, team.getNoHandlerScore(1.2), 0.0001);
+        Assert.assertEquals(12, team.getNoHandlerScore(1.2), 0.0001);
     }
 
     @Test
@@ -62,13 +62,14 @@ public class TeamTest {
 
     @Test
     public void testStdDev() {
-        Assert.assertEquals(12.53, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
+        Assert.assertEquals(327.17, team.getStandardDeviation(Arrays.asList(7.2, 7.7, 7.5)), 0.01);
     }
 
     @Test
     public void testClubScore() {
         Map<String, Double> expectedClubScore = new HashMap<>();
-        expectedClubScore.put("", 3.0);
-        Assert.assertEquals(0.3, team.getClubScore(expectedClubScore), 0.0001);
+        expectedClubScore.put("", 1.0);
+        expectedClubScore.put("test", 1.0);
+        Assert.assertEquals(20.0, team.getClubScore(expectedClubScore), 0.0001);
     }
 }

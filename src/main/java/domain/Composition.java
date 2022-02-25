@@ -33,19 +33,13 @@ public class Composition {
         score = teamCalculator.compute(teams);
     }
 
-    private List<Integer> getDays() {
-        Stream<Player> players = teams.stream().flatMap(t -> t.getPlayers().stream());
-        return players.mapToInt(Player::getDay).distinct().boxed().collect(Collectors.toList());
-    }
-
     public double getScore() {
-        if (isValid())
-            return score;
         int teamMateScore = 0;
+        double clubScore = 20 * teamCalculator.getClubScore(teams);
         for (Team t : teams) {
             teamMateScore += t.getTeamMateScore(teammatePenalty);
         }
-        return score + invalidTeamPenalty + teamMateScore;
+        return score + (isValid() ? 0 : invalidTeamPenalty) + teamMateScore + clubScore;
     }
 
     public Team getTeamFromPlayer(Player player) {
@@ -125,10 +119,7 @@ public class Composition {
     public Composition shuffle() {
         Composition tmpComposition = new Composition(teams, teamCalculator, invalidTeamPenalty, teammatePenalty);
         int nbRun = 0;
-        while (nbRun < (getNumberOfPlayers() * 2)
-        // || !teamCalculator.numberOfPlayersPerTeamIsValidForDay(1, tmpComposition.teams)
-        // || !teamCalculator.numberOfPlayersPerTeamIsValidForDay(2, tmpComposition.teams)
-        ) {
+        while (nbRun < (getNumberOfPlayers() * 2)) {
             Player p1 = getRandomPlayer();
             Player p2 = getRandomPlayer();
             tmpComposition = tmpComposition.switchPlayer(p1, p2);
@@ -160,24 +151,9 @@ public class Composition {
 
     public boolean isValid() {
         for (int day = 1; day <= 2; day++) {
-            if (!teamCalculator.numberOfPlayersPerTeamIsValidForDay(day, teams)) {
+            if (!teamCalculator.numberOfPlayersPerTeamIsValidForDay(day, teams)
+                    || !teamCalculator.numberOfClubsPerTeamIsValidForDay(day, teams)) {
                 return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean teamMatesMatches() {
-        int nbException = 0;
-        int maxException = 2;
-        for (Team team : teams) {
-            for (Player player : team.getRealPlayers()) {
-                if (player.hasTeamMate() && !team.hasPlayer(player.getTeamMate())) {
-                    nbException++;
-                    if (nbException > maxException) {
-                        return false;
-                    }
-                }
             }
         }
         return true;

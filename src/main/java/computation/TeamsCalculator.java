@@ -44,8 +44,7 @@ public class TeamsCalculator {
         Team team = filterTeamForDay(globalTeam, day);
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
-                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviation(expectedScores)
-                + team.getClubScore(expectedClubsScore);
+                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviation(expectedScores);
     }
 
     public double compute(List<Team> teams) {
@@ -58,7 +57,7 @@ public class TeamsCalculator {
     }
 
     public double computeForDay(List<Team> teams, int day) {
-        return teams.stream().map(t -> filterTeamForDay(t, day)).mapToDouble(this::getTeamScore).sum();
+        return teams.stream().mapToDouble(t -> this.getTeamScoreByDay(t, day)).sum();
     }
 
     private Team filterTeamForDay(Team team, int day) {
@@ -77,7 +76,7 @@ public class TeamsCalculator {
 
     public boolean numberOfClubsPerTeamIsValidForDay(int day, List<Team> teams) {
         int nbException = 0;
-        int maxException = 6;
+        int maxException = 1;
         for (Team team : teams) {
             for (Map.Entry<String, Double> expectedClubScore : expectedClubsScore.entrySet()) {
                 String clubName = expectedClubScore.getKey();
@@ -94,5 +93,13 @@ public class TeamsCalculator {
             }
         }
         return true;
+    }
+
+    public double getClubScore(List<Team> teams) {
+        double score = 0;
+        for (Team t : teams) {
+            score += t.getClubScore(this.expectedClubsScore);
+        }
+        return score;
     }
 }
