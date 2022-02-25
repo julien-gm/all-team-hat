@@ -60,8 +60,8 @@ public class Team {
 
     public void initSkills() {
         skills = new ArrayList<>();
-        if (players.size() > 0) {
-            Player firstPlayer = players.get(0);
+        if (getRealPlayers().size() > 0) {
+            Player firstPlayer = getRealPlayers().get(0);
             for (int skillIndex = 0; skillIndex < firstPlayer.getSkillsList().size(); skillIndex++) {
                 skills.add(getSkillTeam(skillIndex));
             }
@@ -178,7 +178,7 @@ public class Team {
     }
 
     private double getSkillScore(double expectedSkillsAverage) {
-        return getSkillsAverage() - expectedSkillsAverage;
+        return Math.abs(getSkillsAverage() - expectedSkillsAverage);
     }
 
     private String getClubStats() {
