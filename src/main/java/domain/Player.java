@@ -187,6 +187,10 @@ public class Player {
                 sport, club, day);
     }
 
+    public double getSkillAverage() {
+        return getSkillsList().stream().mapToDouble(a -> a).average().orElse(0.0);
+    }
+
     public enum Handler {
         YES, MAYBE, NO
     }
