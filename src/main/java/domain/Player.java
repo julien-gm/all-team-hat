@@ -185,9 +185,9 @@ public class Player {
         }
         double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
         return (handler.equals(Handler.YES) ? "H " : (handler.equals(Handler.MAYBE) ? "(H) " : ""))
-                + String.format(Locale.FRANCE, "%s %s %s [%s] score %.2f - %s", firstName, lastName,
-                        (!nickName.equals("")) ? "(" + nickName + ")" : "", (gender.equals(Gender.HOMME) ? "H" : "F"),
-                        sport, club)
+                + String.format(Locale.FRANCE, "%s %s%s [%s] score %.2f - %s", firstName, lastName,
+                        (nickName != null && !nickName.equals("")) ? " (" + nickName + ")" : "",
+                        (gender.equals(Gender.HOMME) ? "H" : "F"), sport, club)
                 + ((day != 0) ? String.format(" (playing day %d only)", day) : "");
     }
 
