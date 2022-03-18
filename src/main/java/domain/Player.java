@@ -2,6 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Player {
 
@@ -183,8 +184,10 @@ public class Player {
             return "";
         }
         double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
-        return String.format("%s %s %s [%s](%s) score %.2f - %s", firstName, lastName,
-                (!nickName.equals("")) ? "(" + nickName + ")" : "", gender, handler, sport, club)
+        return (handler.equals(Handler.YES) ? "H " : (handler.equals(Handler.MAYBE) ? "(H) " : ""))
+                + String.format(Locale.FRANCE, "%s %s %s [%s] score %.2f - %s", firstName, lastName,
+                        (!nickName.equals("")) ? "(" + nickName + ")" : "", (gender.equals(Gender.HOMME) ? "H" : "F"),
+                        sport, club)
                 + ((day != 0) ? String.format(" (playing day %d only)", day) : "");
     }
 

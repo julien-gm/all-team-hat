@@ -73,7 +73,7 @@ public class TeamsCalculator {
             if (nbPlayers < (expectedNumberOfPlayers - 1) || nbPlayers > expectedNumberOfPlayers) {
                 return false;
             }
-            if (team.getRealPlayers().size() > nbPlayers + 2) {
+            if (nbPlayers <= (team.getRealPlayers().size() - 2)) {
                 return false;
             }
         }

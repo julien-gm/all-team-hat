@@ -4,6 +4,7 @@ import computation.TeamsGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -162,7 +163,7 @@ public class Team {
         for (int day = 1; day <= 2; day++) {
             TeamsGenerator teamsGenerator = new TeamsGenerator(getPlayersForDay(day));
 
-            stb.append(String.format("Day #%d - Girls: %d/%d, H/M: %d/%d, Skills: %.2f (%.2f)\n", day,
+            stb.append(String.format(Locale.FRANCE, "Day #%d - Girls: %d/%d, H/M: %d/%d, Skills: %.2f (%.2f)\n", day,
                     teamsGenerator.getNbGirls(), teamsGenerator.getNbPlayers(), teamsGenerator.getNbHandlers(),
                     teamsGenerator.getNbNoHandlers(), teamsGenerator.getSkillsAverage(),
                     teamsGenerator.getSkillsStdDev())).append(getClubStats(getPlayersForDay(day))).append("\n");
