@@ -72,4 +72,10 @@ public class TeamTest {
         expectedClubScore.put("test", 1.0);
         Assert.assertEquals(20.0, team.getClubScore(expectedClubScore), 0.0001);
     }
+
+    @Test
+    public void testToString() {
+        Assert.assertEquals("Day #1 - Girls: 1/2, H/M: 1/0, Skills: 7,50 (0,50)\ntest: 2 \n"
+                + "Day #2 - Girls: 0/1, H/M: 0/0, Skills: 8,00 (0,00)\ntest: 2 \n", team.toString());
+    }
 }

@@ -3,6 +3,8 @@ package domain;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class PlayerTest {
 
     @Test
@@ -27,5 +29,22 @@ public class PlayerTest {
 
         Assert.assertTrue(p1.playsTheSameDay(p3));
         Assert.assertTrue(p1.playsTheSameDay(p5));
+    }
+
+    @Test
+    public void testToString() {
+        Player p = new Player();
+        p.setFirstName("Julien");
+        p.setLastName("GM");
+        p.setNickName("Jouj");
+        p.setHandler(Player.Handler.YES);
+        p.setClub("Shamrock");
+        p.setGender(Player.Gender.HOMME);
+        p.setSkillsList(Arrays.asList(6.0, 7.0, 8.0));
+        Assert.assertEquals("H Julien GM (Jouj) [H] score 7,00 - Shamrock", p.toString());
+
+        p.setHandler(Player.Handler.MAYBE);
+        p.setNickName("");
+        Assert.assertEquals("(H) Julien GM [H] score 7,00 - Shamrock", p.toString());
     }
 }

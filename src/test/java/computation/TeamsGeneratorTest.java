@@ -78,11 +78,17 @@ public class TeamsGeneratorTest {
         Team expectedSecondTeam = new Team(Arrays.asList(p4, p2));
         Assert.assertEquals(expectedFirstTeam, teams.get(0));
         Assert.assertEquals(expectedSecondTeam, teams.get(1));
+        Assert.assertEquals(5, teamGenerator.getNbPlayers());
     }
 
     @Test
     public void testSportAverage() {
         Assert.assertEquals(7.8,
                 teamGenerator.getSkillAverages().stream().mapToDouble(Double::doubleValue).average().orElse(0), 0.0);
+    }
+
+    @Test
+    public void testStdDev() {
+        Assert.assertEquals(0.6, teamGenerator.getSkillsStdDev(), 0.1);
     }
 }

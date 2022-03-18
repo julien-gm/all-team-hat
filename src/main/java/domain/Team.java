@@ -4,6 +4,7 @@ import computation.TeamsGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ public class Team {
     private static final int SKILL_SCORE_COEFF = 120;
     private static final int HANDLER_SCORE_COEFF = 10;
     private static final double CLUB_SCORE_COEFF = 20;
+    public static final int STD_DEV_COEFF = 20;
 
     private final TeamsGenerator teamGenerator;
 
@@ -51,10 +53,6 @@ public class Team {
             skillIndex++;
         }
         skillsScore += getSkillScore(expectedValues.stream().mapToDouble(a -> a).average().orElse(0.0));
-        double skillsStdDev = getSkillsStdDev();
-        if (skillsStdDev > 1.4) {
-            skillsScore += skillsStdDev * 8;
-        }
         return skillsScore * SKILL_SCORE_COEFF;
     }
 
@@ -69,12 +67,8 @@ public class Team {
     }
 
     private double getSkillScoreAverageForTeam(int skillIndex) {
-        double sumSkillScore = 0.0;
-        List<Player> realPlayers = players.stream().filter(Player::isReal).collect(Collectors.toList());
-        for (Player p : realPlayers) {
-            sumSkillScore += p.getSkillsList().get(skillIndex);
-        }
-        return sumSkillScore / realPlayers.size();
+        double sumSkillScore = getRealPlayers().stream().mapToDouble(p -> p.getSkillsList().get(skillIndex)).sum();
+        return sumSkillScore / getRealPlayers().size();
     }
 
     private Skill getSkillTeam(int skillIndex) {
@@ -165,10 +159,16 @@ public class Team {
 
     @Override
     public String toString() {
-        TeamsGenerator teamsGenerator = new TeamsGenerator(players);
-        return String.format("Girls: %d/%d, H/M: %d/%d, Skills: %.2f (%.2f)\n", teamsGenerator.getNbGirls(),
-                this.getNbPlayers(), teamsGenerator.getNbHandlers(), teamsGenerator.getNbNoHandlers(),
-                getSkillsAverage(), getSkillsStdDev()) + getClubStats();
+        StringBuilder stb = new StringBuilder();
+        for (int day = 1; day <= 2; day++) {
+            TeamsGenerator teamsGenerator = new TeamsGenerator(getPlayersForDay(day));
+
+            stb.append(String.format(Locale.FRANCE, "Day #%d - Girls: %d/%d, H/M: %d/%d, Skills: %.2f (%.2f)\n", day,
+                    teamsGenerator.getNbGirls(), teamsGenerator.getNbPlayers(), teamsGenerator.getNbHandlers(),
+                    teamsGenerator.getNbNoHandlers(), teamsGenerator.getSkillsAverage(),
+                    teamsGenerator.getSkillsStdDev())).append(getClubStats(getPlayersForDay(day))).append("\n");
+        }
+        return stb.toString();
     }
 
     private double getSkillsStdDev() {
@@ -181,8 +181,8 @@ public class Team {
         return Math.abs(getSkillsAverage() - expectedSkillsAverage);
     }
 
-    private String getClubStats() {
-        if (!this.players.isEmpty()) {
+    private String getClubStats(List<Player> players) {
+        if (!players.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<Player>> entry : getClubsInfo().entrySet()) {
                 int size = entry.getValue().size();
@@ -193,6 +193,11 @@ public class Team {
             return sb.toString();
         }
         return "\n";
+    }
+
+    public double getStandardDeviationScore(double pExpectedStdDev) {
+        double skillsStdDev = getSkillsStdDev();
+        return Math.abs(pExpectedStdDev - skillsStdDev) * STD_DEV_COEFF;
     }
 
     public double getStandardDeviation(List<Double> pExpectedScores) {

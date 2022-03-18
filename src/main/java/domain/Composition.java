@@ -2,6 +2,7 @@ package domain;
 
 import computation.TeamsCalculator;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -102,15 +103,15 @@ public class Composition {
         int teamNumber = 1;
         for (Team team : getTeams()) {
             result.append(String.format(
-                    "###########################\nteam %d\n%s - score: [%.2f]\n###########################\n",
+                    "###########################\nteam %d\n%s\nscore: [%.2f]\n###########################\n",
                     teamNumber, team, teamCalculator.getTeamScore(team)));
             teamNumber++;
             int playerNumber = 1;
-            for (Player player : team.getPlayers()) {
-                if (player.isReal()) {
-                    result.append(String.format("-%2d. %s\n", playerNumber, player));
-                    playerNumber++;
-                }
+            List<Player> p = team.getRealPlayers();
+            p.sort(Comparator.comparingDouble(Player::getSkillAverage).reversed());
+            for (Player player : p) {
+                result.append(String.format("-%2d. %s\n", playerNumber, player));
+                playerNumber++;
             }
         }
         return result.toString();
