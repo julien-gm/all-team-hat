@@ -158,7 +158,13 @@ public class TeamsGenerator {
             expectedClubScore.put(entry.getKey(), Math.ceil((double) entry.getValue().size() / nbTeams) + 1);
         }
         return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, expectedClubScore,
-                getExpectedPlayersByTeam(nbTeams));
+                getExpectedPlayersByTeam(nbTeams), getExpectedStdDev());
+    }
+
+    private double getExpectedStdDev() {
+        double skillAverage = getAverage(Player::getSkillAverage);
+        return players.stream().filter(Player::isReal).mapToDouble(p -> skillAverage - p.getSkillAverage()).average()
+                .orElse(0.0);
     }
 
     public List<Double> getSkillAverages() {
@@ -229,5 +235,19 @@ public class TeamsGenerator {
 
     public long getNbMaybeHandlers() {
         return getNbHandlersByKind(Player.Handler.MAYBE);
+    }
+
+    public long getNbPlayers() {
+        return players.stream().filter(Player::isReal).count();
+    }
+
+    public double getSkillsAverage() {
+        return players.stream().mapToDouble(Player::getSkillAverage).average().orElse(0.0);
+    }
+
+    public double getSkillsStdDev() {
+        double teamSportAverage = getSkillsAverage();
+        return players.stream().filter(Player::isReal)
+                .mapToDouble(player -> Math.abs(teamSportAverage - player.getSkillAverage())).average().orElse(0);
     }
 }

@@ -183,8 +183,9 @@ public class Player {
             return "";
         }
         double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
-        return String.format("%s (%s %s) [%s](%s) score %.2f - %s (%d)", nickName, firstName, lastName, gender, handler,
-                sport, club, day);
+        return String.format("%s %s %s [%s](%s) score %.2f - %s", firstName, lastName,
+                (!nickName.equals("")) ? "(" + nickName + ")" : "", gender, handler, sport, club)
+                + ((day != 0) ? String.format(" (playing day %d only)", day) : "");
     }
 
     public double getSkillAverage() {

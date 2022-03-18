@@ -44,13 +44,13 @@ public class TeamsCalculatorTest {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("c1", 1.0);
         expectedClubScore.put("c2", 1.0);
-        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0, expectedClubScore, 2);
+        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0, expectedClubScore, 2, 1);
     }
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(938.44, teamCalculator.getTeamScore(team1), 0.01);
-        Assert.assertEquals(3303.64, teamCalculator.getTeamScore(team2), 0.01);
+        Assert.assertEquals(491.07, teamCalculator.getTeamScore(team1), 0.01);
+        Assert.assertEquals(228.17, teamCalculator.getTeamScore(team2), 0.01);
     }
 
     private Player createDefaultPlayer() {

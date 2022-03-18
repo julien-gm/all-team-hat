@@ -18,17 +18,20 @@ public class TeamsCalculator {
 
     public final double expectedNumberOfPlayers;
 
+    private final double expectedStdDev;
+
     private final Map<String, Double> expectedClubsScore;
 
     TeamsCalculator(List<Double> pExpectedScores, double expectedNumberOfNoHandlers, double expectedNumberOfHandlers,
-            double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore,
-            double expectedNumberOfPlayers) {
+            double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore, double expectedNumberOfPlayers,
+            double expectedStdDev) {
         expectedScores = pExpectedScores;
         this.expectedNumberOfNoHandlers = expectedNumberOfNoHandlers;
         this.expectedNumberOfHandlers = expectedNumberOfHandlers;
         this.expectedNumberOfMixedHandlers = expectedNumberOfMaybeHandlers;
         this.expectedClubsScore = expectedClubScore;
         this.expectedNumberOfPlayers = expectedNumberOfPlayers;
+        this.expectedStdDev = expectedStdDev;
     }
 
     public double getTeamScore(Team team) {
@@ -44,7 +47,7 @@ public class TeamsCalculator {
         Team team = filterTeamForDay(globalTeam, day);
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
-                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviation(expectedScores);
+                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviationScore(expectedStdDev);
     }
 
     public double compute(List<Team> teams) {
@@ -68,6 +71,9 @@ public class TeamsCalculator {
         for (Team team : teams) {
             int nbPlayers = team.getPlayersForDay(day).size();
             if (nbPlayers < (expectedNumberOfPlayers - 1) || nbPlayers > expectedNumberOfPlayers) {
+                return false;
+            }
+            if (team.getRealPlayers().size() > nbPlayers + 2) {
                 return false;
             }
         }

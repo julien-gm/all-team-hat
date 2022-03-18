@@ -39,7 +39,7 @@ public class CompositionTest {
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        Assert.assertEquals(319.33, composition.getScore(), 0.1);
+        Assert.assertEquals(375.97, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
@@ -63,7 +63,7 @@ public class CompositionTest {
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        Assert.assertEquals(856.5, composition.getScore(), 0.1);
+        Assert.assertEquals(667.9, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
         Assert.assertEquals(30.4, ageExpected, 0.1);
