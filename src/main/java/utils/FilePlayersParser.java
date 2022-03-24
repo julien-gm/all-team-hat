@@ -22,11 +22,18 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final int firstSkillCol;
     private final int nbSkills;
     private static Iterable<? extends CSVRecord> parser;
+    private final String teamMateColName;
 
-    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill) throws IOException {
+    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName)
+            throws IOException {
         this.firstSkillCol = columnToSkip;
         this.nbSkills = numberOfSkill;
+        this.teamMateColName = teamMateColName;
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
+    }
+
+    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkills) throws IOException {
+        this(file, columnToSkip, numberOfSkills, "N/A");
     }
 
     public TeamsGenerator getTeamsGenerator() {
@@ -94,7 +101,7 @@ public class FilePlayersParser implements PlayersParserInterface {
 
     private void setTeamMate(List<Player> allPlayers, CSVRecord record, Player player) {
         try {
-            String nickName = record.get("Quels sont le nom et prénom de ton binôme?");
+            String nickName = record.get(teamMateColName);
             if (nickName != null && !nickName.equals("")) {
                 allPlayers.stream().filter(p -> p.getNickName().equalsIgnoreCase(nickName)).findFirst()
                         .ifPresent(player::setTeamMate);

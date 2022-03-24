@@ -28,6 +28,7 @@ public class CalculatorUI {
             final JTextField invalidTeamPenaltyField = new JTextField();
             final JTextField numberOfSkillField = new JTextField();
             final JTextField firstSkillColField = new JTextField();
+            final JTextField teamMateColNameField = new JTextField();
             final JFileChooser csvFileChooser = new JFileChooser(
                     new File(preferences.get(LAST_USED_FILE, new File(".").getAbsolutePath())));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
@@ -35,7 +36,7 @@ public class CalculatorUI {
             final Object[] message = { "List of players: ", csvFileChooser, "Number of teams:", numberOfTeams,
                     "Number of runs:", numberOfRuns, "Teammate failure penalty: ", numberOfTeammateFailure,
                     "Invalid team penalty: ", invalidTeamPenaltyField, "Number of skills: ", numberOfSkillField,
-                    "Skill first column: ", firstSkillColField };
+                    "Skill first column: ", firstSkillColField, "teammate column name: ", teamMateColNameField };
             JOptionPane.showInputDialog(message);
 
             preferences.put(LAST_USED_FILE, csvFileChooser.getSelectedFile().getPath());
@@ -48,8 +49,9 @@ public class CalculatorUI {
             int invalidTeamPenalty = getTextFieldAsInt(invalidTeamPenaltyField, 200);
             int numberOfSkill = getTextFieldAsInt(numberOfSkillField, 3);
             int firstSkillCol = getTextFieldAsInt(firstSkillColField, 9);
+            String teamMateColName = teamMateColNameField.getText();
             FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), firstSkillCol,
-                    numberOfSkill);
+                    numberOfSkill, teamMateColName);
             TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
             Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
                     teammatePenalty);

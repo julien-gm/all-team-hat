@@ -30,3 +30,6 @@ all-team-hat.iml
 # Project files
 tokens/
 src/main/resources/credentials.json
+*run*.csv
+*run*.txt
+codecov.sh
