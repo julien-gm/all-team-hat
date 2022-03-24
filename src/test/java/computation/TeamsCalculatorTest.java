@@ -44,7 +44,7 @@ public class TeamsCalculatorTest {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("c1", 1.0);
         expectedClubScore.put("c2", 1.0);
-        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0, expectedClubScore, 2, 1);
+        teamCalculator = new TeamsCalculator(Arrays.asList(7.7, 7.6, 7.9), 0.4, 1.2, 0, expectedClubScore, 2, 1, 10);
     }
 
     @Test
