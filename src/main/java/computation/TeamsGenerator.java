@@ -158,7 +158,7 @@ public class TeamsGenerator {
             expectedClubScore.put(entry.getKey(), Math.ceil((double) entry.getValue().size() / nbTeams) + 1);
         }
         return new TeamsCalculator(skillsAverage, nbNoHandlers, nbHandlers, nbMaybeHandlers, expectedClubScore,
-                getExpectedPlayersByTeam(nbTeams), getExpectedStdDev());
+                getExpectedPlayersByTeam(nbTeams), getExpectedStdDev(), getAgeAverage());
     }
 
     private double getExpectedStdDev() {

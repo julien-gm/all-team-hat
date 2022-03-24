@@ -20,11 +20,13 @@ public class TeamsCalculator {
 
     private final double expectedStdDev;
 
+    private final double expectedAge;
+
     private final Map<String, Double> expectedClubsScore;
 
     TeamsCalculator(List<Double> pExpectedScores, double expectedNumberOfNoHandlers, double expectedNumberOfHandlers,
             double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore, double expectedNumberOfPlayers,
-            double expectedStdDev) {
+            double expectedStdDev, double expectedAge) {
         expectedScores = pExpectedScores;
         this.expectedNumberOfNoHandlers = expectedNumberOfNoHandlers;
         this.expectedNumberOfHandlers = expectedNumberOfHandlers;
@@ -32,6 +34,7 @@ public class TeamsCalculator {
         this.expectedClubsScore = expectedClubScore;
         this.expectedNumberOfPlayers = expectedNumberOfPlayers;
         this.expectedStdDev = expectedStdDev;
+        this.expectedAge = expectedAge;
     }
 
     public double getTeamScore(Team team) {
@@ -47,7 +50,8 @@ public class TeamsCalculator {
         Team team = filterTeamForDay(globalTeam, day);
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
-                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviationScore(expectedStdDev);
+                + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviationScore(expectedStdDev)
+                + team.getAgeScore(expectedAge);
     }
 
     public double compute(List<Team> teams) {

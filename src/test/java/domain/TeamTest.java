@@ -75,7 +75,9 @@ public class TeamTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals("Day #1 - Girls: 1/2, H/M: 1/0, Skills: 7,50 (0,50)\ntest: 2 \n"
-                + "Day #2 - Girls: 0/1, H/M: 0/0, Skills: 8,00 (0,00)\ntest: 2 \n", team.toString());
+        Assert.assertEquals(
+                "Day #1 - 1 Women / 1 Men, 1 Handlers / 0 Middles, Skills: 7,50 (0,50) [0,00]\ntest: 2 \n"
+                        + "Day #2 - 0 Women / 1 Men, 0 Handlers / 0 Middles, Skills: 8,00 (0,00) [0,00]\ntest: 2 \n",
+                team.toString());
     }
 }

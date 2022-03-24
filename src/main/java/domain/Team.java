@@ -163,10 +163,12 @@ public class Team {
         for (int day = 1; day <= 2; day++) {
             TeamsGenerator teamsGenerator = new TeamsGenerator(getPlayersForDay(day));
 
-            stb.append(String.format(Locale.FRANCE, "Day #%d - Girls: %d/%d, H/M: %d/%d, Skills: %.2f (%.2f)\n", day,
-                    teamsGenerator.getNbGirls(), teamsGenerator.getNbPlayers(), teamsGenerator.getNbHandlers(),
-                    teamsGenerator.getNbNoHandlers(), teamsGenerator.getSkillsAverage(),
-                    teamsGenerator.getSkillsStdDev())).append(getClubStats(getPlayersForDay(day))).append("\n");
+            stb.append(String.format(Locale.FRANCE,
+                    "Day #%d - %d Women / %d Men, %d Handlers / %d Middles, Skills: %.2f (%.2f) [%.2f]\n", day,
+                    teamsGenerator.getNbGirls(), teamsGenerator.getNbPlayers() - teamsGenerator.getNbGirls(),
+                    teamsGenerator.getNbHandlers(), teamsGenerator.getNbNoHandlers(), teamsGenerator.getSkillsAverage(),
+                    teamsGenerator.getSkillsStdDev(), teamsGenerator.getAgeAverage()))
+                    .append(getClubStats(getPlayersForDay(day))).append("\n");
         }
         return stb.toString();
     }
@@ -222,6 +224,13 @@ public class Team {
     public double getTeamMateScore(int penalty) {
         return getRealPlayers().stream()
                 .mapToDouble(p -> (p.hasTeamMate() && !players.contains(p.getTeamMate())) ? penalty : 0).sum();
+    }
+
+    public double getAgeScore(double pExpectedAge) {
+        double stdDev = getRealPlayers().stream().mapToDouble(p -> Math.abs(pExpectedAge - p.getAge())).average()
+                .orElse(0.0);
+        return getScore(pExpectedAge, getRealPlayers().stream().mapToDouble(Player::getAge).average().orElse(0.0),
+                stdDev);
     }
 
     public List<Integer> getDays() {
