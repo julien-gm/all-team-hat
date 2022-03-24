@@ -24,22 +24,27 @@ public class CalculatorJob {
         options.addOption("nbRuns", true, "number of shuffle to run");
         options.addOption("invalidTeamPenalty", true, "penalty added when a generated team is invalid");
         options.addOption("teammatePenalty", true, "penalty added when a player doesn't plays with its teammate");
+        options.addOption("nbSkills", true, "Number of skills");
+        options.addOption("skillFirstCol", true, "First column number for skills");
         CommandLine commandline = commandParser.parse(options, args, false);
         PlayersParserInterface playersParser;
+
+        int nbTeams = Integer.parseInt(commandline.getOptionValue("nbTeams", "6"));
+        int nbRuns = Integer.parseInt(commandline.getOptionValue("nbRuns", "1"));
+        int nbSkills = Integer.parseInt(commandline.getOptionValue("nbSkills", "3"));
+        int skillFirstCol = Integer.parseInt(commandline.getOptionValue("skillFirstCol", "9"));
+        int invalidTeamPenalty = Integer.parseInt(commandline.getOptionValue("invalidTeamPenalty", "200"));
+        int teammatePenalty = Integer.parseInt(commandline.getOptionValue("teammatePenalty", "50"));
+
         if (commandline.hasOption("sheet")) {
             String sheetId = commandline.getOptionValue("sheet", "18JPdGOZwmIk9NYdi6KdcYTxEkDaOv3771VaR678jw2E");
             String range = commandline.getOptionValue("range", "Inscriptions!A8:Q88");
-            playersParser = new SheetsPlayersParser(sheetId, range);
+            playersParser = new SheetsPlayersParser(sheetId, range, skillFirstCol, nbSkills);
         } else {
             String file = commandline.getOptionValue("file", "players.csv");
-            playersParser = new FilePlayersParser(new FileReader(file));
+            playersParser = new FilePlayersParser(new FileReader(file), skillFirstCol, nbSkills);
         }
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
-
-        int nbTeams = Integer.parseInt(commandline.getOptionValue("nbTeams", "6"));
-        int nbRuns = Integer.parseInt(commandline.getOptionValue("nbRuns", "20"));
-        int invalidTeamPenalty = Integer.parseInt(commandline.getOptionValue("invalidTeamPenalty", "200"));
-        int teammatePenalty = Integer.parseInt(commandline.getOptionValue("teammatePenalty", "50"));
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
                 teammatePenalty);
         playersParser.write(bestComposition);

@@ -49,8 +49,8 @@ public class TeamsCalculatorTest {
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(492.07, teamCalculator.getTeamScore(team1), 0.01);
-        Assert.assertEquals(229.17, teamCalculator.getTeamScore(team2), 0.01);
+        Assert.assertEquals(187.12, teamCalculator.getTeamScore(team1), 0.01);
+        Assert.assertEquals(698.19, teamCalculator.getTeamScore(team2), 0.01);
     }
 
     private Player createDefaultPlayer() {
@@ -81,6 +81,7 @@ public class TeamsCalculatorTest {
         p2.setDay(2);
         Player p3 = createDefaultPlayer();
         Team t1 = new Team(Arrays.asList(p1, p2, p3));
+        t1.initSkills();
         Assert.assertFalse(teamCalculator.getTeamScore(t1) < 200);
     }
 }
