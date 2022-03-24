@@ -165,8 +165,8 @@ public class Team {
 
             stb.append(String.format(Locale.FRANCE,
                     "Day #%d - %d Women / %d Men, %d Handlers / %d Middles, Skills: %.2f (%.2f) [%.2f]\n", day,
-                    teamsGenerator.getNbGirls(), teamsGenerator.getNbPlayers(), teamsGenerator.getNbHandlers(),
-                    teamsGenerator.getNbNoHandlers(), teamsGenerator.getSkillsAverage(),
+                    teamsGenerator.getNbGirls(), teamsGenerator.getNbPlayers() - teamsGenerator.getNbGirls(),
+                    teamsGenerator.getNbHandlers(), teamsGenerator.getNbNoHandlers(), teamsGenerator.getSkillsAverage(),
                     teamsGenerator.getSkillsStdDev(), teamsGenerator.getAgeAverage()))
                     .append(getClubStats(getPlayersForDay(day))).append("\n");
         }

@@ -49,8 +49,8 @@ public class TeamsCalculatorTest {
 
     @Test
     public void testTeamScore() {
-        Assert.assertEquals(491.07, teamCalculator.getTeamScore(team1), 0.01);
-        Assert.assertEquals(228.17, teamCalculator.getTeamScore(team2), 0.01);
+        Assert.assertEquals(492.07, teamCalculator.getTeamScore(team1), 0.01);
+        Assert.assertEquals(229.17, teamCalculator.getTeamScore(team2), 0.01);
     }
 
     private Player createDefaultPlayer() {
