@@ -36,21 +36,23 @@ import java.util.regex.Pattern;
 public class SheetsPlayersParser implements PlayersParserInterface {
 
     // TODO set it in a config file or as option at runtime
-    private static final int NUM_COL_PSEUDO = 1;
-    private static final int NUM_COL_CLUB = 3;
-    private static final int NUM_COL_GENDER = 4;
-    private static final int NUM_COL_LAST_NAME = 5;
-    private static final int NUM_COL_FIRST_NAME = 6;
-    private static final int NUM_COL_EMAIL = 7;
-    private static final int NUM_COL_HANDLER = 8;
-    private static final int NUM_COL_DAY_PLAYER = 0;
-    private static final int NUM_COL_TEAMMATE = 0;
+    private static int NUM_COL_NICKNAME = 1;
+    private static int NUM_COL_CLUB = 3;
+    private static int NUM_COL_AGE = 2;
+    private static int NUM_COL_GENDER = 4;
+    private static int NUM_COL_LAST_NAME = 5;
+    private static int NUM_COL_FIRST_NAME = 6;
+    private static int NUM_COL_EMAIL = 7;
+    private static int NUM_COL_HANDLER = 8;
+    private static int NUM_COL_DAY_PLAYER = 0;
+    private static int NUM_COL_TEAMMATE = 0;
 
     private static final String APPLICATION_NAME = "All Team Hat";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String OUTPUT_SPREAD_SHEET_ID = "1MQ6api6PXTWROIlPdy0YmbG5MXft3Lg6TOpNdV5f8No";
 
+    private String teammateColName;
     private int firstSkillCol = 9;
     private int lastSkillCol = 13;
 
@@ -65,11 +67,13 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private final String range;
     private Sheets sheets;
 
-    public SheetsPlayersParser(String sheetId, String range, int firstSkillCol, int numberOfSkill) {
+    public SheetsPlayersParser(String sheetId, String range, int firstSkillCol, int numberOfSkill,
+            String teammateColName) {
         this.inputSpreadsheetId = sheetId;
         this.range = range;
         this.firstSkillCol = firstSkillCol;
         this.lastSkillCol = firstSkillCol + numberOfSkill;
+        this.teammateColName = teammateColName;
         this.setSheets();
     }
 
@@ -111,21 +115,62 @@ public class SheetsPlayersParser implements PlayersParserInterface {
             if (values == null || values.isEmpty()) {
                 System.out.println("No data found.");
             } else {
+                List<Object> firstRow = values.get(0);
+                int index = 0;
+                for (Object col : new ArrayList<>(firstRow)) {
+                    switch (col.toString()) {
+                    case EMAIL:
+                        NUM_COL_EMAIL = index;
+                        break;
+                    case FIRST_NAME:
+                        NUM_COL_FIRST_NAME = index;
+                        break;
+                    case LAST_NAME:
+                        NUM_COL_LAST_NAME = index;
+                        break;
+                    case NICKNAME:
+                        NUM_COL_NICKNAME = index;
+                        break;
+                    case CLUB:
+                        NUM_COL_CLUB = index;
+                        break;
+                    case AGE:
+                        NUM_COL_AGE = index;
+                        break;
+                    case GENDER:
+                        NUM_COL_GENDER = index;
+                        break;
+                    case HANDLING:
+                        NUM_COL_HANDLER = index;
+                        break;
+                    case DAY:
+                        NUM_COL_DAY_PLAYER = index;
+                        break;
+                    }
+                    if (this.teammateColName == null | this.teammateColName.equals("")) {
+                        this.teammateColName = TEAMMATE;
+                    }
+                    if (col.toString().equals(this.teammateColName)) {
+                        NUM_COL_TEAMMATE = index;
+                    }
+                    index++;
+                }
                 for (List<Object> row : values) {
                     if (!isPlayer(row)) {
-                        System.err.printf("%s is not a valid player: %s\n", row.get(NUM_COL_PSEUDO),
+                        System.err.printf("%s is not a valid player: %s\n", row.get(NUM_COL_NICKNAME),
                                 row.get(NUM_COL_EMAIL));
                     } else {
-                        Player player = new Player(row.get(NUM_COL_PSEUDO).toString());
+                        Player player = new Player(row.get(NUM_COL_NICKNAME).toString());
                         player.setClub(row.get(NUM_COL_CLUB).toString());
                         player.setGender(row.get(NUM_COL_GENDER).toString().startsWith("F") ? Player.Gender.FEMME
                                 : Player.Gender.HOMME);
                         player.setLastName(row.get(NUM_COL_LAST_NAME).toString());
                         player.setFirstName(row.get(NUM_COL_FIRST_NAME).toString());
                         player.setEmail(getEmail(row));
+                        player.setAge(Integer.parseInt(row.get(NUM_COL_AGE).toString()));
                         String handler = row.get(NUM_COL_HANDLER).toString();
-                        player.setHandler(handler.equals("oui") ? Player.Handler.YES
-                                : handler.equals("non") ? Player.Handler.NO : Player.Handler.MAYBE);
+                        player.setHandler(handler.equals(YES) ? Player.Handler.YES
+                                : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
 
                         // Getting skills
                         // Skipping the first 8 columns that we just read
