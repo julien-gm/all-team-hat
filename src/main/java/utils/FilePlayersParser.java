@@ -42,16 +42,16 @@ public class FilePlayersParser implements PlayersParserInterface {
         for (CSVRecord record : parser) {
             // Reading with headers so we can get the values via the name
             // and they can be in any order (as long as the skills are last)
-            Player player = new Player(record.get("Pseudo"));
-            player.setLastName(record.get("Nom"));
-            player.setFirstName(record.get("Prénom"));
-            player.setEmail(record.get("Adresse e-mail"));
-            player.setClub(record.get("Club"));
-            player.setAge(Integer.parseInt(record.get("Age")));
-            player.setGender(record.get("Sexe").startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
-            String handler = record.get("Handler?");
-            player.setHandler(handler.equals("Oui") ? Player.Handler.YES
-                    : handler.equals("Non") ? Player.Handler.NO : Player.Handler.MAYBE);
+            Player player = new Player(record.get(NICKNAME));
+            player.setLastName(record.get(LAST_NAME));
+            player.setFirstName(record.get(FIRST_NAME));
+            player.setEmail(record.get(EMAIL));
+            player.setClub(record.get(CLUB));
+            player.setAge(Integer.parseInt(record.get(AGE)));
+            player.setGender(record.get(GENDER).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
+            String handler = record.get(HANDLING);
+            player.setHandler(handler.equals(YES) ? Player.Handler.YES
+                    : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
 
             // Getting skills
             // Skipping the first 8 columns that we just read
@@ -66,11 +66,19 @@ public class FilePlayersParser implements PlayersParserInterface {
                 skillNumber++;
             }
             setTeamMate(allPlayers, record, player);
-            if (record.isSet("Jour")) {
-                String day = record.get("Jour");
+            if (record.isSet(DAY)) {
+                String day = record.get(DAY);
                 if (!day.equals("")) {
                     player.setDay(Integer.parseInt(day));
                 }
+            }
+            if (allPlayers.stream().anyMatch(p -> p.getEmail().equals(player.getEmail()))) {
+                System.err.println("Warning, you have several players with the same email: " + player.getEmail());
+            }
+            if (allPlayers.stream().anyMatch(p -> p.getFirstName().equals(player.getFirstName())
+                    && p.getLastName().equals(player.getLastName()))) {
+                System.err.println(String.format("Warning, you have several players with the same name: %s %s",
+                        player.getFirstName(), player.getLastName()));
             }
             allPlayers.add(player);
         }

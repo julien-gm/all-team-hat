@@ -26,6 +26,7 @@ hs_err_pid*
 # IDE
 .idea/
 all-team-hat.iml
+.cache
 
 # Project files
 tokens/
