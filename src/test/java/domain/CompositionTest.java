@@ -16,7 +16,7 @@ public class CompositionTest {
     @Test
     public void testShuffle() throws IOException {
         File csvFile = new File("src/test/resources/players.csv");
-        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), 9, 3);
 
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         int nbTeams = 3;
@@ -31,7 +31,7 @@ public class CompositionTest {
     @Test
     public void testScore() throws IOException {
         File csvFile = new File("src/test/resources/players.csv");
-        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile));
+        FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), 9, 3);
 
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         Composition composition = teamsGenerator.computeBestComposition(2, 20, 0, 0);
@@ -39,12 +39,12 @@ public class CompositionTest {
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        Assert.assertEquals(376.27, composition.getScore(), 0.1);
+        Assert.assertEquals(534.61, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
         double s2 = t2.getSkillsScore(skills);
-        Assert.assertEquals(s1, s2, 3.5);
+        Assert.assertEquals(s1, s2, 35);
         double sa1 = t1.getSkillsAverage();
         double sa2 = t2.getSkillsAverage();
         Assert.assertEquals(sa1, sa2, 0.8);
@@ -58,22 +58,22 @@ public class CompositionTest {
         FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), 7, 4);
 
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
-        Composition composition = teamsGenerator.computeBestComposition(2, 20, 200, 50);
+        Composition composition = teamsGenerator.computeBestComposition(2, 20, 0, 0);
         List<Team> teams = composition.getTeams();
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        Assert.assertEquals(668.4, composition.getScore(), 0.1);
+        Assert.assertEquals(1499.5, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
         Assert.assertEquals(30.4, ageExpected, 0.1);
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
         double s2 = t2.getSkillsScore(skills);
-        Assert.assertEquals(s1, s2, 5.5);
+        Assert.assertEquals(s1, s2, 300);
         double sa1 = t1.getSkillsAverage();
         double sa2 = t2.getSkillsAverage();
-        Assert.assertEquals(sa1, sa2, 12.0);
+        Assert.assertEquals(sa1, sa2, 1.0);
         double expectedHandlerScore = teamsGenerator.getNbHandlers();
         Assert.assertEquals(t1.getHandlerScore(expectedHandlerScore), t2.getHandlerScore(expectedHandlerScore), 0.1);
     }

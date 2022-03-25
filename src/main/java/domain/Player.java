@@ -195,6 +195,31 @@ public class Player {
         return getSkillsList().stream().mapToDouble(a -> a).average().orElse(0.0);
     }
 
+    public String getHandlerStr() {
+        switch (getHandler()) {
+        case YES:
+            return "H";
+        case MAYBE:
+            return "(h)";
+        case NO:
+            return "M";
+        }
+        return "";
+    }
+
+    public String getGenderStr() {
+        return getGender().equals(Gender.HOMME) ? "H" : "F";
+    }
+
+    public String getSkillsStr() {
+        StringBuilder stb = new StringBuilder();
+        for (double s : skillsList) {
+            stb.append(String.format(Locale.FRANCE, "\"%.2f\"", s)).append(",");
+        }
+        stb.append(String.format(Locale.FRANCE, "\"%.2f\"", getSkillAverage()));
+        return stb.toString();
+    }
+
     public enum Handler {
         YES, MAYBE, NO
     }

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>shamrock</groupId>
     <artifactId>all-team-hat</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -112,8 +112,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>CalculatorJob</mainClass>
+                            <mainClass>CalculatorUI</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

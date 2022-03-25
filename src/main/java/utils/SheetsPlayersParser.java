@@ -43,8 +43,6 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private static final int NUM_COL_FIRST_NAME = 6;
     private static final int NUM_COL_EMAIL = 7;
     private static final int NUM_COL_HANDLER = 8;
-    private static final int NUM_COL_FIRST_SKILL = 9;
-    private static final int NUM_COL_LAST_SKILL = 13;
     private static final int NUM_COL_DAY_PLAYER = 0;
     private static final int NUM_COL_TEAMMATE = 0;
 
@@ -52,6 +50,9 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String OUTPUT_SPREAD_SHEET_ID = "1MQ6api6PXTWROIlPdy0YmbG5MXft3Lg6TOpNdV5f8No";
+
+    private int firstSkillCol = 9;
+    private int lastSkillCol = 13;
 
     /**
      * Global instance of the scopes required by this project. If modifying these scopes, delete your previously saved
@@ -64,9 +65,11 @@ public class SheetsPlayersParser implements PlayersParserInterface {
     private final String range;
     private Sheets sheets;
 
-    public SheetsPlayersParser(String sheetId, String range) {
+    public SheetsPlayersParser(String sheetId, String range, int firstSkillCol, int numberOfSkill) {
         this.inputSpreadsheetId = sheetId;
         this.range = range;
+        this.firstSkillCol = firstSkillCol;
+        this.lastSkillCol = firstSkillCol + numberOfSkill;
         this.setSheets();
     }
 
@@ -126,9 +129,9 @@ public class SheetsPlayersParser implements PlayersParserInterface {
 
                         // Getting skills
                         // Skipping the first 8 columns that we just read
-                        int i = NUM_COL_FIRST_SKILL;
+                        int i = firstSkillCol;
                         double skillValue;
-                        for (int colNum = NUM_COL_FIRST_SKILL; colNum <= NUM_COL_LAST_SKILL; colNum++) {
+                        for (int colNum = firstSkillCol; colNum <= lastSkillCol; colNum++) {
                             try {
                                 skillValue = Double.parseDouble(row.get(i++).toString());
                                 player.getSkillsList().add(skillValue);

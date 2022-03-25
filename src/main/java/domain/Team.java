@@ -39,7 +39,7 @@ public class Team {
     private double getSkillScoreValue(Skill skill, double expectedValue, double skillValue) {
         double stdDev = skill.getStdDev();
         double score = getScore(expectedValue, skillValue, stdDev);
-        return score / stdDev;
+        return score * stdDev;
     }
 
     public double getSkillsScore(List<Double> expectedValues) {
@@ -57,11 +57,13 @@ public class Team {
     }
 
     public void initSkills() {
-        skills = new ArrayList<>();
-        if (getRealPlayers().size() > 0) {
-            Player firstPlayer = getRealPlayers().get(0);
-            for (int skillIndex = 0; skillIndex < firstPlayer.getSkillsList().size(); skillIndex++) {
-                skills.add(getSkillTeam(skillIndex));
+        if (skills == null || skills.isEmpty()) {
+            skills = new ArrayList<>();
+            if (getRealPlayers().size() > 0) {
+                Player firstPlayer = getRealPlayers().get(0);
+                for (int skillIndex = 0; skillIndex < firstPlayer.getSkillsList().size(); skillIndex++) {
+                    skills.add(getSkillTeam(skillIndex));
+                }
             }
         }
     }
@@ -99,7 +101,7 @@ public class Team {
     }
 
     private double getScore(double expectedScore, double actualScore, double stdDev) {
-        return (Math.abs(expectedScore - actualScore) / stdDev) / (expectedScore / 10);
+        return (Math.abs(expectedScore - actualScore) * stdDev) / (expectedScore / 10);
     }
 
     public void add(Player player) {
@@ -173,6 +175,29 @@ public class Team {
         return stb.toString();
     }
 
+    public String toCSV() {
+        StringBuilder stb = new StringBuilder();
+        stb.append("Poste,Genre,Prenom,Nom,Pseudo,Age,");
+        for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
+            stb.append("skill_").append(skillIndex + 1).append(",");
+        }
+        stb.append("Moyenne compétence,Club,Jour\n");
+        for (Player p : getRealPlayers()) {
+            stb.append(String.format("%s,%s,%s,%s,%s,%d,%s,%s,%d\n", p.getHandlerStr(), p.getGenderStr(),
+                    p.getFirstName(), p.getLastName(), p.getNickName(), (int) p.getAge(), p.getSkillsStr(), p.getClub(),
+                    p.getDay()));
+        }
+        int i = getRealPlayers().size() + 1;
+        StringBuilder skillsAvgStr = new StringBuilder();
+        char col = 'G';
+        for (int skillIndex = 0; skillIndex <= skills.size(); skillIndex++) {
+            skillsAvgStr.append(String.format("=AVERAGE(%c2:%c%d),", col, col, i));
+            col++;
+        }
+        stb.append(String.format(",,,,,=AVERAGE(F2:F%d),", i)).append(skillsAvgStr);
+        return stb.toString();
+    }
+
     private double getSkillsStdDev() {
         double teamSportAverage = getSkillsAverage();
         return getRealPlayers().stream().mapToDouble(player -> Math.abs(teamSportAverage - player.getSkillAverage()))
@@ -202,11 +227,10 @@ public class Team {
         return Math.abs(pExpectedStdDev - skillsStdDev) * STD_DEV_COEFF;
     }
 
-    public double getStandardDeviation(List<Double> pExpectedScores) {
-        double teamSportAverage = getSkillsScore(pExpectedScores);
-        return getRealPlayers().stream()
-                .mapToDouble(player -> Math.abs(teamSportAverage - player.getSkillScore(pExpectedScores))).average()
-                .orElse(0);
+    public double getStandardDeviation() {
+        double teamSportAverage = getSkillsAverage();
+        return getRealPlayers().stream().mapToDouble(player -> Math.abs(teamSportAverage - player.getSkillAverage()))
+                .average().orElse(0);
     }
 
     double getSkillsAverage() {

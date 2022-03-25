@@ -11,13 +11,21 @@ Generates as much as possible the most balanced distribution of players between 
 
 ### With file
 
+#### Using the CLI
 ```bash
 $ mvn clean package
-$ java -jar target/all-team-hat-1.0.0.jar CalculatorJob --nbTeams=6 --nbRuns=20 -file my_file.csv
+$ java -jar target/all-team-hat-2.2.0.jar CalculatorJob --nbTeams=6 --nbRuns=20 -file my_file.csv
+```
+
+#### Using the UI
+You can either download the latest release or package it using `maven`.
+```bash
+$ java -jar target/all-team-hat-2.2.0-jar-with-dependencies.jar CalculatorUI
 ```
 
 ### With Google spreadsheet
 
+#### /!\ Not working for the moment !
 1. Retrieve your `credentials.json` following the step 1 on [this page](https://developers.google.com/sheets/api/quickstart/java).
 1. Add it to the folder `src/main/resources/`
 1. Retrieve your `sheetid`
