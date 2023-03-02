@@ -51,16 +51,13 @@ public class TeamsCalculator {
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
                 + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviationScore(expectedStdDev)
-                + team.getAgeScore(expectedAge);
+                + team.getAgeScore(expectedAge) + team.getNumberOfPlayersScore(expectedNumberOfPlayers);
     }
 
     public double compute(List<Team> teams) {
-        double sumScore = 0;
-        for (int day = 1; day <= 2; day++) {
-            int finalDay = day;
-            sumScore += teams.stream().mapToDouble(t -> computeForDay(teams, finalDay)).min().orElse(0);
-        }
-        return sumScore;
+        double scoreDayOne = teams.stream().mapToDouble(t -> computeForDay(teams, 1)).min().orElse(0);
+        double scoreDayTwo = teams.stream().mapToDouble(t -> computeForDay(teams, 2)).min().orElse(0);
+        return scoreDayOne + scoreDayTwo + (2 * Math.abs(scoreDayTwo - scoreDayOne));
     }
 
     public double computeForDay(List<Team> teams, int day) {

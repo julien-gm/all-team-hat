@@ -75,10 +75,12 @@ public class FilePlayersParser implements PlayersParserInterface {
             if (allPlayers.stream().anyMatch(p -> p.getEmail().equals(player.getEmail()))) {
                 System.err.println("Warning, you have several players with the same email: " + player.getEmail());
             }
-            if (allPlayers.stream().anyMatch(p -> p.getFirstName().equals(player.getFirstName())
-                    && p.getLastName().equals(player.getLastName()))) {
-                System.err.println(String.format("Warning, you have several players with the same name: %s %s",
-                        player.getFirstName(), player.getLastName()));
+            if (allPlayers.stream()
+                    .anyMatch(p -> (p.getFirstName().equals(player.getFirstName())
+                            && p.getLastName().equals(player.getLastName()))
+                            || p.getNickName().equals(player.getNickName()))) {
+                System.err.println(String.format("Warning, you have several players with the same name: %s %s (%s)",
+                        player.getFirstName(), player.getLastName(), player.getNickName()));
             }
             allPlayers.add(player);
         }
@@ -93,8 +95,8 @@ public class FilePlayersParser implements PlayersParserInterface {
             for (Team t : bestComposition.getTeams()) {
                 String fileName = String.format("run_%s_team_%d.csv", runtime, teamIndex);
                 FileWriter fw = new FileWriter(fileName);
+                fw.write(t.toCSV(bestComposition.getTeams(), teamIndex));
                 teamIndex++;
-                fw.write(t.toCSV());
                 fw.close();
             }
             FileWriter fw = new FileWriter(String.format("run_%s_info.txt", runtime));
@@ -103,7 +105,6 @@ public class FilePlayersParser implements PlayersParserInterface {
             System.err.println("Unable to write composition");
             System.err.println(e.getMessage());
             System.out.println(bestComposition);
-
         }
     }
 

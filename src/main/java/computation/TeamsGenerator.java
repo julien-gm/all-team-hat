@@ -2,9 +2,11 @@ package computation;
 
 import domain.Composition;
 import domain.Player;
+import domain.Skill;
 import domain.Team;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ public class TeamsGenerator {
 
     private static final int LOCAL_NUMBER_OF_OPTIMIZATION = 50;
     private List<Player> players;
+    private static int NORMALIZED_SKILL_MAX_VALUE = 10;
 
     public TeamsGenerator(List<Player> players) {
         this.players = players;
@@ -28,7 +31,7 @@ public class TeamsGenerator {
     public int getExpectedPlayersByTeam(int nbTeam) {
         long nbPlayerDay1 = players.stream().filter(p -> p.playsTheSameDay(1)).count();
         long nbPlayerDay2 = players.stream().filter(p -> p.playsTheSameDay(2)).count();
-        return (int) Math.ceil(Math.max(nbPlayerDay1, nbPlayerDay2) / (double) nbTeam);
+        return (int) Math.round(Math.max(nbPlayerDay1, nbPlayerDay2) / (double) nbTeam);
     }
 
     public List<Team> initTeams(int nbTeams) {
@@ -42,19 +45,50 @@ public class TeamsGenerator {
             boysTeams.add(new Team(new ArrayList<>()));
             teams.add(new Team(new ArrayList<>()));
         }
-        int playerNumber = initTeam(nbTeams, girlsTeams, 0, Player.Gender.FEMME);
-        initTeam(nbTeams, boysTeams, playerNumber, Player.Gender.HOMME);
+        normalizeSkillsFor(players);
+        int playerNumber = initTeamByGender(nbTeams, girlsTeams, 0, Player.Gender.FEMME);
+        initTeamByGender(nbTeams, boysTeams, playerNumber, Player.Gender.HOMME);
         Composition girlsCompo = new Composition(girlsTeams);
         Composition boysCompos = new Composition(boysTeams);
         fillTeams(nbTeams, numberOfPlayersByTeam, teams, girlsCompo, boysCompos);
         return teams;
     }
 
-    private int initTeam(int nbTeams, List<Team> boysTeams, int playerNumber, Player.Gender gender) {
-        for (Player boy : getPlayersFromGender(gender)) {
-            Team playerTeam = boysTeams.get(playerNumber % nbTeams);
+    private void normalizeSkillsFor(List<Player> players) {
+        List<Player> realPlayers = players.stream().filter(Player::isReal).collect(Collectors.toList());
+        Player firstRealPlayer = realPlayers.get(0);
+        List<List<Double>> skillsValues = new ArrayList<>();
+        for (int i = 0; i < firstRealPlayer.getSkillsList().size(); ++i) {
+            Double minValue = Double.MAX_VALUE;
+            Double maxValue = 0.d;
+            for (Player p : players) {
+                minValue = Math.min(minValue, p.getSkillsList().get(i));
+                maxValue = Math.max(maxValue, p.getSkillsList().get(i));
+            }
+            skillsValues.add(Arrays.asList(minValue, maxValue));
+        }
+        for (Player p : players) {
+            List<Double> newSkills = new ArrayList<>();
+            int index = 0;
+            for (Double skillValue : p.getSkillsList()) {
+                if (skillsValues.get(index).get(1) < NORMALIZED_SKILL_MAX_VALUE) {
+                    newSkills.add(skillValue);
+                } else {
+                    Double minValue = skillsValues.get(index).get(0);
+                    newSkills.add(((double) (skillValue - minValue) / (skillsValues.get(index).get(1) - minValue))
+                            * NORMALIZED_SKILL_MAX_VALUE);
+                }
+                index++;
+            }
+            p.setSkillsList(newSkills);
+        }
+    }
+
+    private int initTeamByGender(int nbTeams, List<Team> genderTeams, int playerNumber, Player.Gender gender) {
+        for (Player player : getPlayersFromGender(gender)) {
+            Team playerTeam = genderTeams.get(playerNumber % nbTeams);
             playerNumber++;
-            playerTeam.add(boy);
+            playerTeam.add(player);
         }
         return playerNumber;
     }

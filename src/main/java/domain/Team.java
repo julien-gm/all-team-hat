@@ -15,6 +15,7 @@ public class Team {
     private static final int HANDLER_SCORE_COEFF = 10;
     private static final double CLUB_SCORE_COEFF = 20;
     public static final int STD_DEV_COEFF = 20;
+    public static final int NUMBER_OF_PLAYERS_BY_DAY_COEFF = 200;
 
     private final TeamsGenerator teamGenerator;
 
@@ -26,10 +27,6 @@ public class Team {
         this.players = players;
         this.teamGenerator = new TeamsGenerator(players);
         initSkills();
-    }
-
-    private int getNbPlayers() {
-        return getRealPlayers().size();
     }
 
     public double getGirlScore(double expectedGirlNumber) {
@@ -175,9 +172,9 @@ public class Team {
         return stb.toString();
     }
 
-    public String toCSV() {
+    public String toCSV(List<Team> teams, int teamNumber) {
         StringBuilder stb = new StringBuilder();
-        stb.append("Poste,Genre,Prenom,Nom,Pseudo,Age,");
+        stb.append(String.format("Team #%d\nPoste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
         for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
             stb.append("skill_").append(skillIndex + 1).append(",");
         }
@@ -187,14 +184,27 @@ public class Team {
                     p.getFirstName(), p.getLastName(), p.getNickName(), (int) p.getAge(), p.getSkillsStr(), p.getClub(),
                     p.getDay()));
         }
-        int i = getRealPlayers().size() + 1;
+        int nbOfHeaderLines = 2;
+        int blankLines = 1;
+        int firstLineNumber = nbOfHeaderLines + 1;
+        for (int i = 1; i < teamNumber; i++) {
+            firstLineNumber += teams.get(i - 1).getRealPlayers().size() + blankLines + nbOfHeaderLines + 1;
+        }
+        int lastLineNumber = firstLineNumber + getRealPlayers().size() - 1;
         StringBuilder skillsAvgStr = new StringBuilder();
         char col = 'G';
         for (int skillIndex = 0; skillIndex <= skills.size(); skillIndex++) {
-            skillsAvgStr.append(String.format("=AVERAGE(%c2:%c%d),", col, col, i));
+            skillsAvgStr.append(String.format("=AVERAGE(%c%d:%c%d),", col, firstLineNumber, col, lastLineNumber));
             col++;
         }
-        stb.append(String.format(",,,,,=AVERAGE(F2:F%d),", i)).append(skillsAvgStr);
+        stb.append(String.format(
+                "=COUNTIF(A%d:A%d;\"H\"),=A%d+COUNTIF(A%d:A%d;\"(h)\"),=COUNTIF(B%d:B%d;\"F\"),,,=AVERAGE(F%d:F%d),",
+                firstLineNumber, lastLineNumber, lastLineNumber + 1, firstLineNumber, lastLineNumber, firstLineNumber,
+                lastLineNumber, firstLineNumber, lastLineNumber));
+        stb.append(skillsAvgStr);
+        stb.append(String.format("=ARRAYFORMULA(MAX(COUNTIF(%c%d:%c%d;%c%d:%c%d))),%d,%d\n\n", col, firstLineNumber,
+                col, lastLineNumber, col, firstLineNumber, col, lastLineNumber, getPlayersForDay(1).size(),
+                getPlayersForDay(2).size()));
         return stb.toString();
     }
 
@@ -267,5 +277,10 @@ public class Team {
 
     public List<Player> getRealPlayers() {
         return players.stream().filter(Player::isReal).collect(Collectors.toList());
+    }
+
+    public double getNumberOfPlayersScore(double expectedNumberOfPlayers) {
+        return NUMBER_OF_PLAYERS_BY_DAY_COEFF * (Math.abs(this.getPlayersForDay(1).size() - expectedNumberOfPlayers)
+                + Math.abs(this.getPlayersForDay(2).size() - expectedNumberOfPlayers));
     }
 }

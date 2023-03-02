@@ -93,10 +93,12 @@ public class TeamTest {
     @Test
     public void testToCSV() {
         Assert.assertEquals(
-                "Poste,Genre,Prenom,Nom,Pseudo,Age,skill_1,skill_2,skill_3,Moyenne compétence,Club,Jour\n"
+                "Team #1\nPoste,Genre,Prenom,Nom,Pseudo,Age,skill_1,skill_2,skill_3,Moyenne compétence,Club,Jour\n"
                         + "H,F,Pré,Nom,nickie,20,\"7,00\",\"6,00\",\"8,00\",\"7,00\",test,1\n"
                         + "(h),H,first,last,nick,30,\"8,00\",\"9,00\",\"7,00\",\"8,00\",test,0\n"
-                        + ",,,,,=AVERAGE(F2:F3),=AVERAGE(G2:G3),=AVERAGE(H2:H3),=AVERAGE(I2:I3),=AVERAGE(J2:J3),",
-                team.toCSV());
+                        + "=COUNTIF(A3:A4;\"H\"),=A5+COUNTIF(A3:A4;\"(h)\"),=COUNTIF(B3:B4;\"F\"),"
+                        + ",,=AVERAGE(F3:F4),=AVERAGE(G3:G4),=AVERAGE(H3:H4),=AVERAGE(I3:I4),=AVERAGE(J3:J4),"
+                        + "=ARRAYFORMULA(MAX(COUNTIF(K3:K4;K3:K4))),2,1\n\n",
+                team.toCSV(Arrays.asList(team), 1));
     }
 }
