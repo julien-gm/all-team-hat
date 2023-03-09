@@ -16,7 +16,7 @@ public class TeamsCalculator {
 
     private final double expectedNumberOfMixedHandlers;
 
-    public final double expectedNumberOfPlayers;
+    public final List<Double> expectedNumberOfPlayersForDays;
 
     private final double expectedStdDev;
 
@@ -25,14 +25,14 @@ public class TeamsCalculator {
     private final Map<String, Double> expectedClubsScore;
 
     TeamsCalculator(List<Double> pExpectedScores, double expectedNumberOfNoHandlers, double expectedNumberOfHandlers,
-            double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore, double expectedNumberOfPlayers,
-            double expectedStdDev, double expectedAge) {
+            double expectedNumberOfMaybeHandlers, Map<String, Double> expectedClubScore,
+            List<Double> expectedNumberOfPlayersForDays, double expectedStdDev, double expectedAge) {
         expectedScores = pExpectedScores;
         this.expectedNumberOfNoHandlers = expectedNumberOfNoHandlers;
         this.expectedNumberOfHandlers = expectedNumberOfHandlers;
         this.expectedNumberOfMixedHandlers = expectedNumberOfMaybeHandlers;
         this.expectedClubsScore = expectedClubScore;
-        this.expectedNumberOfPlayers = expectedNumberOfPlayers;
+        this.expectedNumberOfPlayersForDays = expectedNumberOfPlayersForDays;
         this.expectedStdDev = expectedStdDev;
         this.expectedAge = expectedAge;
     }
@@ -51,13 +51,23 @@ public class TeamsCalculator {
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
                 + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
                 + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviationScore(expectedStdDev)
-                + team.getAgeScore(expectedAge) + team.getNumberOfPlayersScore(expectedNumberOfPlayers);
+                + team.getAgeScore(expectedAge);
     }
 
-    public double compute(List<Team> teams) {
+    public double compute(List<Team> teams, double invalidTeamPenalty) {
         double scoreDayOne = teams.stream().mapToDouble(t -> computeForDay(teams, 1)).min().orElse(0);
         double scoreDayTwo = teams.stream().mapToDouble(t -> computeForDay(teams, 2)).min().orElse(0);
-        return scoreDayOne + scoreDayTwo + (2 * Math.abs(scoreDayTwo - scoreDayOne));
+        return (isValid(teams) ? 0 : invalidTeamPenalty) + scoreDayOne + scoreDayTwo
+                + (2 * Math.abs(scoreDayTwo - scoreDayOne));
+    }
+
+    public boolean isValid(List<Team> teams) {
+        for (int day = 1; day <= 2; day++) {
+            if (!numberOfPlayersPerTeamIsValidForDay(day, teams) || !numberOfClubsPerTeamIsValidForDay(day, teams)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public double computeForDay(List<Team> teams, int day) {
@@ -69,12 +79,10 @@ public class TeamsCalculator {
     }
 
     public boolean numberOfPlayersPerTeamIsValidForDay(int day, List<Team> teams) {
+        double numberOfPlayers = expectedNumberOfPlayersForDays.get(day - 1);
         for (Team team : teams) {
             int nbPlayers = team.getPlayersForDay(day).size();
-            if (nbPlayers < (expectedNumberOfPlayers - 1) || nbPlayers > expectedNumberOfPlayers) {
-                return false;
-            }
-            if (nbPlayers <= (team.getRealPlayers().size() - 2)) {
+            if (nbPlayers < Math.floor(numberOfPlayers) || nbPlayers > Math.ceil(numberOfPlayers)) {
                 return false;
             }
         }

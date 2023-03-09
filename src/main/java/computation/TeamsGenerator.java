@@ -1,10 +1,5 @@
 package computation;
 
-import domain.Composition;
-import domain.Player;
-import domain.Skill;
-import domain.Team;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -13,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
+
+import domain.Composition;
+import domain.Player;
+import domain.Team;
 
 public class TeamsGenerator {
 
@@ -28,10 +27,10 @@ public class TeamsGenerator {
         return (int) Math.ceil(players.size() / (double) nbTeam);
     }
 
-    public int getExpectedPlayersByTeam(int nbTeam) {
+    public List<Double> getExpectedPlayersByTeam(int nbTeam) {
         long nbPlayerDay1 = players.stream().filter(p -> p.playsTheSameDay(1)).count();
         long nbPlayerDay2 = players.stream().filter(p -> p.playsTheSameDay(2)).count();
-        return (int) Math.round(Math.max(nbPlayerDay1, nbPlayerDay2) / (double) nbTeam);
+        return Arrays.asList((double) nbPlayerDay1 / nbTeam, (double) nbPlayerDay2 / nbTeam);
     }
 
     public List<Team> initTeams(int nbTeams) {

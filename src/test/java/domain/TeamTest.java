@@ -93,12 +93,13 @@ public class TeamTest {
     @Test
     public void testToCSV() {
         Assert.assertEquals(
-                "Team #1\nPoste,Genre,Prenom,Nom,Pseudo,Age,skill_1,skill_2,skill_3,Moyenne compétence,Club,Jour\n"
-                        + "H,F,Pré,Nom,nickie,20,\"7,00\",\"6,00\",\"8,00\",\"7,00\",test,1\n"
-                        + "(h),H,first,last,nick,30,\"8,00\",\"9,00\",\"7,00\",\"8,00\",test,0\n"
-                        + "=COUNTIF(A3:A4;\"H\"),=A5+COUNTIF(A3:A4;\"(h)\"),=COUNTIF(B3:B4;\"F\"),"
-                        + ",,=AVERAGE(F3:F4),=AVERAGE(G3:G4),=AVERAGE(H3:H4),=AVERAGE(I3:I4),=AVERAGE(J3:J4),"
-                        + "=ARRAYFORMULA(MAX(COUNTIF(K3:K4;K3:K4))),2,1\n\n",
+                "Team #1\n#,Poste,Genre,Prenom,Nom,Pseudo,Age,skill_1,skill_2,skill_3,Moyenne compétence,Club,Jour\n"
+                        + "1,H,F,Pré,Nom,nickie,20,\"7,00\",\"6,00\",\"8,00\",\"7,00\",test,1\n"
+                        + "2,(h),H,first,last,nick,30,\"8,00\",\"9,00\",\"7,00\",\"8,00\",test,0\n"
+                        + "=COUNTIF(B3:B4;\"H\"),=A5+COUNTIF(B3:B4;\"(h)\"),=COUNTIF(C3:C4;\"F\"),"
+                        + ",,,=ROUND(AVERAGE(G6:G7); 2),=ROUND(AVERAGE(H6:H7); 2),=ROUND(AVERAGE(I6:I7); 2),=ROUND(AVERAGE(J6:J7); 2),=ROUND(AVERAGE(K6:K7); 2),"
+                        + "=ARRAYFORMULA(MAX(COUNTIF(L3:L4;L3:L4))),2\n1,2,1,,,,\"25,00\",\"7,50\",\"7,50\",\"7,50\",\"7,50\",2,2\n"
+                        + "0,1,0,,,,\"30,00\",\"8,00\",\"9,00\",\"7,00\",\"8,00\",1,1\n\n",
                 team.toCSV(Arrays.asList(team), 1));
     }
 }

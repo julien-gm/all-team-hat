@@ -92,15 +92,22 @@ public class FilePlayersParser implements PlayersParserInterface {
         try {
             int teamIndex = 1;
             String runtime = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+            String teams = "";
             for (Team t : bestComposition.getTeams()) {
                 String fileName = String.format("run_%s_team_%d.csv", runtime, teamIndex);
                 FileWriter fw = new FileWriter(fileName);
-                fw.write(t.toCSV(bestComposition.getTeams(), teamIndex));
+                String teamCSV = t.toCSV(bestComposition.getTeams(), teamIndex);
+                teams += teamCSV;
+                fw.write(teamCSV);
                 teamIndex++;
                 fw.close();
             }
-            FileWriter fw = new FileWriter(String.format("run_%s_info.txt", runtime));
+            FileWriter fw = new FileWriter(String.format("run_%s_teams.csv", runtime));
+            fw.write(teams);
+            fw.close();
+            fw = new FileWriter(String.format("run_%s_info.txt", runtime));
             fw.write(toString());
+            fw.close();
         } catch (IOException e) {
             System.err.println("Unable to write composition");
             System.err.println(e.getMessage());

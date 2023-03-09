@@ -1,12 +1,17 @@
 package domain;
 
-import computation.TeamsGenerator;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import computation.TeamsGenerator;
+import domain.Player.Gender;
+import domain.Player.Handler;
 
 public class Team {
 
@@ -174,37 +179,67 @@ public class Team {
 
     public String toCSV(List<Team> teams, int teamNumber) {
         StringBuilder stb = new StringBuilder();
-        stb.append(String.format("Team #%d\nPoste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
+        stb.append(String.format("Team #%d\n#,Poste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
         for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
             stb.append("skill_").append(skillIndex + 1).append(",");
         }
         stb.append("Moyenne compétence,Club,Jour\n");
+        int index = 0;
         for (Player p : getRealPlayers()) {
-            stb.append(String.format("%s,%s,%s,%s,%s,%d,%s,%s,%d\n", p.getHandlerStr(), p.getGenderStr(),
+            index++;
+            stb.append(String.format("%d,%s,%s,%s,%s,%s,%d,%s,%s,%d\n", index, p.getHandlerStr(), p.getGenderStr(),
                     p.getFirstName(), p.getLastName(), p.getNickName(), (int) p.getAge(), p.getSkillsStr(), p.getClub(),
                     p.getDay()));
         }
         int nbOfHeaderLines = 2;
-        int blankLines = 1;
+        int blankLines = 3;
         int firstLineNumber = nbOfHeaderLines + 1;
         for (int i = 1; i < teamNumber; i++) {
             firstLineNumber += teams.get(i - 1).getRealPlayers().size() + blankLines + nbOfHeaderLines + 1;
         }
         int lastLineNumber = firstLineNumber + getRealPlayers().size() - 1;
         StringBuilder skillsAvgStr = new StringBuilder();
-        char col = 'G';
+        char col = 'H';
         for (int skillIndex = 0; skillIndex <= skills.size(); skillIndex++) {
-            skillsAvgStr.append(String.format("=AVERAGE(%c%d:%c%d),", col, firstLineNumber, col, lastLineNumber));
+            skillsAvgStr.append(
+                    String.format("=ROUND(AVERAGE(%c%d:%c%d); 2),", col, lastLineNumber + 2, col, lastLineNumber + 3));
             col++;
         }
         stb.append(String.format(
-                "=COUNTIF(A%d:A%d;\"H\"),=A%d+COUNTIF(A%d:A%d;\"(h)\"),=COUNTIF(B%d:B%d;\"F\"),,,=AVERAGE(F%d:F%d),",
+                "=COUNTIF(B%d:B%d;\"H\"),=A%d+COUNTIF(B%d:B%d;\"(h)\"),=COUNTIF(C%d:C%d;\"F\"),,,,=ROUND(AVERAGE(G%d:G%d); 2),",
                 firstLineNumber, lastLineNumber, lastLineNumber + 1, firstLineNumber, lastLineNumber, firstLineNumber,
-                lastLineNumber, firstLineNumber, lastLineNumber));
+                lastLineNumber, lastLineNumber + 2, lastLineNumber + 3));
         stb.append(skillsAvgStr);
-        stb.append(String.format("=ARRAYFORMULA(MAX(COUNTIF(%c%d:%c%d;%c%d:%c%d))),%d,%d\n\n", col, firstLineNumber,
-                col, lastLineNumber, col, firstLineNumber, col, lastLineNumber, getPlayersForDay(1).size(),
-                getPlayersForDay(2).size()));
+        stb.append(String.format("=ARRAYFORMULA(MAX(COUNTIF(%c%d:%c%d;%c%d:%c%d))),%d\n", col, firstLineNumber, col,
+                lastLineNumber, col, firstLineNumber, col, lastLineNumber, getRealPlayers().size()));
+        for (Integer day : Arrays.asList(1, 2)) {
+            List<Player> dayPlayers = this.getPlayersForDay(day);
+            long nbHandlers = dayPlayers.stream().filter(p -> p.getHandler().equals(Handler.YES)).count();
+            long nbTotalHandlers = dayPlayers.stream().filter(p -> !p.getHandler().equals(Handler.NO)).count();
+            long nbGirls = dayPlayers.stream().filter(p -> p.getGender().equals(Gender.FEMME)).count();
+            double ageAverage = dayPlayers.stream().mapToDouble(Player::getAge).average().orElse(0);
+            stb.append(String.format("%d,%d,%d,,,,\"%.2f\",", nbHandlers, nbTotalHandlers, nbGirls, ageAverage));
+            for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
+                final int skillI = skillIndex;
+                stb.append(String.format("\"%.2f\",",
+                        dayPlayers.stream().mapToDouble(p -> p.getSkillsList().get(skillI)).average().orElse(0)));
+            }
+            stb.append(String.format("\"%.2f\",",
+                    dayPlayers.stream()
+                            .mapToDouble(p -> p.getSkillsList().stream().mapToDouble(s -> s).average().orElse(0))
+                            .average().orElse(0)));
+            List<String> listClubs = dayPlayers.stream().map(Player::getClub).collect(Collectors.toList());
+            int maxClubOccurence = 0;
+            for (String club : new HashSet<String>(listClubs)) {
+                int clubOccurence = Collections.frequency(listClubs, club);
+                if (clubOccurence > maxClubOccurence) {
+                    maxClubOccurence = clubOccurence;
+                }
+            }
+
+            stb.append(String.format("%d,%d\n", maxClubOccurence, dayPlayers.size()));
+        }
+        stb.append("\n");
         return stb.toString();
     }
 
@@ -277,10 +312,5 @@ public class Team {
 
     public List<Player> getRealPlayers() {
         return players.stream().filter(Player::isReal).collect(Collectors.toList());
-    }
-
-    public double getNumberOfPlayersScore(double expectedNumberOfPlayers) {
-        return NUMBER_OF_PLAYERS_BY_DAY_COEFF * (Math.abs(this.getPlayersForDay(1).size() - expectedNumberOfPlayers)
-                + Math.abs(this.getPlayersForDay(2).size() - expectedNumberOfPlayers));
     }
 }
