@@ -13,7 +13,7 @@ public class Composition {
 
     private int teammatePenalty = 50;
 
-    private int invalidTeamPenalty = 200;
+    private int invalidTeamPenalty = 20000;
 
     private TeamsCalculator teamCalculator = null;
 
@@ -31,7 +31,7 @@ public class Composition {
         this.teamCalculator = teamCalculator;
         this.invalidTeamPenalty = invalidTeamPenalty;
         this.teammatePenalty = teammatePenalty;
-        score = teamCalculator.compute(teams);
+        score = teamCalculator.compute(teams, invalidTeamPenalty);
     }
 
     public double getScore() {
@@ -147,16 +147,10 @@ public class Composition {
     }
 
     public double getScoreForDay(int day) {
-        return teamCalculator.computeForDay(teams, day);
+        return (isValid() ? 0 : invalidTeamPenalty) + teamCalculator.computeForDay(teams, day);
     }
 
     public boolean isValid() {
-        for (int day = 1; day <= 2; day++) {
-            if (!teamCalculator.numberOfPlayersPerTeamIsValidForDay(day, teams)
-                    || !teamCalculator.numberOfClubsPerTeamIsValidForDay(day, teams)) {
-                return false;
-            }
-        }
-        return true;
+        return teamCalculator.isValid(teams);
     }
 }

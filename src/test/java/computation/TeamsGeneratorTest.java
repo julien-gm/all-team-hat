@@ -64,8 +64,8 @@ public class TeamsGeneratorTest {
 
     @Test
     public void testGetExpectedPlayersByTeam() {
-        Assert.assertEquals(2, teamGenerator.getExpectedPlayersByTeam(2));
-        Assert.assertEquals(4, teamGenerator.getExpectedPlayersByTeam(1));
+        Assert.assertEquals(Arrays.asList(2.0, 2.0), teamGenerator.getExpectedPlayersByTeam(2));
+        Assert.assertEquals(Arrays.asList(4.0, 4.0), teamGenerator.getExpectedPlayersByTeam(1));
     }
 
     @Test
