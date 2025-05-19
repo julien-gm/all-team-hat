@@ -50,10 +50,6 @@ public class Player {
         return this.real;
     }
 
-    public void setReal(boolean real) {
-        this.real = real;
-    }
-
     public double getAge() {
         return this.age;
     }
@@ -150,32 +146,12 @@ public class Player {
         return playsTheSameDay(p.getDay());
     }
 
-    public boolean playsTheSamesDay(Player p) {
-        return p.getDay() == this.getDay();
-    }
-
     public boolean playsTheSameDay(int day) {
         return this.getDay() == 0 || day == 0 || this.getDay() == day;
     }
 
-    public List<Double> getSportScores(List<Double> expectedScores) {
-        List<Double> scores = new ArrayList<>();
-        for (int i = 0; i < this.skillsList.size(); i++) {
-            scores.add(this.score(this.skillsList.get(i), expectedScores.get(i)));
-        }
-        return scores;
-    }
-
-    public double getSkillScore(List<Double> pExpectedScores) {
-        return getSportScores(pExpectedScores).stream().mapToDouble(Double::doubleValue).sum();
-    }
-
     public boolean hasTeamMate() {
         return teamMate != null && teamMate != Team.fakePlayer;
-    }
-
-    private double score(double value, double expected) {
-        return Math.abs(value - expected);
     }
 
     @Override
@@ -183,10 +159,11 @@ public class Player {
         if (!this.isReal()) {
             return "";
         }
-        double sport = skillsList.stream().mapToDouble(Double::doubleValue).sum() / skillsList.size();
+        // double sport = skillsList.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+        double sport = skillsList.get(skillsList.size()-1);
         return (handler.equals(Handler.YES) ? "H " : (handler.equals(Handler.MAYBE) ? "(H) " : ""))
                 + String.format(Locale.FRANCE, "%s %s%s [%s] (%d) score %.2f - %s", firstName, lastName,
-                        (nickName != null && !nickName.equals("")) ? " (" + nickName + ")" : "",
+                        (nickName != null && !nickName.isEmpty()) ? " (" + nickName + ")" : "",
                         (gender.equals(Gender.HOMME) ? "H" : "F"), age, sport, club)
                 + ((day != 0) ? String.format(" (playing day %d only)", day) : "");
     }
@@ -218,6 +195,18 @@ public class Player {
         }
         stb.append(String.format(Locale.FRANCE, "\"%.2f\"", getSkillAverage()));
         return stb.toString();
+    }
+
+    public boolean isHandler() {
+        return getHandler().equals(Handler.YES);
+    }
+
+    public boolean canBeHandler() {
+        return !getHandler().equals(Handler.NO);
+    }
+
+    public boolean isGirl() {
+        return getGender().equals(Gender.FEMME);
     }
 
     public enum Handler {

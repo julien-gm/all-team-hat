@@ -79,7 +79,7 @@ public class TeamTest {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("", 1.0);
         expectedClubScore.put("test", 1.0);
-        Assert.assertEquals(20.0, team.getClubScore(expectedClubScore), 0.0001);
+        Assert.assertEquals(100.0, team.getClubScore(expectedClubScore), 0.0001);
     }
 
     @Test
@@ -97,9 +97,8 @@ public class TeamTest {
                         + "1,H,F,Pré,Nom,nickie,20,\"7,00\",\"6,00\",\"8,00\",\"7,00\",test,1\n"
                         + "2,(h),H,first,last,nick,30,\"8,00\",\"9,00\",\"7,00\",\"8,00\",test,0\n"
                         + "=COUNTIF(B3:B4;\"H\"),=A5+COUNTIF(B3:B4;\"(h)\"),=COUNTIF(C3:C4;\"F\"),"
-                        + ",,,=ROUND(AVERAGE(G6:G7); 2),=ROUND(AVERAGE(H6:H7); 2),=ROUND(AVERAGE(I6:I7); 2),=ROUND(AVERAGE(J6:J7); 2),=ROUND(AVERAGE(K6:K7); 2),"
-                        + "=ARRAYFORMULA(MAX(COUNTIF(L3:L4;L3:L4))),2\n1,2,1,,,,\"25,00\",\"7,50\",\"7,50\",\"7,50\",\"7,50\",2,2\n"
-                        + "0,1,0,,,,\"30,00\",\"8,00\",\"9,00\",\"7,00\",\"8,00\",1,1\n\n",
+                        + ",,,=ROUND(AVERAGE(G3:G4); 2),=ROUND(AVERAGE(H3:H4); 2),=ROUND(AVERAGE(I3:I4); 2),=ROUND(AVERAGE(J3:J4); 2),=ROUND(AVERAGE(K3:K4); 2),"
+                        + "=ARRAYFORMULA(MAX(COUNTIF(L3:L4;L3:L4))),2\n\"1,00\",\"2,00\",\"1,00\",,,,\"25,00\",\"7,50\",\"7,50\",\"7,50\",\"7,50\"\n\n",
                 team.toCSV(Arrays.asList(team), 1));
     }
 }

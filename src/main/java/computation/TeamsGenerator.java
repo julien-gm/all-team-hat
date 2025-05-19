@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import domain.Composition;
 import domain.Player;
@@ -16,18 +17,23 @@ import domain.Team;
 public class TeamsGenerator {
 
     private static final int LOCAL_NUMBER_OF_OPTIMIZATION = 50;
-    private List<Player> players;
+    private final List<Player> players;
     private static int NORMALIZED_SKILL_MAX_VALUE = 10;
 
     public TeamsGenerator(List<Player> players) {
         this.players = players;
     }
 
-    public int getNumberOfPlayersByTeam(int nbTeam) {
-        return (int) Math.ceil(players.size() / (double) nbTeam);
+    public int getNumberOfPlayersByTeam(double nbTeam) {
+        int nbPlayers = 0;
+        for (int day : Arrays.asList(1, 2)) {
+            double nbPlayersForDay = players.stream().filter(p -> p.playsTheSameDay(day)).count();
+            nbPlayers = Math.max(nbPlayers, (int) Math.ceil(nbPlayersForDay / nbTeam));
+        }
+        return nbPlayers;
     }
 
-    public List<Double> getExpectedPlayersByTeam(int nbTeam) {
+    public List<Double> getExpectedPlayersByTeam(double nbTeam) {
         long nbPlayerDay1 = players.stream().filter(p -> p.playsTheSameDay(1)).count();
         long nbPlayerDay2 = players.stream().filter(p -> p.playsTheSameDay(2)).count();
         return Arrays.asList((double) nbPlayerDay1 / nbTeam, (double) nbPlayerDay2 / nbTeam);
@@ -35,16 +41,16 @@ public class TeamsGenerator {
 
     public List<Team> initTeams(int nbTeams) {
         int numberOfPlayersByTeam = getNumberOfPlayersByTeam(nbTeams);
-        List<Team> girlsTeams = new ArrayList<>(numberOfPlayersByTeam);
-        List<Team> boysTeams = new ArrayList<>(numberOfPlayersByTeam);
-        List<Team> teams = new ArrayList<>(numberOfPlayersByTeam);
+        List<Team> girlsTeams = new ArrayList<>(nbTeams);
+        List<Team> boysTeams = new ArrayList<>(nbTeams);
+        List<Team> teams = new ArrayList<>(nbTeams);
         // Add nbTeams empty to each composition
         for (int i = 0; i < nbTeams; i++) {
             girlsTeams.add(new Team(new ArrayList<>()));
             boysTeams.add(new Team(new ArrayList<>()));
             teams.add(new Team(new ArrayList<>()));
         }
-        normalizeSkillsFor(players);
+        // normalizeSkillsFor(players);
         int playerNumber = initTeamByGender(nbTeams, girlsTeams, 0, Player.Gender.FEMME);
         initTeamByGender(nbTeams, boysTeams, playerNumber, Player.Gender.HOMME);
         Composition girlsCompo = new Composition(girlsTeams);
@@ -58,8 +64,8 @@ public class TeamsGenerator {
         Player firstRealPlayer = realPlayers.get(0);
         List<List<Double>> skillsValues = new ArrayList<>();
         for (int i = 0; i < firstRealPlayer.getSkillsList().size(); ++i) {
-            Double minValue = Double.MAX_VALUE;
-            Double maxValue = 0.d;
+            double minValue = Double.MAX_VALUE;
+            double maxValue = 0.d;
             for (Player p : players) {
                 minValue = Math.min(minValue, p.getSkillsList().get(i));
                 maxValue = Math.max(maxValue, p.getSkillsList().get(i));
@@ -67,20 +73,24 @@ public class TeamsGenerator {
             skillsValues.add(Arrays.asList(minValue, maxValue));
         }
         for (Player p : players) {
-            List<Double> newSkills = new ArrayList<>();
-            int index = 0;
-            for (Double skillValue : p.getSkillsList()) {
-                if (skillsValues.get(index).get(1) < NORMALIZED_SKILL_MAX_VALUE) {
-                    newSkills.add(skillValue);
-                } else {
-                    Double minValue = skillsValues.get(index).get(0);
-                    newSkills.add(((double) (skillValue - minValue) / (skillsValues.get(index).get(1) - minValue))
-                            * NORMALIZED_SKILL_MAX_VALUE);
-                }
-                index++;
-            }
-            p.setSkillsList(newSkills);
+            p.setSkillsList(getSkills(p, skillsValues));
         }
+    }
+
+    private static List<Double> getSkills(Player p, List<List<Double>> skillsValues) {
+        List<Double> newSkills = new ArrayList<>();
+        int index = 0;
+        for (Double skillValue : p.getSkillsList()) {
+            if (skillsValues.get(index).get(1) < NORMALIZED_SKILL_MAX_VALUE) {
+                newSkills.add(skillValue);
+            } else {
+                Double minValue = skillsValues.get(index).get(0);
+                newSkills.add(((skillValue - minValue) / (skillsValues.get(index).get(1) - minValue))
+                        * NORMALIZED_SKILL_MAX_VALUE);
+            }
+            index++;
+        }
+        return newSkills;
     }
 
     private int initTeamByGender(int nbTeams, List<Team> genderTeams, int playerNumber, Player.Gender gender) {
@@ -126,12 +136,11 @@ public class TeamsGenerator {
                     localBestComposition = currentComposition;
                 }
             } else {
-                System.out.print(
-                        String.format("\nNo more valid composition for this run after %d tries", optimizedNumber));
+                System.out.printf("\nNo more valid composition for this run after %d tries", optimizedNumber);
                 break;
             }
         }
-        System.out.println(String.format("\nNew local best score : %.2f", localBestScore));
+        System.out.printf("\nNew local best score : %.2f%n", localBestScore);
         return localBestComposition;
     }
 
@@ -144,12 +153,11 @@ public class TeamsGenerator {
         double bestScore = currentComposition.getScore();
         Composition bestComposition = currentComposition;
         for (int tryNumber = 0; tryNumber < nbShuffles; ++tryNumber) {
-            System.out.println(
-                    String.format("Run number #%d, initial score: %.2f", tryNumber + 1, currentComposition.getScore()));
+            System.out.printf("Run number #%d, initial score: %.2f%n", tryNumber + 1, currentComposition.getScore());
             Composition localBestComposition = getLocalBestComposition(currentComposition);
             double score = localBestComposition.getScore();
             if (score < bestScore) {
-                System.out.println(String.format("New best score ever: %.2f", score));
+                System.out.printf("New best score ever: %.2f%n", score);
                 bestComposition = localBestComposition;
                 bestScore = score;
             }

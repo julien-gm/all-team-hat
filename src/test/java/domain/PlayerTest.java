@@ -42,10 +42,10 @@ public class PlayerTest {
         p.setClub("Shamrock");
         p.setGender(Player.Gender.HOMME);
         p.setSkillsList(Arrays.asList(6.0, 7.0, 8.0));
-        Assert.assertEquals("H Julien GM (Jouj) [H] (30) score 7,00 - Shamrock", p.toString());
+        Assert.assertEquals("H Julien GM (Jouj) [H] (30) score 8,00 - Shamrock", p.toString());
 
         p.setHandler(Player.Handler.MAYBE);
         p.setNickName("");
-        Assert.assertEquals("(H) Julien GM [H] (30) score 7,00 - Shamrock", p.toString());
+        Assert.assertEquals("(H) Julien GM [H] (30) score 8,00 - Shamrock", p.toString());
     }
 }

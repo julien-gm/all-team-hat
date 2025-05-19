@@ -35,7 +35,7 @@ public class CalculatorJob {
         int nbSkills = Integer.parseInt(commandline.getOptionValue("nbSkills", "3"));
         int skillFirstCol = Integer.parseInt(commandline.getOptionValue("skillFirstCol", "9"));
         int invalidTeamPenalty = Integer.parseInt(commandline.getOptionValue("invalidTeamPenalty", "200"));
-        int teammatePenalty = Integer.parseInt(commandline.getOptionValue("teammatePenalty", "50"));
+        int teammatePenalty = Integer.parseInt(commandline.getOptionValue("teammatePenalty", "500"));
         String teamMateColName = commandline.getOptionValue("teamMateColName", PlayersParserInterface.TEAMMATE);
 
         if (commandline.hasOption("sheet")) {

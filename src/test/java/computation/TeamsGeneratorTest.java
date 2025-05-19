@@ -57,8 +57,8 @@ public class TeamsGeneratorTest {
 
     @Test
     public void testGetNumberOfPlayerByTeam() {
-        Assert.assertEquals(1, teamGenerator.getNumberOfPlayersByTeam(5));
-        Assert.assertEquals(5, teamGenerator.getNumberOfPlayersByTeam(1));
+        Assert.assertEquals(1, teamGenerator.getNumberOfPlayersByTeam(4));
+        Assert.assertEquals(4, teamGenerator.getNumberOfPlayersByTeam(1));
         Assert.assertEquals(2, teamGenerator.getNumberOfPlayersByTeam(3));
     }
 
@@ -72,7 +72,7 @@ public class TeamsGeneratorTest {
     public void testInitTeams() {
         int nbOfTeam = 2;
         List<Team> teams = teamGenerator.initTeams(nbOfTeam);
-        Assert.assertEquals(3, teamGenerator.getNumberOfPlayersByTeam(nbOfTeam));
+        Assert.assertEquals(2, teamGenerator.getNumberOfPlayersByTeam(nbOfTeam));
         Assert.assertEquals(nbOfTeam, teams.size());
         Team expectedFirstTeam = new Team(Arrays.asList(p1, p3, p5));
         Team expectedSecondTeam = new Team(Arrays.asList(p4, p2));

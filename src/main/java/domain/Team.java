@@ -18,8 +18,8 @@ public class Team {
     public static final Player fakePlayer = new Player(false);
     private static final int SKILL_SCORE_COEFF = 120;
     private static final int HANDLER_SCORE_COEFF = 10;
-    private static final double CLUB_SCORE_COEFF = 20;
-    public static final int STD_DEV_COEFF = 20;
+    private static final double CLUB_SCORE_COEFF = 100;
+    public static final int STD_DEV_COEFF = 25;
     public static final int NUMBER_OF_PLAYERS_BY_DAY_COEFF = 200;
 
     private final TeamsGenerator teamGenerator;
@@ -61,7 +61,7 @@ public class Team {
     public void initSkills() {
         if (skills == null || skills.isEmpty()) {
             skills = new ArrayList<>();
-            if (getRealPlayers().size() > 0) {
+            if (!getRealPlayers().isEmpty()) {
                 Player firstPlayer = getRealPlayers().get(0);
                 for (int skillIndex = 0; skillIndex < firstPlayer.getSkillsList().size(); skillIndex++) {
                     skills.add(getSkillTeam(skillIndex));
@@ -133,7 +133,7 @@ public class Team {
                 if (!clubToCheck.isEmpty()) {
                     if (clubsInfo.containsKey(clubToCheck)) {
                         if (clubsInfo.get(clubToCheck).size() > expectedClubScore.getValue()) {
-                            clubScore += clubsInfo.get(clubToCheck).size() - expectedClubScore.getValue();
+                            clubScore += (int) (clubsInfo.get(clubToCheck).size() - expectedClubScore.getValue());
                         }
                     }
                 }
@@ -192,7 +192,7 @@ public class Team {
                     p.getDay()));
         }
         int nbOfHeaderLines = 2;
-        int blankLines = 3;
+        int blankLines = 2;
         int firstLineNumber = nbOfHeaderLines + 1;
         for (int i = 1; i < teamNumber; i++) {
             firstLineNumber += teams.get(i - 1).getRealPlayers().size() + blankLines + nbOfHeaderLines + 1;
@@ -202,43 +202,34 @@ public class Team {
         char col = 'H';
         for (int skillIndex = 0; skillIndex <= skills.size(); skillIndex++) {
             skillsAvgStr.append(
-                    String.format("=ROUND(AVERAGE(%c%d:%c%d); 2),", col, lastLineNumber + 2, col, lastLineNumber + 3));
+                    String.format("=ROUND(AVERAGE(%c%d:%c%d); 2),", col, firstLineNumber, col, lastLineNumber));
             col++;
         }
         stb.append(String.format(
                 "=COUNTIF(B%d:B%d;\"H\"),=A%d+COUNTIF(B%d:B%d;\"(h)\"),=COUNTIF(C%d:C%d;\"F\"),,,,=ROUND(AVERAGE(G%d:G%d); 2),",
                 firstLineNumber, lastLineNumber, lastLineNumber + 1, firstLineNumber, lastLineNumber, firstLineNumber,
-                lastLineNumber, lastLineNumber + 2, lastLineNumber + 3));
+                lastLineNumber, firstLineNumber, lastLineNumber));
         stb.append(skillsAvgStr);
         stb.append(String.format("=ARRAYFORMULA(MAX(COUNTIF(%c%d:%c%d;%c%d:%c%d))),%d\n", col, firstLineNumber, col,
                 lastLineNumber, col, firstLineNumber, col, lastLineNumber, getRealPlayers().size()));
-        for (Integer day : Arrays.asList(1, 2)) {
-            List<Player> dayPlayers = this.getPlayersForDay(day);
-            long nbHandlers = dayPlayers.stream().filter(p -> p.getHandler().equals(Handler.YES)).count();
-            long nbTotalHandlers = dayPlayers.stream().filter(p -> !p.getHandler().equals(Handler.NO)).count();
-            long nbGirls = dayPlayers.stream().filter(p -> p.getGender().equals(Gender.FEMME)).count();
-            double ageAverage = dayPlayers.stream().mapToDouble(Player::getAge).average().orElse(0);
-            stb.append(String.format("%d,%d,%d,,,,\"%.2f\",", nbHandlers, nbTotalHandlers, nbGirls, ageAverage));
-            for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
-                final int skillI = skillIndex;
-                stb.append(String.format("\"%.2f\",",
-                        dayPlayers.stream().mapToDouble(p -> p.getSkillsList().get(skillI)).average().orElse(0)));
-            }
-            stb.append(String.format("\"%.2f\",",
-                    dayPlayers.stream()
-                            .mapToDouble(p -> p.getSkillsList().stream().mapToDouble(s -> s).average().orElse(0))
-                            .average().orElse(0)));
-            List<String> listClubs = dayPlayers.stream().map(Player::getClub).collect(Collectors.toList());
-            int maxClubOccurence = 0;
-            for (String club : new HashSet<String>(listClubs)) {
-                int clubOccurence = Collections.frequency(listClubs, club);
-                if (clubOccurence > maxClubOccurence) {
-                    maxClubOccurence = clubOccurence;
-                }
-            }
 
-            stb.append(String.format("%d,%d\n", maxClubOccurence, dayPlayers.size()));
+        stb.append(String.format("\"%.2f\",", teams.stream().mapToDouble(t -> t.getRealPlayers().stream().filter(Player::isHandler).count()).average().orElse(0)));
+        stb.append(String.format("\"%.2f\",", teams.stream().mapToDouble(t -> t.getRealPlayers().stream().filter(Player::canBeHandler).count()).average().orElse(0)));
+        stb.append(String.format("\"%.2f\",", teams.stream().mapToDouble(t -> t.getRealPlayers().stream().filter(Player::isGirl).count()).average().orElse(0)));
+        stb.append(",,,");
+        stb.append(String.format("\"%.2f\",", teams.stream().mapToDouble(t -> t.getRealPlayers().stream().mapToDouble(Player::getAge).average().orElse(0)).average().orElse(0)));
+        for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
+            final int skillI = skillIndex;
+            stb.append(String.format("\"%.2f\",",
+                    teams.stream().mapToDouble(t -> t.getRealPlayers().stream().mapToDouble(p -> p.getSkillsList().get(skillI)).average().orElse(0)
+            ).average().orElse(0)));
         }
+        stb.append(String.format("\"%.2f\"\n",
+                teams.stream().mapToDouble(t -> t.getRealPlayers().stream().mapToDouble(
+                        p -> p.getSkillsList().stream().mapToDouble(s -> s).average().orElse(0)).average().orElse(0)
+                ).average().orElse(0)
+        ));
+
         stb.append("\n");
         return stb.toString();
     }
@@ -299,7 +290,7 @@ public class Team {
         double stdDev = getRealPlayers().stream().mapToDouble(p -> Math.abs(pExpectedAge - p.getAge())).average()
                 .orElse(0.0);
         return getScore(pExpectedAge, getRealPlayers().stream().mapToDouble(Player::getAge).average().orElse(0.0),
-                stdDev);
+                stdDev) * 0.02; // 0.2 decrease the impact of the age
     }
 
     public List<Integer> getDays() {

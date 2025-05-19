@@ -38,7 +38,7 @@ public class Composition {
         int teamMateScore = 0;
         double clubScore = 20 * teamCalculator.getClubScore(teams);
         for (Team t : teams) {
-            teamMateScore += t.getTeamMateScore(teammatePenalty);
+            teamMateScore += (int) t.getTeamMateScore(teammatePenalty);
         }
         return score + (isValid() ? 0 : invalidTeamPenalty) + teamMateScore + clubScore;
     }

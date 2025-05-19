@@ -11,12 +11,12 @@ public interface PlayersParserInterface {
     String NICKNAME = "Pseudo";
     String CLUB = "Club";
     String AGE = "Age";
-    String GENDER = "Sexe";
-    String HANDLING = "Handler?";
+    String GENDER = "Genre";
+    String HANDLING = "Handler";
     String DAY = "Jour";
     String YES = "Oui";
     String NO = "Non";
-    String TEAMMATE = "Binôme";
+    String TEAMMATE = "binome";
 
     TeamsGenerator getTeamsGenerator();
 
