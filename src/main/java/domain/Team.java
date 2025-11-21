@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import computation.TeamsGenerator;
 import domain.Player.Gender;
@@ -179,6 +181,9 @@ public class Team {
 
     public String toCSV(List<Team> teams, int teamNumber) {
         StringBuilder stb = new StringBuilder();
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.FRANCE);
+        otherSymbols.setDecimalSeparator('.');
+        DecimalFormat format = new DecimalFormat("#0.00", otherSymbols);
         stb.append(String.format("Team #%d\n#,Poste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
         for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
             stb.append("skill_").append(skillIndex + 1).append(",");
@@ -218,16 +223,17 @@ public class Team {
             long nbTotalHandlers = dayPlayers.stream().filter(p -> !p.getHandler().equals(Handler.NO)).count();
             long nbGirls = dayPlayers.stream().filter(p -> p.getGender().equals(Gender.FEMME)).count();
             double ageAverage = dayPlayers.stream().mapToDouble(Player::getAge).average().orElse(0);
-            stb.append(String.format("%d,%d,%d,,,,\"%.2f\",", nbHandlers, nbTotalHandlers, nbGirls, ageAverage));
+            stb.append(String.format("%d,%d,%d,,,,\"%s\",", nbHandlers, nbTotalHandlers, nbGirls,
+                    format.format(ageAverage)));
             for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
                 final int skillI = skillIndex;
-                stb.append(String.format("\"%.2f\",",
-                        dayPlayers.stream().mapToDouble(p -> p.getSkillsList().get(skillI)).average().orElse(0)));
+                stb.append(String.format("\"%s\",", format.format(
+                        dayPlayers.stream().mapToDouble(p -> p.getSkillsList().get(skillI)).average().orElse(0))));
             }
-            stb.append(String.format("\"%.2f\",",
-                    dayPlayers.stream()
+            stb.append(String.format("\"%s\",",
+                    format.format(dayPlayers.stream()
                             .mapToDouble(p -> p.getSkillsList().stream().mapToDouble(s -> s).average().orElse(0))
-                            .average().orElse(0)));
+                            .average().orElse(0))));
             List<String> listClubs = dayPlayers.stream().map(Player::getClub).collect(Collectors.toList());
             int maxClubOccurence = 0;
             for (String club : new HashSet<String>(listClubs)) {

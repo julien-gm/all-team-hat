@@ -3,6 +3,8 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public class Player {
 
@@ -213,10 +215,13 @@ public class Player {
 
     public String getSkillsStr() {
         StringBuilder stb = new StringBuilder();
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.FRANCE);
+        otherSymbols.setDecimalSeparator('.');
+        DecimalFormat format = new DecimalFormat("#0.00", otherSymbols);
         for (double s : skillsList) {
-            stb.append(String.format(Locale.FRANCE, "\"%.2f\"", s)).append(",");
+            stb.append(String.format("\"%s\"", format.format(s))).append(",");
         }
-        stb.append(String.format(Locale.FRANCE, "\"%.2f\"", getSkillAverage()));
+        stb.append(String.format("\"%s\"", format.format(getSkillAverage())));
         return stb.toString();
     }
 
