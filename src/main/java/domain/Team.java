@@ -187,9 +187,9 @@ public class Team {
         int index = 0;
         for (Player p : getRealPlayers()) {
             index++;
-            stb.append(String.format("%d,%s,%s,%s,%s,%s,%d,%s,%s,%d\n", index, p.getHandlerStr(), p.getGenderStr(),
-                    p.getFirstName(), p.getLastName(), p.getNickName(), (int) p.getAge(), p.getSkillsStr(), p.getClub(),
-                    p.getDay()));
+            stb.append(String.format(Locale.FRANCE, "%d,%s,%s,%s,%s,%s,%d,%s,%s,%d\n", index, p.getHandlerStr(),
+                    p.getGenderStr(), p.getFirstName(), p.getLastName(), p.getNickName(), (int) p.getAge(),
+                    p.getSkillsStr(), p.getClub(), p.getDay()));
         }
         int nbOfHeaderLines = 2;
         int blankLines = 3;
