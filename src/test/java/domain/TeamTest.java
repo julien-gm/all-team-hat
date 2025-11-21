@@ -78,15 +78,15 @@ public class TeamTest {
     public void testClubScore() {
         Map<String, Double> expectedClubScore = new HashMap<>();
         expectedClubScore.put("", 1.0);
-        expectedClubScore.put("test", 1.0);
+        expectedClubScore.put("TEST", 1.0);
         Assert.assertEquals(20.0, team.getClubScore(expectedClubScore), 0.0001);
     }
 
     @Test
     public void testToString() {
         Assert.assertEquals(
-                "Day #1 - 1 Women / 1 Men, 1 Handlers / 0 Middles, Skills: 7,50 (0,50) [25,00]\ntest: 2 \n"
-                        + "Day #2 - 0 Women / 1 Men, 0 Handlers / 0 Middles, Skills: 8,00 (0,00) [30,00]\ntest: 2 \n",
+                "Day #1 - 1 Women / 1 Men, 1 Handlers / 0 Middles, Skills: 7,50 (0,50) [25,00]\nTEST: 2 \n"
+                        + "Day #2 - 0 Women / 1 Men, 0 Handlers / 0 Middles, Skills: 8,00 (0,00) [30,00]\nTEST: 2 \n",
                 team.toString());
     }
 
@@ -94,12 +94,12 @@ public class TeamTest {
     public void testToCSV() {
         Assert.assertEquals(
                 "Team #1\n#,Poste,Genre,Prenom,Nom,Pseudo,Age,skill_1,skill_2,skill_3,Moyenne compétence,Club,Jour\n"
-                        + "1,H,F,Pré,Nom,nickie,20,\"7,00\",\"6,00\",\"8,00\",\"7,00\",test,1\n"
-                        + "2,(h),H,first,last,nick,30,\"8,00\",\"9,00\",\"7,00\",\"8,00\",test,0\n"
+                        + "1,H,F,Pré,Nom,nickie,20,\"7.00\",\"6.00\",\"8.00\",\"7.00\",TEST,1\n"
+                        + "2,(h),H,first,last,nick,30,\"8.00\",\"9.00\",\"7.00\",\"8.00\",TEST,0\n"
                         + "=COUNTIF(B3:B4;\"H\"),=A5+COUNTIF(B3:B4;\"(h)\"),=COUNTIF(C3:C4;\"F\"),"
                         + ",,,=ROUND(AVERAGE(G6:G7); 2),=ROUND(AVERAGE(H6:H7); 2),=ROUND(AVERAGE(I6:I7); 2),=ROUND(AVERAGE(J6:J7); 2),=ROUND(AVERAGE(K6:K7); 2),"
-                        + "=ARRAYFORMULA(MAX(COUNTIF(L3:L4;L3:L4))),2\n1,2,1,,,,\"25,00\",\"7,50\",\"7,50\",\"7,50\",\"7,50\",2,2\n"
-                        + "0,1,0,,,,\"30,00\",\"8,00\",\"9,00\",\"7,00\",\"8,00\",1,1\n\n",
+                        + "=ARRAYFORMULA(MAX(COUNTIF(L3:L4;L3:L4))),2\n1,2,1,,,,\"25.00\",\"7.50\",\"7.50\",\"7.50\",\"7.50\",2,2\n"
+                        + "0,1,0,,,,\"30.00\",\"8.00\",\"9.00\",\"7.00\",\"8.00\",1,1\n\n",
                 team.toCSV(Arrays.asList(team), 1));
     }
 }

@@ -50,8 +50,7 @@ public class FilePlayersParser implements PlayersParserInterface {
             player.setAge(Integer.parseInt(record.get(AGE)));
             player.setGender(record.get(GENDER).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get(HANDLING);
-            player.setHandler(handler.equals(YES) ? Player.Handler.YES
-                    : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
+            player.setHandler(handler.equals(YES) ? Player.Handler.YES : Player.Handler.NO);
 
             // Getting skills
             // Skipping the first 8 columns that we just read
@@ -92,9 +91,10 @@ public class FilePlayersParser implements PlayersParserInterface {
         try {
             int teamIndex = 1;
             String runtime = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+            runtime = runtime.replace(":", ".");
             String teams = "";
             for (Team t : bestComposition.getTeams()) {
-                String fileName = String.format("run_%s_team_%d.csv", runtime, teamIndex);
+                String fileName = String.format("./run_%s_team_%d.csv", runtime, teamIndex);
                 FileWriter fw = new FileWriter(fileName);
                 String teamCSV = t.toCSV(bestComposition.getTeams(), teamIndex);
                 teams += teamCSV;
@@ -102,10 +102,10 @@ public class FilePlayersParser implements PlayersParserInterface {
                 teamIndex++;
                 fw.close();
             }
-            FileWriter fw = new FileWriter(String.format("run_%s_teams.csv", runtime));
+            FileWriter fw = new FileWriter(String.format("./run_%s_teams.csv", runtime));
             fw.write(teams);
             fw.close();
-            fw = new FileWriter(String.format("run_%s_info.txt", runtime));
+            fw = new FileWriter(String.format("./run_%s_info.txt", runtime));
             fw.write(toString());
             fw.close();
         } catch (IOException e) {

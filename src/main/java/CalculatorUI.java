@@ -22,40 +22,48 @@ public class CalculatorUI {
             // Retrieve users preferences (values at last use)
             final Preferences preferences = Preferences.userRoot().node(CalculatorUI.class.getName());
 
-            final JTextField numberOfTeams = new JTextField();
-            final JTextField numberOfRuns = new JTextField();
-            final JTextField numberOfTeammateFailure = new JTextField();
-            final JTextField invalidTeamPenaltyField = new JTextField();
-            final JTextField numberOfSkillField = new JTextField();
-            final JTextField firstSkillColField = new JTextField();
-            final JTextField teamMateColNameField = new JTextField();
+            int DEFAULT_NUM_TEAMS = 4;
+            int DEFAULT_NUM_RUN = 15;
+            int DEFAULT_TEAMMATE_FAILURE_PENALTY = 50;
+            int DEFAULT_INVALID_TEAM_PENALTY = 250;
+            int DEFAULT_NUMBER_OF_SKILLS = 3;
+            int DEFAULT_FIRST_SKILL_COL = 8;
+            String DEFAULT_TEAMMATE_COL_NAME = "Binôme";
+
+            final JTextField numberOfTeams = new JTextField(String.valueOf(DEFAULT_NUM_TEAMS));
+            final JTextField numberOfRuns = new JTextField(String.valueOf(DEFAULT_NUM_RUN));
+            final JTextField numberOfTeammateFailure = new JTextField(String.valueOf(DEFAULT_TEAMMATE_FAILURE_PENALTY));
+            final JTextField invalidTeamPenaltyField = new JTextField(String.valueOf(DEFAULT_INVALID_TEAM_PENALTY));
+            final JTextField numberOfSkillField = new JTextField(String.valueOf(DEFAULT_NUMBER_OF_SKILLS));
+            final JTextField firstSkillColField = new JTextField(String.valueOf(DEFAULT_FIRST_SKILL_COL));
+
             final JFileChooser csvFileChooser = new JFileChooser(
                     new File(preferences.get(LAST_USED_FILE, new File(".").getAbsolutePath())));
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
-            csvFileChooser.setFileFilter(filter);
+            csvFileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+
             final Object[] message = { "List of players: ", csvFileChooser, "Number of teams:", numberOfTeams,
-                    "Number of runs:", numberOfRuns, "Teammate failure penalty: ", numberOfTeammateFailure,
-                    "Invalid team penalty: ", invalidTeamPenaltyField, "Number of skills: ", numberOfSkillField,
-                    "Skill first column: ", firstSkillColField, "teammate column name: ", teamMateColNameField };
-            JOptionPane.showInputDialog(message);
+                    "Number of runs:", numberOfRuns, "Number of skills: ", numberOfSkillField, "Skill first column: ",
+                    firstSkillColField, "teammate column name: " };
+            String teamMateColName = JOptionPane.showInputDialog(message);
 
             preferences.put(LAST_USED_FILE, csvFileChooser.getSelectedFile().getPath());
 
             File csvFile = csvFileChooser.getSelectedFile();
 
-            int nbTeams = getTextFieldAsInt(numberOfTeams, 6);
-            int nbRuns = getTextFieldAsInt(numberOfRuns, 20);
-            int teammatePenalty = getTextFieldAsInt(numberOfTeammateFailure, 50);
-            int invalidTeamPenalty = getTextFieldAsInt(invalidTeamPenaltyField, 200);
-            int numberOfSkill = getTextFieldAsInt(numberOfSkillField, 3);
-            int firstSkillCol = getTextFieldAsInt(firstSkillColField, 9);
-            String teamMateColName = teamMateColNameField.getText();
+            int nbTeams = getTextFieldAsInt(numberOfTeams, DEFAULT_NUM_TEAMS);
+            int nbRuns = getTextFieldAsInt(numberOfRuns, DEFAULT_NUM_RUN);
+            int teammatePenalty = getTextFieldAsInt(numberOfTeammateFailure, DEFAULT_TEAMMATE_FAILURE_PENALTY);
+            int invalidTeamPenalty = getTextFieldAsInt(invalidTeamPenaltyField, DEFAULT_INVALID_TEAM_PENALTY);
+            int numberOfSkill = getTextFieldAsInt(numberOfSkillField, DEFAULT_NUMBER_OF_SKILLS);
+            int firstSkillCol = getTextFieldAsInt(firstSkillColField, DEFAULT_FIRST_SKILL_COL);
             FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), firstSkillCol,
                     numberOfSkill, teamMateColName);
             TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
             Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
                     teammatePenalty);
-            System.out.println(bestComposition);
+            playersParser.write(bestComposition);
+            System.out.println(bestComposition.getScoreForDay(1));
+            System.out.println(bestComposition.getScoreForDay(2));
 
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | UnsupportedLookAndFeelException e) {
