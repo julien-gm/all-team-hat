@@ -182,7 +182,7 @@ public class Team {
     public String toCSV(List<Team> teams, int teamNumber) {
         StringBuilder stb = new StringBuilder();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.FRANCE);
-        otherSymbols.setDecimalSeparator('.');
+        otherSymbols.setDecimalSeparator(',');
         DecimalFormat format = new DecimalFormat("#0.00", otherSymbols);
         stb.append(String.format("Team #%d\n#,Poste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
         for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {

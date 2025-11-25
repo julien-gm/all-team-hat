@@ -7,7 +7,9 @@ import domain.Team;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,12 +47,17 @@ public class FilePlayersParser implements PlayersParserInterface {
             Player player = new Player(record.get(NICKNAME));
             player.setLastName(record.get(LAST_NAME));
             player.setFirstName(record.get(FIRST_NAME));
-            player.setEmail(record.get(EMAIL));
+            try {
+                player.setEmail(record.get(EMAIL));
+            } catch (IllegalArgumentException e) {
+                player.setEmail("");
+            }
             player.setClub(record.get(CLUB));
             player.setAge(Integer.parseInt(record.get(AGE)));
             player.setGender(record.get(GENDER).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get(HANDLING);
-            player.setHandler(handler.equals(YES) ? Player.Handler.YES : Player.Handler.NO);
+            player.setHandler(handler.equals(YES) ? Player.Handler.YES
+                    : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
 
             // Getting skills
             // Skipping the first 8 columns that we just read
@@ -108,6 +115,8 @@ public class FilePlayersParser implements PlayersParserInterface {
             fw = new FileWriter(String.format("./run_%s_info.txt", runtime));
             fw.write(toString());
             fw.close();
+            // copy team file with a generic name
+            FileUtils.copyFile(new File(String.format("./run_%s_teams.csv", runtime)), new File("./last_run.csv"));
         } catch (IOException e) {
             System.err.println("Unable to write composition");
             System.err.println(e.getMessage());
