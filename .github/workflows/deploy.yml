@@ -44,17 +44,17 @@ jobs:
       run: |
         scp -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no \
           -r deploy/* \
-          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/myapp/
+          ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }}:/home/${{ vars.EC2_USER }}/myapp/
 
     # Redémarrage Streamlit
     - name: Restart Streamlit on EC2
       run: |
         ssh -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no \
-          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
+          ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} \
             "echo '🛑 Killing old Streamlit processes...' && \
             pkill -f 'streamlit' || true && \
             echo '🚀 Starting Streamlit...' && \
-            nohup streamlit run /home/${{ secrets.EC2_USER }}/myapp/app.py \
+            nohup streamlit run /home/${{ vars.EC2_USER }}/myapp/app.py \
              --server.port 80 \
              --server.address 0.0.0.0 \
-             > /home/${{ secrets.EC2_USER }}/myapp/streamlit.log 2>&1 &"
+             > /home/${{ vars.EC2_USER }}/myapp/streamlit.log 2>&1 &"
