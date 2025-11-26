@@ -33,10 +33,13 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final String emailColName;
     private final String genderColName;
     private final String handlingColName;
+    private final String handler;
+    private final String middle;
 
     public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName,
             String firstnameColName, String lastnameColName, String nicknameColName, String clubColName,
-            String ageColName, String emailColName, String genderColName, String handlingColName) throws IOException {
+            String ageColName, String emailColName, String genderColName, String handlingColName, String handler,
+            String middle) throws IOException {
         this.firstSkillCol = columnToSkip;
         this.nbSkills = numberOfSkill;
         this.teamMateColName = teamMateColName;
@@ -48,12 +51,14 @@ public class FilePlayersParser implements PlayersParserInterface {
         this.emailColName = emailColName;
         this.genderColName = genderColName;
         this.handlingColName = handlingColName;
+        this.handler = handler;
+        this.middle = middle;
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
     }
 
     public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill) throws IOException {
         this(file, columnToSkip, numberOfSkill, TEAMMATE, FIRST_NAME, LAST_NAME, NICKNAME, CLUB, AGE, EMAIL, GENDER,
-                HANDLING);
+                HANDLING, HANDLER, MIDDLE);
     }
 
     public TeamsGenerator getTeamsGenerator() {
@@ -75,8 +80,8 @@ public class FilePlayersParser implements PlayersParserInterface {
             player.setGender(
                     record.get(this.genderColName).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get(this.handlingColName);
-            player.setHandler(handler.equals(YES) ? Player.Handler.YES
-                    : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
+            player.setHandler(handler.equals(HANDLER) ? Player.Handler.YES
+                    : handler.equals(MIDDLE) ? Player.Handler.NO : Player.Handler.MAYBE);
 
             // Getting skills
             // Skipping the first 8 columns that we just read
@@ -104,8 +109,9 @@ public class FilePlayersParser implements PlayersParserInterface {
                     .anyMatch(p -> (p.getFirstName().equals(player.getFirstName())
                             && p.getLastName().equals(player.getLastName()))
                             || p.getNickName().equals(player.getNickName()))) {
-                System.err.println(String.format("Warning, you have several players with the same name: %s %s (%s)",
-                        player.getFirstName(), player.getLastName(), player.getNickName()));
+                System.err.println(
+                        String.format("Warning, you have several players with the same nickname : \"%s\" (%s %s)",
+                                player.getFirstName(), player.getLastName(), player.getNickName()));
             }
             allPlayers.add(player);
         }

@@ -34,6 +34,8 @@ public class CalculatorJob {
         options.addOption("genderCol", true, "Column gender name");
         options.addOption("emailCol", true, "Column email name");
         options.addOption("handlingCol", true, "Column handling name");
+        options.addOption("handlerValue", true, "Value when handler");
+        options.addOption("middleValue", true, "Value when middle");
         options.addOption("teamMateColName", true, "Column teammate name");
         CommandLine commandline = commandParser.parse(options, args, false);
         PlayersParserInterface playersParser;
@@ -52,6 +54,8 @@ public class CalculatorJob {
         String genderColName = commandline.getOptionValue("genderCol", PlayersParserInterface.GENDER);
         String emailColName = commandline.getOptionValue("emailCol", PlayersParserInterface.EMAIL);
         String handlingColName = commandline.getOptionValue("handlingCol", PlayersParserInterface.HANDLING);
+        String handler = commandline.getOptionValue("handler", PlayersParserInterface.HANDLER);
+        String middle = commandline.getOptionValue("middle", PlayersParserInterface.MIDDLE);
         String teamMateColName = commandline.getOptionValue("teamMateColName", PlayersParserInterface.TEAMMATE);
 
         if (commandline.hasOption("sheet")) {
@@ -62,7 +66,7 @@ public class CalculatorJob {
             String file = commandline.getOptionValue("file", "players.csv");
             playersParser = new FilePlayersParser(new FileReader(file), skillFirstCol, nbSkills, teamMateColName,
                     firstnameColName, lastnameColName, nicknameColName, clubColName, ageColName, emailColName,
-                    genderColName, handlingColName);
+                    genderColName, handlingColName, handler, middle);
         }
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,

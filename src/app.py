@@ -15,6 +15,8 @@ age_col = st.text_input("Nom de la colonne Age", value="Age")
 email_col = st.text_input("Nom de la colonne Email", value="Email")
 gender_col = st.text_input("Nom de la colonne Genre", value="Genre")
 handling_col = st.text_input("Nom de la colonne Handling", value="Handler?")
+handler = st.text_input("Valeur pour handler", value="Oui")
+middle = st.text_input("Valeur pour middle", value="Non")
 number_of_skills = st.number_input("Nombre de compétences", min_value=1, max_value=10, value=3)
 first_skill_col = st.number_input("Index de la première colonne de compétence (en commençant à 0)", min_value=0, value=8)
 
@@ -24,7 +26,7 @@ if uploaded_file and st.button("Lancer l'application"):
     with open(input_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    jar_name = "all-team-hat-2.2.0-jar-with-dependencies.jar"
+    jar_name = "/home/ubuntu/myapp/all-team-hat-2.2.0-jar-with-dependencies.jar"
     cmd = [
         "java", "-cp", jar_name, "CalculatorJob",
         "-nbTeams", str(nbTeams),
@@ -37,8 +39,10 @@ if uploaded_file and st.button("Lancer l'application"):
         "-genderCol", gender_col,
         "-nicknameCol", nickname_col,
         "-handlingCol", handling_col,
-        "-numberOfSkills", str(number_of_skills),
-        "-firstSkillCol", str(first_skill_col),
+        "-handlerValue", handler,
+        "-middleValue", middle,
+        "-nbSkills", str(number_of_skills),
+        "-skillFirstCol", str(first_skill_col),
         "-file", input_path
     ]
 

@@ -60,7 +60,8 @@ public class CalculatorUI {
             FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), firstSkillCol,
                     numberOfSkill, teamMateColName, PlayersParserInterface.FIRST_NAME, PlayersParserInterface.LAST_NAME,
                     PlayersParserInterface.NICKNAME, PlayersParserInterface.CLUB, PlayersParserInterface.AGE,
-                    PlayersParserInterface.EMAIL, PlayersParserInterface.GENDER, PlayersParserInterface.HANDLING);
+                    PlayersParserInterface.EMAIL, PlayersParserInterface.GENDER, PlayersParserInterface.HANDLING,
+                    PlayersParserInterface.HANDLER, PlayersParserInterface.MIDDLE);
             TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
             Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
                     teammatePenalty);
