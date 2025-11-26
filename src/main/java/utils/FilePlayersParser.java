@@ -25,7 +25,7 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final int nbSkills;
     private static Iterable<? extends CSVRecord> parser;
     private final String teamMateColName;
-    private final String firstNameCol;
+    private final String firstnameColName;
     private final String lastnameColName;
     private final String nicknameColName;
     private final String clubColName;
@@ -35,8 +35,8 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final String handlingColName;
 
     public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName,
-            String firstnameColName = FIRST_NAME, String lastnameColName = LAST_NAME, String nicknameColName = NICKNAME, String clubColName = CLUB,
-            String ageColName = AGE, String emailColName = EMAIL, String genderColName = GENDER, String handlingColName = HANDLING) throws IOException {
+            String firstnameColName, String lastnameColName, String nicknameColName, String clubColName,
+            String ageColName, String emailColName, String genderColName, String handlingColName) throws IOException {
         this.firstSkillCol = columnToSkip;
         this.nbSkills = numberOfSkill;
         this.teamMateColName = teamMateColName;
@@ -51,8 +51,9 @@ public class FilePlayersParser implements PlayersParserInterface {
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
     }
 
-    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkills) throws IOException {
-        this(file, columnToSkip, numberOfSkills, "N/A");
+    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill) throws IOException {
+        this(file, columnToSkip, numberOfSkill, TEAMMATE, FIRST_NAME, LAST_NAME, NICKNAME, CLUB, AGE, EMAIL, GENDER,
+                HANDLING);
     }
 
     public TeamsGenerator getTeamsGenerator() {

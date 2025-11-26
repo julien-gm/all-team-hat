@@ -24,7 +24,7 @@ if uploaded_file and st.button("Lancer l'application"):
     with open(input_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    jar_name = "all-team-hat.jar"
+    jar_name = "all-team-hat-2.2.0-jar-with-dependencies.jar"
     cmd = [
         "java", "-cp", jar_name, "CalculatorJob",
         "-nbTeams", str(nbTeams),
