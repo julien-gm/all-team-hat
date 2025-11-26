@@ -100,6 +100,6 @@ public class TeamTest {
                         + ",,,=ROUND(AVERAGE(G6:G7); 2),=ROUND(AVERAGE(H6:H7); 2),=ROUND(AVERAGE(I6:I7); 2),=ROUND(AVERAGE(J6:J7); 2),=ROUND(AVERAGE(K6:K7); 2),"
                         + "=ARRAYFORMULA(MAX(COUNTIF(L3:L4;L3:L4))),2\n1,2,1,,,,\"25,00\",\"7,50\",\"7,50\",\"7,50\",\"7,50\",2,2\n"
                         + "0,1,0,,,,\"30,00\",\"8,00\",\"9,00\",\"7,00\",\"8,00\",1,1\n\n",
-                team.toCSV(Arrays.asList(team), 1));
+                team.toCSV(Arrays.asList(team), 1, true));
     }
 }

@@ -35,6 +35,7 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final String handlingColName;
     private final String handler;
     private final String middle;
+    private boolean use_day = false;
 
     public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName,
             String firstnameColName, String lastnameColName, String nicknameColName, String clubColName,
@@ -80,8 +81,8 @@ public class FilePlayersParser implements PlayersParserInterface {
             player.setGender(
                     record.get(this.genderColName).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get(this.handlingColName);
-            player.setHandler(handler.equals(HANDLER) ? Player.Handler.YES
-                    : handler.equals(MIDDLE) ? Player.Handler.NO : Player.Handler.MAYBE);
+            player.setHandler(handler.equals(this.handler) ? Player.Handler.YES
+                    : handler.equals(this.middle) ? Player.Handler.NO : Player.Handler.MAYBE);
 
             // Getting skills
             // Skipping the first 8 columns that we just read
@@ -97,6 +98,7 @@ public class FilePlayersParser implements PlayersParserInterface {
             }
             setTeamMate(allPlayers, record, player);
             if (record.isSet(DAY)) {
+                this.use_day = true;
                 String day = record.get(DAY);
                 if (!day.equals("")) {
                     player.setDay(Integer.parseInt(day));
@@ -111,7 +113,7 @@ public class FilePlayersParser implements PlayersParserInterface {
                             || p.getNickName().equals(player.getNickName()))) {
                 System.err.println(
                         String.format("Warning, you have several players with the same nickname : \"%s\" (%s %s)",
-                                player.getFirstName(), player.getLastName(), player.getNickName()));
+                                player.getNickName(), player.getFirstName(), player.getLastName()));
             }
             allPlayers.add(player);
         }
@@ -128,7 +130,7 @@ public class FilePlayersParser implements PlayersParserInterface {
             for (Team t : bestComposition.getTeams()) {
                 String fileName = String.format("./run_%s_team_%d.csv", runtime, teamIndex);
                 FileWriter fw = new FileWriter(fileName);
-                String teamCSV = t.toCSV(bestComposition.getTeams(), teamIndex);
+                String teamCSV = t.toCSV(bestComposition.getTeams(), teamIndex, this.use_day);
                 teams += teamCSV;
                 fw.write(teamCSV);
                 teamIndex++;
