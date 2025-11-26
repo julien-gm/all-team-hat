@@ -25,12 +25,29 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final int nbSkills;
     private static Iterable<? extends CSVRecord> parser;
     private final String teamMateColName;
+    private final String firstNameCol;
+    private final String lastnameColName;
+    private final String nicknameColName;
+    private final String clubColName;
+    private final String ageColName;
+    private final String emailColName;
+    private final String genderColName;
+    private final String handlingColName;
 
-    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName)
-            throws IOException {
+    public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName,
+            String firstnameColName = FIRST_NAME, String lastnameColName = LAST_NAME, String nicknameColName = NICKNAME, String clubColName = CLUB,
+            String ageColName = AGE, String emailColName = EMAIL, String genderColName = GENDER, String handlingColName = HANDLING) throws IOException {
         this.firstSkillCol = columnToSkip;
         this.nbSkills = numberOfSkill;
         this.teamMateColName = teamMateColName;
+        this.firstnameColName = firstnameColName;
+        this.lastnameColName = lastnameColName;
+        this.nicknameColName = nicknameColName;
+        this.clubColName = clubColName;
+        this.ageColName = ageColName;
+        this.emailColName = emailColName;
+        this.genderColName = genderColName;
+        this.handlingColName = handlingColName;
         parser = CSVParser.parse(file, CSVFormat.RFC4180.withHeader());
     }
 
@@ -44,18 +61,19 @@ public class FilePlayersParser implements PlayersParserInterface {
         for (CSVRecord record : parser) {
             // Reading with headers so we can get the values via the name
             // and they can be in any order (as long as the skills are last)
-            Player player = new Player(record.get(NICKNAME));
-            player.setLastName(record.get(LAST_NAME));
-            player.setFirstName(record.get(FIRST_NAME));
+            Player player = new Player(record.get(this.nicknameColName));
+            player.setLastName(record.get(this.lastnameColName));
+            player.setFirstName(record.get(this.firstnameColName));
             try {
-                player.setEmail(record.get(EMAIL));
+                player.setEmail(record.get(this.emailColName));
             } catch (IllegalArgumentException e) {
                 player.setEmail("");
             }
-            player.setClub(record.get(CLUB));
-            player.setAge(Integer.parseInt(record.get(AGE)));
-            player.setGender(record.get(GENDER).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
-            String handler = record.get(HANDLING);
+            player.setClub(record.get(this.clubColName));
+            player.setAge(Integer.parseInt(record.get(this.ageColName)));
+            player.setGender(
+                    record.get(this.genderColName).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
+            String handler = record.get(this.handlingColName);
             player.setHandler(handler.equals(YES) ? Player.Handler.YES
                     : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
 

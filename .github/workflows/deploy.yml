@@ -56,6 +56,6 @@ jobs:
               killall streamlit;
               echo \"🚀 Starting Streamlit...\";
               nohup /home/${{ vars.EC2_USER }}/base/bin/streamlit run /home/${{ vars.EC2_USER }}/myapp/app.py \
-             --server.port 80 \
+             --server.port 8080 \
              --server.address 0.0.0.0 \
              >> /home/${{ vars.EC2_USER }}/myapp/streamlit.log 2>&1 &'"

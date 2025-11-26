@@ -26,6 +26,14 @@ public class CalculatorJob {
         options.addOption("teammatePenalty", true, "penalty added when a player doesn't plays with its teammate");
         options.addOption("nbSkills", true, "Number of skills");
         options.addOption("skillFirstCol", true, "First column number for skills");
+        options.addOption("firstNameCol", true, "Column firstname name");
+        options.addOption("lastNameCol", true, "Column lastname name");
+        options.addOption("nicknameCol", true, "Column nickname name");
+        options.addOption("clubCol", true, "Column club name");
+        options.addOption("ageCol", true, "Column age name");
+        options.addOption("genderCol", true, "Column gender name");
+        options.addOption("emailCol", true, "Column email name");
+        options.addOption("handlingCol", true, "Column handling name");
         options.addOption("teamMateColName", true, "Column teammate name");
         CommandLine commandline = commandParser.parse(options, args, false);
         PlayersParserInterface playersParser;
@@ -36,6 +44,14 @@ public class CalculatorJob {
         int skillFirstCol = Integer.parseInt(commandline.getOptionValue("skillFirstCol", "9"));
         int invalidTeamPenalty = Integer.parseInt(commandline.getOptionValue("invalidTeamPenalty", "200"));
         int teammatePenalty = Integer.parseInt(commandline.getOptionValue("teammatePenalty", "50"));
+        String firstnameColName = commandline.getOptionValue("firstNameCol", PlayersParserInterface.FIRST_NAME);
+        String lastnameColName = commandline.getOptionValue("lastNameCol", PlayersParserInterface.LAST_NAME);
+        String nicknameColName = commandline.getOptionValue("nicknameCol", PlayersParserInterface.NICKNAME);
+        String clubColName = commandline.getOptionValue("clubCol", PlayersParserInterface.CLUB);
+        String ageColName = commandline.getOptionValue("ageCol", PlayersParserInterface.AGE);
+        String genderColName = commandline.getOptionValue("genderCol", PlayersParserInterface.GENDER);
+        String emailColName = commandline.getOptionValue("emailCol", PlayersParserInterface.EMAIL);
+        String handlingColName = commandline.getOptionValue("handlingCol", PlayersParserInterface.HANDLING);
         String teamMateColName = commandline.getOptionValue("teamMateColName", PlayersParserInterface.TEAMMATE);
 
         if (commandline.hasOption("sheet")) {
@@ -44,7 +60,9 @@ public class CalculatorJob {
             playersParser = new SheetsPlayersParser(sheetId, range, skillFirstCol, nbSkills, teamMateColName);
         } else {
             String file = commandline.getOptionValue("file", "players.csv");
-            playersParser = new FilePlayersParser(new FileReader(file), skillFirstCol, nbSkills, teamMateColName);
+            playersParser = new FilePlayersParser(new FileReader(file), skillFirstCol, nbSkills, teamMateColName,
+                    firstnameColName, lastnameColName, nicknameColName, clubColName, ageColName, emailColName,
+                    genderColName, handlingColName);
         }
         TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,

@@ -5,8 +5,18 @@ import os
 st.title("All Team Hat 🚀")
 
 uploaded_file = st.file_uploader("Upload du fichier CSV", type=["csv"])
-nbTeams = st.number_input("nbTeams", min_value=1, value=2)
-nbRuns = st.number_input("nbRuns", min_value=1, value=2)
+nbTeams = st.number_input("nbTeams", min_value=2, value=4)
+nbRuns = st.number_input("nbRuns", min_value=2, max_value=20, value=5)
+first_name_col = st.text_input("Nom de la colonne Prénom", value="Prénom")
+last_name_col = st.text_input("Nom de la colonne Nom", value="Nom")
+club_col = st.text_input("Nom de la colonne Club", value="Club")
+nickname_col = st.text_input("Nom de la colonne Surnom", value="Pseudo")
+age_col = st.text_input("Nom de la colonne Age", value="Age")
+email_col = st.text_input("Nom de la colonne Email", value="Email")
+gender_col = st.text_input("Nom de la colonne Genre", value="Genre")
+handling_col = st.text_input("Nom de la colonne Handling", value="Handler?")
+number_of_skills = st.number_input("Nombre de compétences", min_value=1, max_value=10, value=3)
+first_skill_col = st.number_input("Index de la première colonne de compétence (en commençant à 0)", min_value=0, value=8)
 
 if uploaded_file and st.button("Lancer l'application"):
     # Sauvegarde du fichier uploadé
@@ -19,6 +29,16 @@ if uploaded_file and st.button("Lancer l'application"):
         "java", "-cp", jar_name, "CalculatorJob",
         "-nbTeams", str(nbTeams),
         "-nbRuns", str(nbRuns),
+        "-firstNameCol", first_name_col,
+        "-lastNameCol", last_name_col,
+        "-clubCol", club_col,
+        "-ageCol", age_col,
+        "-emailCol", email_col,
+        "-genderCol", gender_col,
+        "-nicknameCol", nickname_col,
+        "-handlingCol", handling_col,
+        "-numberOfSkills", str(number_of_skills),
+        "-firstSkillCol", str(first_skill_col),
         "-file", input_path
     ]
 
