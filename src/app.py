@@ -78,7 +78,7 @@ if uploaded_file and st.button("Lancer l'application"):
                 break
             # Ajoute la ligne reçue et met à jour l'affichage
             lines.append(raw_line.rstrip('\n'))
-            output_container.text('\n'.join(lines))
+            output_container.text_area("Logs", '\n'.join(lines), height=400)
         process.wait()
     except Exception as e:
         process.kill()
