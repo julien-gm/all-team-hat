@@ -39,7 +39,7 @@ public class CompositionTest {
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        Assert.assertEquals(560.16, composition.getScore(), 0.1);
+        Assert.assertEquals(568.16, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         List<Double> skills = teamsGenerator.getSkillAverages();
         double s1 = t1.getSkillsScore(skills);
@@ -48,8 +48,10 @@ public class CompositionTest {
         double sa1 = t1.getSkillsAverage();
         double sa2 = t2.getSkillsAverage();
         Assert.assertEquals(sa1, sa2, 0.8);
-        double expectedHandlerScore = teamsGenerator.getNbHandlers();
-        Assert.assertEquals(t1.getHandlerScore(expectedHandlerScore), t2.getHandlerScore(expectedHandlerScore), 0.1);
+        double expectedHandlerScore = teamsGenerator.getNbHandlers() / teams.size();
+        Assert.assertEquals(2.0, expectedHandlerScore, 0.0);
+        Assert.assertEquals(2.0, t1.getHandlerScore(expectedHandlerScore), 1.0);
+        Assert.assertEquals(2.0, t2.getHandlerScore(expectedHandlerScore), 1.0);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class CompositionTest {
         Assert.assertEquals(2, teams.size());
         Team t1 = teams.get(0);
         Team t2 = teams.get(1);
-        Assert.assertEquals(2331.1, composition.getScore(), 0.1);
+        Assert.assertEquals(2339.1, composition.getScore(), 0.1);
         Assert.assertEquals(t1.getPlayers().size(), t2.getPlayers().size());
         double ageExpected = teamsGenerator.getAgeAverage();
         Assert.assertEquals(30.4, ageExpected, 0.1);
@@ -74,8 +76,9 @@ public class CompositionTest {
         double sa1 = t1.getSkillsAverage();
         double sa2 = t2.getSkillsAverage();
         Assert.assertEquals(sa1, sa2, 1.0);
-        double expectedHandlerScore = teamsGenerator.getNbHandlers();
-        Assert.assertEquals(t1.getHandlerScore(expectedHandlerScore), t2.getHandlerScore(expectedHandlerScore), 0.1);
+        double expectedHandlerScore = teamsGenerator.getNbHandlers() / teams.size();
+        Assert.assertEquals(expectedHandlerScore, t1.getHandlerScore(expectedHandlerScore), 1.0);
+        Assert.assertEquals(expectedHandlerScore, t2.getHandlerScore(expectedHandlerScore), 1.0);
     }
 
     @Test

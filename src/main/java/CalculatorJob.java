@@ -54,8 +54,8 @@ public class CalculatorJob {
         String genderColName = commandline.getOptionValue("genderCol", PlayersParserInterface.GENDER);
         String emailColName = commandline.getOptionValue("emailCol", PlayersParserInterface.EMAIL);
         String handlingColName = commandline.getOptionValue("handlingCol", PlayersParserInterface.HANDLING);
-        String handler = commandline.getOptionValue("handler", PlayersParserInterface.HANDLER);
-        String middle = commandline.getOptionValue("middle", PlayersParserInterface.MIDDLE);
+        String handler = commandline.getOptionValue("handlerValue", PlayersParserInterface.HANDLER);
+        String middle = commandline.getOptionValue("middleValue", PlayersParserInterface.MIDDLE);
         String teamMateColName = commandline.getOptionValue("teamMateColName", PlayersParserInterface.TEAMMATE);
 
         if (commandline.hasOption("sheet")) {

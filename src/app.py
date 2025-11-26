@@ -2,23 +2,34 @@ import streamlit as st
 import subprocess
 import os
 
+st.set_page_config(page_title="All Team Hat", layout="wide")
 st.title("All Team Hat 🚀")
 
+# Trois colonnes pour l'interface
+col1, col2, col3, col4 = st.columns(4)
+
 uploaded_file = st.file_uploader("Upload du fichier CSV", type=["csv"])
-nbTeams = st.number_input("nbTeams", min_value=2, value=4)
-nbRuns = st.number_input("nbRuns", min_value=2, max_value=20, value=5)
-first_name_col = st.text_input("Nom de la colonne Prénom", value="Prénom")
-last_name_col = st.text_input("Nom de la colonne Nom", value="Nom")
-club_col = st.text_input("Nom de la colonne Club", value="Club")
-nickname_col = st.text_input("Nom de la colonne Surnom", value="Pseudo")
-age_col = st.text_input("Nom de la colonne Age", value="Age")
-email_col = st.text_input("Nom de la colonne Email", value="Email")
-gender_col = st.text_input("Nom de la colonne Genre", value="Genre")
-handling_col = st.text_input("Nom de la colonne Handling", value="Handler?")
-handler = st.text_input("Valeur pour handler", value="Oui")
-middle = st.text_input("Valeur pour middle", value="Non")
-number_of_skills = st.number_input("Nombre de compétences", min_value=1, max_value=10, value=3)
-first_skill_col = st.number_input("Index de la première colonne de compétence (en commençant à 0)", min_value=0, value=8)
+with col1:
+    nbTeams = col1.number_input("nbTeams", min_value=2, value=4)
+    first_name_col = col1.text_input("Nom de la colonne Prénom", value="Prénom")
+    club_col = col1.text_input("Nom de la colonne Club", value="Club")
+    handling_col = col1.text_input("Nom de la colonne Handling", value="Handler?")
+
+with col2:
+    nbRuns = col2.number_input("nbRuns", min_value=2, max_value=20, value=5)
+    last_name_col = col2.text_input("Nom de la colonne Nom", value="Nom")
+    age_col = col2.text_input("Nom de la colonne Age", value="Age")
+    handler = col2.text_input("Valeur pour handler", value="Oui")
+
+with col3:
+    number_of_skills = col3.number_input("Nombre de compétences", min_value=1, max_value=10, value=3)
+    nickname_col = col3.text_input("Nom de la colonne Surnom", value="Pseudo")
+    gender_col = col3.text_input("Nom de la colonne Genre", value="Genre")
+    middle = col3.text_input("Valeur pour middle", value="Non")
+
+with col4:
+    first_skill_col = col4.number_input("Index de la première colonne de compétence (en commençant à 0)", min_value=0, value=8)
+    email_col = col4.text_input("Nom de la colonne Email", value="Email")
 
 if uploaded_file and st.button("Lancer l'application"):
     # Sauvegarde du fichier uploadé

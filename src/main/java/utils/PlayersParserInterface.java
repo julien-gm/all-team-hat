@@ -14,8 +14,8 @@ public interface PlayersParserInterface {
     String GENDER = "Sexe";
     String HANDLING = "Handler?";
     String DAY = "Jour";
-    String HANDLER = "Oui";
-    String MIDDLE = "Non";
+    String HANDLER = "oui";
+    String MIDDLE = "non";
     String TEAMMATE = "Binôme";
 
     TeamsGenerator getTeamsGenerator();
