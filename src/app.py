@@ -10,7 +10,13 @@ def xlsx_to_csv(entree, sortie):
 
 
 def csv_to_xlsx(entree, sortie):
-    df = pl.read_csv(entree, separator=',')
+    df = pl.read_csv(
+        entree,
+        separator=',',
+        truncate_ragged_lines=True,
+        infer_schema_length=1000,
+        ignore_errors=True
+    )
     df.write_excel(sortie)
 
 st.set_page_config(page_title="All Team Hat", layout="wide")
@@ -19,7 +25,7 @@ st.title("All Team Hat 🚀")
 # Trois colonnes pour l'interface
 col1, col2, col3, col4 = st.columns(4)
 
-uploaded_file = st.file_uploader("Upload du fichier CSV", type=["xlsx"])
+uploaded_file = st.file_uploader("Upload du fichier CSV", type=["xlsx", "xls"])
 
 with col1:
     nbTeams = col1.number_input("nbTeams", min_value=2, value=4)
@@ -45,7 +51,8 @@ with col4:
 
 if uploaded_file and st.button("Lancer l'application"):
     # Sauvegarde du fichier uploadé
-    input_path = "input.xlsx"
+    ext = os.path.splitext(uploaded_file.name)[-1].lower()
+    input_path = f"input.{ext}"
     input_csv = "input.csv"
     with open(input_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
