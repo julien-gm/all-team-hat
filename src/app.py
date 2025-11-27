@@ -1,6 +1,17 @@
 import streamlit as st
 import subprocess
 import os
+import polars as pl
+
+
+def xlsx_to_csv(entree, sortie):
+    df = pl.read_excel(entree)
+    df.write_csv(sortie, separator=',')
+
+
+def csv_to_xlsx(entree, sortie):
+    df = pl.read_csv(entree, separator=',')
+    df.write_excel(sortie)
 
 st.set_page_config(page_title="All Team Hat", layout="wide")
 st.title("All Team Hat 🚀")
@@ -8,7 +19,8 @@ st.title("All Team Hat 🚀")
 # Trois colonnes pour l'interface
 col1, col2, col3, col4 = st.columns(4)
 
-uploaded_file = st.file_uploader("Upload du fichier CSV", type=["csv"])
+uploaded_file = st.file_uploader("Upload du fichier CSV", type=["xlsx"])
+
 with col1:
     nbTeams = col1.number_input("nbTeams", min_value=2, value=4)
     first_name_col = col1.text_input("Nom de la colonne Prénom", value="Prénom")
@@ -33,9 +45,11 @@ with col4:
 
 if uploaded_file and st.button("Lancer l'application"):
     # Sauvegarde du fichier uploadé
-    input_path = "input.csv"
+    input_path = "input.xlsx"
+    input_csv = "input.csv"
     with open(input_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
+        xlsx_to_csv(input_path, input_csv)
 
     jar_name = "/home/ubuntu/myapp/all-team-hat-2.2.0-jar-with-dependencies.jar"
     cmd = [
@@ -54,7 +68,7 @@ if uploaded_file and st.button("Lancer l'application"):
         "-middleValue", middle,
         "-nbSkills", str(number_of_skills),
         "-skillFirstCol", str(first_skill_col),
-        "-file", input_path
+        "-file", input_csv
     ]
 
     st.write("⏳ Exécution en cours...")
@@ -101,10 +115,12 @@ if uploaded_file and st.button("Lancer l'application"):
 
     output_file = "last_run.csv"
     if os.path.exists(output_file):
-        with open(output_file, "rb") as f:
+        output_xlsx = "teams.xlsx"
+        csv_to_xlsx(output_file, output_xlsx)
+        with open(output_xlsx, "rb") as f:
             st.download_button(
                 label="Télécharger le résultat",
                 data=f,
-                file_name=output_file,
-                mime="text/csv"
+                file_name=output_xlsx,
+                mime="application/vnd.ms-excel"
             )

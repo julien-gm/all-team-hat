@@ -267,10 +267,9 @@ public class Team {
                 stb.append(String.format("\"%s\",", format.format(this.getRealPlayers().stream()
                         .mapToDouble(p -> p.getSkillsList().get(skillI)).average().orElse(0))));
             }
-            stb.append(String.format("\"%s\",",
-                    format.format(this.getRealPlayers().stream()
-                            .mapToDouble(p -> p.getSkillsList().stream().mapToDouble(s -> s).average().orElse(0))
-                            .average().orElse(0))));
+            double skillAverage = this.getRealPlayers().stream()
+                    .mapToDouble(p -> p.getSkillsList().stream().mapToDouble(s -> s).average().orElse(0)).average()
+                    .orElse(0);
             List<String> listClubs = this.getRealPlayers().stream().map(Player::getClub).collect(Collectors.toList());
             int maxClubOccurence = 0;
             for (String club : new HashSet<String>(listClubs)) {
@@ -279,8 +278,7 @@ public class Team {
                     maxClubOccurence = clubOccurence;
                 }
             }
-
-            stb.append(String.format("%d\n", maxClubOccurence));
+            stb.append(String.format("\"%s\",%d\n", format.format(skillAverage), maxClubOccurence));
 
         }
         stb.append("\n");
