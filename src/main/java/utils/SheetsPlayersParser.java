@@ -198,6 +198,10 @@ public class SheetsPlayersParser implements PlayersParserInterface {
         return new TeamsGenerator(allPlayers);
     }
 
+    public boolean useDay() {
+        return false;
+    }
+
     private void setPlayerDay(List<Object> row, Player player) {
         if (NUM_COL_DAY_PLAYER != 0) {
             try {

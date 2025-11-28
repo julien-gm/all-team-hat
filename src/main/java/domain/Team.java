@@ -179,17 +179,17 @@ public class Team {
         return stb.toString();
     }
 
-    public String toCSV(List<Team> teams, int teamNumber, boolean use_day) {
+    public String toCSV(List<Team> teams, int teamNumber, boolean useDay) {
         StringBuilder stb = new StringBuilder();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.FRANCE);
         otherSymbols.setDecimalSeparator(',');
         DecimalFormat format = new DecimalFormat("#0.00", otherSymbols);
-        stb.append(String.format("Team #%d\n#,Poste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
+        stb.append(String.format("Team #%d,Poste,Genre,Prenom,Nom,Pseudo,Age,", teamNumber));
         for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
             stb.append("skill_").append(skillIndex + 1).append(",");
         }
         stb.append("Moyenne compétence,Club");
-        if (use_day) {
+        if (useDay) {
             stb.append(",Jour");
         }
         stb.append("\n");
@@ -199,7 +199,7 @@ public class Team {
             stb.append(String.format(Locale.FRANCE, "%d,%s,%s,%s,%s,%s,%d,%s,%s", index, p.getHandlerStr(),
                     p.getGenderStr(), p.getFirstName(), p.getLastName(), p.getNickName(), (int) p.getAge(),
                     p.getSkillsStr(), p.getClub()));
-            if (use_day) {
+            if (useDay) {
                 stb.append(",").append(p.getDay());
             }
             stb.append("\n");
@@ -218,7 +218,7 @@ public class Team {
                     String.format("=ROUND(AVERAGE(%c%d:%c%d); 2),", col, lastLineNumber + 2, col, lastLineNumber + 3));
             col++;
         }
-        if (use_day) {
+        if (useDay) {
             stb.append(String.format(
                     "=COUNTIF(B%d:B%d;\"H\"),=A%d+COUNTIF(B%d:B%d;\"(h)\"),=COUNTIF(C%d:C%d;\"F\"),,,,=ROUND(AVERAGE(G%d:G%d); 2),",
                     firstLineNumber, lastLineNumber, lastLineNumber + 1, firstLineNumber, lastLineNumber,
@@ -232,8 +232,8 @@ public class Team {
                 long nbTotalHandlers = dayPlayers.stream().filter(p -> !p.getHandler().equals(Handler.NO)).count();
                 long nbGirls = dayPlayers.stream().filter(p -> p.getGender().equals(Gender.FEMME)).count();
                 double ageAverage = dayPlayers.stream().mapToDouble(Player::getAge).average().orElse(0);
-                stb.append(String.format("%d,%d,%d,,,,\"%s\",", nbHandlers, nbTotalHandlers, nbGirls,
-                        format.format(ageAverage)));
+                stb.append(String.format("Stats J%d:,%d+%d,%d/%d,,,,\"%s\",", day, nbHandlers,
+                        nbTotalHandlers - nbHandlers, nbGirls, dayPlayers.size(), format.format(ageAverage)));
                 for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
                     final int skillI = skillIndex;
                     stb.append(String.format("\"%s\",", format.format(
@@ -260,8 +260,8 @@ public class Team {
                     .count();
             long nbGirls = this.getRealPlayers().stream().filter(p -> p.getGender().equals(Gender.FEMME)).count();
             double ageAverage = this.getRealPlayers().stream().mapToDouble(Player::getAge).average().orElse(0);
-            stb.append(String.format("%d,%d,%d,,,,\"%s\",", nbHandlers, nbTotalHandlers, nbGirls,
-                    format.format(ageAverage)));
+            stb.append(String.format("Stats:,%d+%d,%d/%d,,,,\"%s\",", nbHandlers, nbTotalHandlers - nbHandlers, nbGirls,
+                    this.getRealPlayers().size(), format.format(ageAverage)));
             for (int skillIndex = 0; skillIndex < skills.size(); skillIndex++) {
                 final int skillI = skillIndex;
                 stb.append(String.format("\"%s\",", format.format(this.getRealPlayers().stream()

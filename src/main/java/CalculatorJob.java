@@ -72,7 +72,11 @@ public class CalculatorJob {
         Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
                 teammatePenalty);
         playersParser.write(bestComposition);
-        System.out.println(bestComposition.getScoreForDay(1));
-        System.out.println(bestComposition.getScoreForDay(2));
+        if (playersParser.useDay()) {
+            System.out.println(bestComposition.getScoreForDay(1));
+            System.out.println(bestComposition.getScoreForDay(2));
+        } else {
+            System.out.println(bestComposition.getScore());
+        }
     }
 }

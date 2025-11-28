@@ -20,5 +20,7 @@ public interface PlayersParserInterface {
 
     TeamsGenerator getTeamsGenerator();
 
+    boolean useDay();
+
     void write(Composition bestComposition);
 }

@@ -46,7 +46,7 @@ with col3:
     middle = col3.text_input("Valeur pour middle", value="Non")
 
 with col4:
-    first_skill_col = col4.number_input("Index de la première colonne de compétence (en commençant à 0)", min_value=0, value=8)
+    first_skill_col = col4.number_input("N° de la colonne de la 1ère compétence", min_value=1, value=8)
     email_col = col4.text_input("Nom de la colonne Email", value="Email")
 
 if uploaded_file and st.button("Lancer l'application"):
@@ -58,7 +58,7 @@ if uploaded_file and st.button("Lancer l'application"):
         f.write(uploaded_file.getbuffer())
         xlsx_to_csv(input_path, input_csv)
 
-    jar_name = "/home/ubuntu/myapp/all-team-hat-2.2.0-jar-with-dependencies.jar"
+    jar_name = "target/all-team-hat-2.2.0-jar-with-dependencies.jar"
     cmd = [
         "java", "-cp", jar_name, "CalculatorJob",
         "-nbTeams", str(nbTeams),
@@ -74,14 +74,9 @@ if uploaded_file and st.button("Lancer l'application"):
         "-handlerValue", handler,
         "-middleValue", middle,
         "-nbSkills", str(number_of_skills),
-        "-skillFirstCol", str(first_skill_col),
+        "-skillFirstCol", str(first_skill_col-1),
         "-file", input_csv
     ]
-
-    st.write("⏳ Exécution en cours...")
-
-    output_container = st.empty()
-    lines = []
 
     # Lancement du process et lecture en temps réel (stdout et stderr combinés)
     process = subprocess.Popen(
@@ -94,12 +89,14 @@ if uploaded_file and st.button("Lancer l'application"):
     )
 
     try:
-        for raw_line in iter(process.stdout.readline, ''):
-            if raw_line == '' and process.poll() is not None:
-                break
-            # Ajoute la ligne reçue et met à jour l'affichage
-            lines.append(raw_line.rstrip('\n'))
-            output_container.text_area("Logs", '\n'.join(lines), height=400)
+        with st.container(height=200):
+            with st.chat_message("logs"):
+                st.markdown("⏳ Exécution en cours...")
+                for raw_line in iter(process.stdout.readline, ''):
+                    if raw_line == '' and process.poll() is not None:
+                        break
+                    # Ajoute la ligne reçue et met à jour l'affichage
+                    st.markdown(raw_line.rstrip('\n'))
         process.wait()
     except Exception as e:
         process.kill()
@@ -112,13 +109,6 @@ if uploaded_file and st.button("Lancer l'application"):
         st.error(f"Process terminé avec le code {process.returncode}")
     else:
         st.success("Terminé ✅")
-
-    # Récupération du résultat final
-    # result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-    # st.text(result.stdout)
-    # if result.stderr:
-    #     st.error(result.stderr)
 
     output_file = "last_run.csv"
     if os.path.exists(output_file):

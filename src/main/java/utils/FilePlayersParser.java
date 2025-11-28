@@ -35,7 +35,7 @@ public class FilePlayersParser implements PlayersParserInterface {
     private final String handlingColName;
     private final String handler;
     private final String middle;
-    private boolean use_day = false;
+    private boolean useDay = false;
 
     public FilePlayersParser(FileReader file, int columnToSkip, int numberOfSkill, String teamMateColName,
             String firstnameColName, String lastnameColName, String nicknameColName, String clubColName,
@@ -71,10 +71,8 @@ public class FilePlayersParser implements PlayersParserInterface {
             Player player = new Player(record.get(this.nicknameColName));
             player.setLastName(record.get(this.lastnameColName));
             player.setFirstName(record.get(this.firstnameColName));
-            try {
+            if (record.isSet(this.emailColName)) {
                 player.setEmail(record.get(this.emailColName));
-            } catch (IllegalArgumentException e) {
-                player.setEmail("");
             }
             player.setClub(record.get(this.clubColName));
             player.setAge(Integer.parseInt(record.get(this.ageColName)));
@@ -98,13 +96,14 @@ public class FilePlayersParser implements PlayersParserInterface {
             }
             setTeamMate(allPlayers, record, player);
             if (record.isSet(DAY)) {
-                this.use_day = true;
+                this.useDay = true;
                 String day = record.get(DAY);
                 if (!day.equals("")) {
                     player.setDay(Integer.parseInt(day));
                 }
             }
-            if (allPlayers.stream().anyMatch(p -> p.getEmail().equals(player.getEmail()))) {
+            if (record.isSet(this.emailColName)
+                    && allPlayers.stream().anyMatch(p -> p.getEmail().equals(player.getEmail()))) {
                 System.err.println("Warning, you have several players with the same email: " + player.getEmail());
             }
             if (allPlayers.stream()
@@ -120,6 +119,10 @@ public class FilePlayersParser implements PlayersParserInterface {
         return new TeamsGenerator(allPlayers);
     }
 
+    public boolean useDay() {
+        return this.useDay;
+    }
+
     @Override
     public void write(Composition bestComposition) {
         try {
@@ -130,7 +133,7 @@ public class FilePlayersParser implements PlayersParserInterface {
             for (Team t : bestComposition.getTeams()) {
                 String fileName = String.format("./run_%s_team_%d.csv", runtime, teamIndex);
                 FileWriter fw = new FileWriter(fileName);
-                String teamCSV = t.toCSV(bestComposition.getTeams(), teamIndex, this.use_day);
+                String teamCSV = t.toCSV(bestComposition.getTeams(), teamIndex, this.useDay);
                 teams += teamCSV;
                 fw.write(teamCSV);
                 teamIndex++;
