@@ -35,9 +35,9 @@ jobs:
     # Création du dossier de déploiement
     - name: Prepare deploy bundle
       run: |
-        mkdir deploy
+        mkdir -p deploy/target
         cp src/app.py deploy/
-        cp target/*.jar deploy/
+        cp target/*.jar deploy/target/
 
     # Copie vers l'EC2
     - name: Upload to EC2
@@ -55,7 +55,8 @@ jobs:
               echo \"🛑 Killing old Streamlit processes...\";
               killall streamlit;
               echo \"🚀 Starting Streamlit...\";
-              nohup /home/${{ vars.EC2_USER }}/base/bin/streamlit run /home/${{ vars.EC2_USER }}/myapp/app.py \
+              cd /home/${{ vars.EC2_USER }}/myapp/;
+              nohup /home/${{ vars.EC2_USER }}/base/bin/streamlit run app.py \
              --server.port 8080 \
              --server.address 0.0.0.0 \
              >> /home/${{ vars.EC2_USER }}/myapp/streamlit.log 2>&1 &'"
