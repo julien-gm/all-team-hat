@@ -169,8 +169,8 @@ public class SheetsPlayersParser implements PlayersParserInterface {
                         player.setEmail(getEmail(row));
                         player.setAge(Integer.parseInt(row.get(NUM_COL_AGE).toString()));
                         String handler = row.get(NUM_COL_HANDLER).toString();
-                        player.setHandler(handler.equals(YES) ? Player.Handler.YES
-                                : handler.equals(NO) ? Player.Handler.NO : Player.Handler.MAYBE);
+                        player.setHandler(handler.equals(HANDLER) ? Player.Handler.YES
+                                : handler.equals(MIDDLE) ? Player.Handler.NO : Player.Handler.MAYBE);
 
                         // Getting skills
                         // Skipping the first 8 columns that we just read
@@ -196,6 +196,10 @@ public class SheetsPlayersParser implements PlayersParserInterface {
             System.err.println(e.getMessage());
         }
         return new TeamsGenerator(allPlayers);
+    }
+
+    public boolean useDay() {
+        return false;
     }
 
     private void setPlayerDay(List<Object> row, Player player) {

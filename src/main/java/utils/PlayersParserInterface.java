@@ -6,19 +6,21 @@ import domain.Composition;
 public interface PlayersParserInterface {
 
     String EMAIL = "Email payeur";
-    String FIRST_NAME = "Prénom participant";
-    String LAST_NAME = "Nom participant";
-    String NICKNAME = "Surnom";
-    String CLUB = "Nom du club d'inscription pour la saison en cours (si tu n'es pas (encore) licencié·e, inscris \"sans\", on te prendra une assurance pour la journée)";
-    String AGE = "Votre âge";
+    String FIRST_NAME = "Prenom";
+    String LAST_NAME = "Nom";
+    String NICKNAME = "Pseudo";
+    String CLUB = "Club";
+    String AGE = "Âge";
     String GENDER = "Sexe";
-    String HANDLING = "Votre poste ";
+    String HANDLING = "Handler?";
     String DAY = "Jour";
-    String YES = "Handler";
-    String NO = "Non";
+    String HANDLER = "oui";
+    String MIDDLE = "non";
     String TEAMMATE = "Binôme";
 
     TeamsGenerator getTeamsGenerator();
+
+    boolean useDay();
 
     void write(Composition bestComposition);
 }

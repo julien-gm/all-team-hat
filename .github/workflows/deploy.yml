@@ -1,0 +1,62 @@
+name: Build & Deploy Streamlit App to EC2
+
+on:
+  push:
+    branches: [ "main", "feat/deploy-on-ec2" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Récupération du repo
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Installation de Java (si Maven)
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # Construction du JAR via Maven
+    - name: Build JAR with Maven
+      run: |
+        mvn -B clean package -DskipTests
+
+    # Préparation clé SSH
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key
+        chmod 600 ~/.ssh/ec2_key
+
+    # Création du dossier de déploiement
+    - name: Prepare deploy bundle
+      run: |
+        mkdir -p deploy/target
+        cp src/app.py deploy/
+        cp target/*.jar deploy/target/
+
+    # Copie vers l'EC2
+    - name: Upload to EC2
+      run: |
+        scp -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no \
+          -r deploy/* \
+          ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }}:/home/${{ vars.EC2_USER }}/myapp/
+
+    # Redémarrage Streamlit
+    - name: Restart Streamlit on EC2
+      run: |
+        ssh -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no \
+          ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} \
+            "bash -lc '
+              echo \"🛑 Killing old Streamlit processes...\";
+              killall streamlit;
+              echo \"🚀 Starting Streamlit...\";
+              cd /home/${{ vars.EC2_USER }}/myapp/;
+              nohup /home/${{ vars.EC2_USER }}/base/bin/streamlit run app.py \
+             --server.port 8080 \
+             --server.address 0.0.0.0 \
+             >> /home/${{ vars.EC2_USER }}/myapp/streamlit.log 2>&1 &'"

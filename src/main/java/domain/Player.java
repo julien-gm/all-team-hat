@@ -216,7 +216,7 @@ public class Player {
     public String getSkillsStr() {
         StringBuilder stb = new StringBuilder();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.FRANCE);
-        otherSymbols.setDecimalSeparator('.');
+        otherSymbols.setDecimalSeparator(',');
         DecimalFormat format = new DecimalFormat("#0.00", otherSymbols);
         for (double s : skillsList) {
             stb.append(String.format("\"%s\"", format.format(s))).append(",");

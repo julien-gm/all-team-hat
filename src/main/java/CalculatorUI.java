@@ -1,6 +1,7 @@
 import computation.TeamsGenerator;
 import domain.Composition;
 import utils.FilePlayersParser;
+import utils.PlayersParserInterface;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -57,7 +58,10 @@ public class CalculatorUI {
             int numberOfSkill = getTextFieldAsInt(numberOfSkillField, DEFAULT_NUMBER_OF_SKILLS);
             int firstSkillCol = getTextFieldAsInt(firstSkillColField, DEFAULT_FIRST_SKILL_COL);
             FilePlayersParser playersParser = new FilePlayersParser(new FileReader(csvFile), firstSkillCol,
-                    numberOfSkill, teamMateColName);
+                    numberOfSkill, teamMateColName, PlayersParserInterface.FIRST_NAME, PlayersParserInterface.LAST_NAME,
+                    PlayersParserInterface.NICKNAME, PlayersParserInterface.CLUB, PlayersParserInterface.AGE,
+                    PlayersParserInterface.EMAIL, PlayersParserInterface.GENDER, PlayersParserInterface.HANDLING,
+                    PlayersParserInterface.HANDLER, PlayersParserInterface.MIDDLE);
             TeamsGenerator teamsGenerator = playersParser.getTeamsGenerator();
             Composition bestComposition = teamsGenerator.computeBestComposition(nbTeams, nbRuns, invalidTeamPenalty,
                     teammatePenalty);

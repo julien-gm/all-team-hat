@@ -60,7 +60,7 @@ public class TeamsGenerator {
         for (int i = 0; i < firstRealPlayer.getSkillsList().size(); ++i) {
             Double minValue = Double.MAX_VALUE;
             Double maxValue = 0.d;
-            for (Player p : players) {
+            for (Player p : realPlayers) {
                 minValue = Math.min(minValue, p.getSkillsList().get(i));
                 maxValue = Math.max(maxValue, p.getSkillsList().get(i));
             }
@@ -70,7 +70,7 @@ public class TeamsGenerator {
             List<Double> newSkills = new ArrayList<>();
             int index = 0;
             for (Double skillValue : p.getSkillsList()) {
-                if (skillsValues.get(index).get(1) < NORMALIZED_SKILL_MAX_VALUE) {
+                if (skillsValues.get(index).get(1) <= NORMALIZED_SKILL_MAX_VALUE) {
                     newSkills.add(skillValue);
                 } else {
                     Double minValue = skillsValues.get(index).get(0);
