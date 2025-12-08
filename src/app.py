@@ -6,11 +6,11 @@ from utils import xlsx_to_csv, csv_to_xlsx, load_config, update_config, CONFIG_D
 
 
 st.set_page_config(page_title="All Team Hat", layout="wide")
-st.title("All Team Hat 🚀")
+st.title("All Team Hat 🥏")
 
 col1, col2 = st.columns([3, 1])
 with col1:
-    uploaded_file = col1.file_uploader("Upload du fichier CSV", type=["xlsx", "xls"])
+    uploaded_file = col1.file_uploader("Importer la liste des joueurs", type=["xlsx", "xls"])
 
 with col2:
     config_name = col2.selectbox(
