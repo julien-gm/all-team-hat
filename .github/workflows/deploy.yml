@@ -2,7 +2,7 @@ name: Build & Deploy Streamlit App to EC2
 
 on:
   push:
-    branches: [ "main", "feat/deploy-on-ec2" ]
+    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
