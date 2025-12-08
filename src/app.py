@@ -1,4 +1,3 @@
-from optparse import Values
 import streamlit as st
 import subprocess
 import os
@@ -6,27 +5,8 @@ import polars as pl
 from utils import xlsx_to_csv, csv_to_xlsx, load_config, update_config, CONFIG_DISPLAY_NAMES
 
 
-def xlsx_to_csv(entree, sortie):
-    df = pl.read_excel(entree)
-    df.write_csv(sortie, separator=',')
-
-
-def csv_to_xlsx(entree, sortie):
-    df = pl.read_csv(
-        entree,
-        separator=',',
-        truncate_ragged_lines=True,
-        infer_schema_length=1000,
-        ignore_errors=True
-    )
-    df.write_excel(sortie)
-
 st.set_page_config(page_title="All Team Hat", layout="wide")
 st.title("All Team Hat 🚀")
-
-
-# Trois colonnes pour l'interface
-col1, col2, col3, col4 = st.columns(4)
 
 uploaded_file = st.file_uploader("Upload du fichier CSV", type=["xlsx", "xls"])
 
@@ -40,27 +20,29 @@ config_name = st.selectbox(
 config = load_config(config_name)
 
 with st.container():
+    # Trois colonnes pour l'interface
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-            nbTeams = col1.number_input("nbTeams", min_value=2, value=config.get("nb_teams"))
-            first_name_col = col1.text_input("Nom de la colonne Prénom", value=config.get("first_name_col"))
-            club_col = col1.text_input("Nom de la colonne Club", value=config.get("club_col"))
-            handling_col = col1.text_input("Nom de la colonne Handling", value=config.get("handling_col"))
+        nbTeams = col1.number_input("nbTeams", min_value=2, value=config.get("nb_teams"))
+        first_name_col = col1.text_input("Nom de la colonne Prénom", value=config.get("first_name_col"))
+        club_col = col1.text_input("Nom de la colonne Club", value=config.get("club_col"))
+        handling_col = col1.text_input("Nom de la colonne Handling", value=config.get("handling_col"))
 
     with col2:
-            nbRuns = col2.number_input("nbRuns", min_value=2, max_value=20, value=config.get("nb_runs"))
-            last_name_col = col2.text_input("Nom de la colonne Nom", value=config.get("last_name_col"))
-            age_col = col2.text_input("Nom de la colonne Age", value=config.get("age_col"))
-            handler = col2.text_input("Valeur pour handler", value=config.get("handler"))
+        nbRuns = col2.number_input("nbRuns", min_value=2, max_value=20, value=config.get("nb_runs"))
+        last_name_col = col2.text_input("Nom de la colonne Nom", value=config.get("last_name_col"))
+        age_col = col2.text_input("Nom de la colonne Age", value=config.get("age_col"))
+        handler = col2.text_input("Valeur pour handler", value=config.get("handler"))
 
     with col3:
-            number_of_skills = col3.number_input("Nombre de compétences", min_value=1, max_value=10, value=config.get("number_of_skills"))
-            nickname_col = col3.text_input("Nom de la colonne Surnom", value=config.get("nickname_col"))
-            gender_col = col3.text_input("Nom de la colonne Genre", value=config.get("gender_col"))
-            middle = col3.text_input("Valeur pour middle", value=config.get("middle"))
+        number_of_skills = col3.number_input("Nombre de compétences", min_value=1, max_value=10, value=config.get("number_of_skills"))
+        nickname_col = col3.text_input("Nom de la colonne Surnom", value=config.get("nickname_col"))
+        gender_col = col3.text_input("Nom de la colonne Genre", value=config.get("gender_col"))
+        middle = col3.text_input("Valeur pour middle", value=config.get("middle"))
 
     with col4:
-            first_skill_col = col4.number_input("N° de la colonne de la 1ère compétence", min_value=1, value=config.get("first_skill_col"))
-            email_col = col4.text_input("Nom de la colonne Email", value=config.get("email_col"))
+        first_skill_col = col4.number_input("N° de la colonne de la 1ère compétence", min_value=1, value=config.get("first_skill_col"))
+        email_col = col4.text_input("Nom de la colonne Email", value=config.get("email_col"))
 
 if uploaded_file and st.button("Lancer l'application"):
     # Sauvegarde du fichier uploadé
