@@ -8,6 +8,8 @@ Generates as much as possible the most balanced distribution of players between 
 
 ## Usage
 
+Go to http://15.188.55.121:8080/
+
 ### Input file and options
 
 The input file should be a XLSX file containing the following columns in the header:

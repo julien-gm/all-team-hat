@@ -33,7 +33,7 @@ def load_config(config_key):
     if not filename:
         raise Exception(f"Clé de configuration inconnue : {config_key}")
         
-    file_path = f"src/config_{filename}.json"
+    file_path = f"config_{filename}.json"
     
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
