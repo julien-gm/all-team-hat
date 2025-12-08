@@ -10,7 +10,7 @@ Generates as much as possible the most balanced distribution of players between 
 
 ### Input file and options
 
-The input file should be a CSV file containing the following columns in the header:
+The input file should be a XLSX file containing the following columns in the header:
 * `Prénom` : First name of the player, used with last name to avoid duplicates
 * `Nom` : Last name of the player, used with first name to avoid duplicates.
 * `Pseudo` : Nickname of the player.
