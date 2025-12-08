@@ -2,7 +2,7 @@ name: Build & Deploy Streamlit App to EC2
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "fix/deploy-not-working" ]
 
 jobs:
   build-and-deploy:
@@ -37,6 +37,8 @@ jobs:
       run: |
         mkdir -p deploy/target
         cp src/app.py deploy/
+        cp src/utils.py deploy/
+        cp src/config* deploy/
         cp target/*.jar deploy/target/
 
     # Copie vers l'EC2
