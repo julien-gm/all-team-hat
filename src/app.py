@@ -8,41 +8,44 @@ from utils import xlsx_to_csv, csv_to_xlsx, load_config, update_config, CONFIG_D
 st.set_page_config(page_title="All Team Hat", layout="wide")
 st.title("All Team Hat 🚀")
 
-uploaded_file = st.file_uploader("Upload du fichier CSV", type=["xlsx", "xls"])
+col1, col2 = st.columns([3, 1])
+with col1:
+    uploaded_file = col1.file_uploader("Upload du fichier CSV", type=["xlsx", "xls"])
 
-config_name = st.selectbox(
-    "Choisir un profil de configuration :",
-    options=CONFIG_DISPLAY_NAMES,
-    key='config_selector',
-    on_change=update_config # Fonction appelée lors du changement
-)
+with col2:
+    config_name = col2.selectbox(
+        "Choisir un profil de configuration :",
+        options=CONFIG_DISPLAY_NAMES,
+        key='config_selector',
+        on_change=update_config # Fonction appelée lors du changement
+    )
 
 config = load_config(config_name)
 
-with st.container():
-    # Trois colonnes pour l'interface
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        nbTeams = col1.number_input("nbTeams", min_value=2, value=config.get("nb_teams"))
-        first_name_col = col1.text_input("Nom de la colonne Prénom", value=config.get("first_name_col"))
-        club_col = col1.text_input("Nom de la colonne Club", value=config.get("club_col"))
-        handling_col = col1.text_input("Nom de la colonne Handling", value=config.get("handling_col"))
+st.divider()
+# Trois colonnes pour l'interface
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    nbTeams = col1.number_input("nbTeams", min_value=2, value=config.get("nb_teams"))
+    first_name_col = col1.text_input("Nom de la colonne Prénom", value=config.get("first_name_col"))
+    club_col = col1.text_input("Nom de la colonne Club", value=config.get("club_col"))
+    handling_col = col1.text_input("Nom de la colonne Handling", value=config.get("handling_col"))
 
-    with col2:
-        nbRuns = col2.number_input("nbRuns", min_value=2, max_value=20, value=config.get("nb_runs"))
-        last_name_col = col2.text_input("Nom de la colonne Nom", value=config.get("last_name_col"))
-        age_col = col2.text_input("Nom de la colonne Age", value=config.get("age_col"))
-        handler = col2.text_input("Valeur pour handler", value=config.get("handler"))
+with col2:
+    nbRuns = col2.number_input("nbRuns", min_value=2, max_value=20, value=config.get("nb_runs"))
+    last_name_col = col2.text_input("Nom de la colonne Nom", value=config.get("last_name_col"))
+    age_col = col2.text_input("Nom de la colonne Age", value=config.get("age_col"))
+    handler = col2.text_input("Valeur pour handler", value=config.get("handler"))
 
-    with col3:
-        number_of_skills = col3.number_input("Nombre de compétences", min_value=1, max_value=10, value=config.get("number_of_skills"))
-        nickname_col = col3.text_input("Nom de la colonne Surnom", value=config.get("nickname_col"))
-        gender_col = col3.text_input("Nom de la colonne Genre", value=config.get("gender_col"))
-        middle = col3.text_input("Valeur pour middle", value=config.get("middle"))
+with col3:
+    number_of_skills = col3.number_input("Nombre de compétences", min_value=1, max_value=10, value=config.get("number_of_skills"))
+    nickname_col = col3.text_input("Nom de la colonne Surnom", value=config.get("nickname_col"))
+    gender_col = col3.text_input("Nom de la colonne Genre", value=config.get("gender_col"))
+    middle = col3.text_input("Valeur pour middle", value=config.get("middle"))
 
-    with col4:
-        first_skill_col = col4.number_input("N° de la colonne de la 1ère compétence", min_value=1, value=config.get("first_skill_col"))
-        email_col = col4.text_input("Nom de la colonne Email", value=config.get("email_col"))
+with col4:
+    first_skill_col = col4.number_input("N° de la colonne de la 1ère compétence", min_value=1, value=config.get("first_skill_col"))
+    email_col = col4.text_input("Nom de la colonne Email", value=config.get("email_col"))
 
 if uploaded_file and st.button("Lancer l'application"):
     # Sauvegarde du fichier uploadé
@@ -124,4 +127,11 @@ with col_feedback:
     st.markdown("[📝 N'hésitez pas à faire des suggestions d'amélioration ici](https://github.com/julien-gm/all-team-hat/issues)")
 
 with col_donate:
-    st.markdown("[💝 Le projet vous a plu, n'hésitez pas à soutenir cette initiative 💝](https://paypal.me/gmjulien)")
+    st.markdown(
+        """
+        <div style="text-align: right;">
+            <a href="https://paypal.me/gmjulien">💝 Le projet vous a plu, n'hésitez pas à soutenir cette initiative 💝</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
