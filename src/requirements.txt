@@ -1,0 +1,4 @@
+polars
+fastexcel
+streamlit
+xlsxwriter
