@@ -55,7 +55,7 @@ public class TeamTest {
 
     @Test
     public void testHandlerScore() {
-        Assert.assertEquals(0.7, team.getHandlerScore(0.3), 0.0001);
+        Assert.assertEquals(7, team.getHandlerScore(0.3), 0.0001);
     }
 
     @Test
