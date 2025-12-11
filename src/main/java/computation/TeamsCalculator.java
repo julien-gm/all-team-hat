@@ -49,7 +49,7 @@ public class TeamsCalculator {
     public double getTeamScoreByDay(Team globalTeam, int day) {
         Team team = filterTeamForDay(globalTeam, day);
         return team.getSkillsScore(expectedScores) + team.getNoHandlerScore(expectedNumberOfNoHandlers)
-                + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers / 2)
+                + team.getMixedHandlerScore(expectedNumberOfHandlers + expectedNumberOfMixedHandlers)
                 + team.getHandlerScore(expectedNumberOfHandlers) + team.getStandardDeviationScore(expectedStdDev)
                 + team.getAgeScore(expectedAge);
     }
