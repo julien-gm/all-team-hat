@@ -96,32 +96,31 @@ public class FilePlayersParser implements PlayersParserInterface {
                     player.getSkillsList().add(Double.parseDouble(value));
                     skillNumber++;
                 }
+                setTeamMate(allPlayers, record, player);
+                if (record.isSet(DAY)) {
+                    this.useDay = true;
+                    String day = record.get(DAY);
+                    if (!day.equals("")) {
+                        player.setDay(Integer.parseInt(day));
+                    }
+                }
+                if (record.isSet(this.emailColName)
+                        && allPlayers.stream().anyMatch(p -> p.getEmail().equals(player.getEmail()))) {
+                    System.err.println("Warning, you have several players with the same email: " + player.getEmail());
+                }
+                if (allPlayers.stream()
+                        .anyMatch(p -> (p.getFirstName().equals(player.getFirstName())
+                                && p.getLastName().equals(player.getLastName()))
+                                || p.getNickName().equals(player.getNickName()))) {
+                    System.err.println(
+                            String.format("Warning, you have several players with the same nickname : \"%s\" (%s %s)",
+                                    player.getNickName(), player.getFirstName(), player.getLastName()));
+                }
+                allPlayers.add(player);
             } catch (NumberFormatException e) {
                 System.err.println(String.format("Warning, %s (%s) has no skill or age defined. Skipping.",
                         player.getNickName(), player.getEmail()));
-                break;
             }
-            setTeamMate(allPlayers, record, player);
-            if (record.isSet(DAY)) {
-                this.useDay = true;
-                String day = record.get(DAY);
-                if (!day.equals("")) {
-                    player.setDay(Integer.parseInt(day));
-                }
-            }
-            if (record.isSet(this.emailColName)
-                    && allPlayers.stream().anyMatch(p -> p.getEmail().equals(player.getEmail()))) {
-                System.err.println("Warning, you have several players with the same email: " + player.getEmail());
-            }
-            if (allPlayers.stream()
-                    .anyMatch(p -> (p.getFirstName().equals(player.getFirstName())
-                            && p.getLastName().equals(player.getLastName()))
-                            || p.getNickName().equals(player.getNickName()))) {
-                System.err.println(
-                        String.format("Warning, you have several players with the same nickname : \"%s\" (%s %s)",
-                                player.getNickName(), player.getFirstName(), player.getLastName()));
-            }
-            allPlayers.add(player);
         }
         return new TeamsGenerator(allPlayers);
     }
