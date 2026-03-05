@@ -1,16 +1,16 @@
 {
     "nb_teams": 4,
-    "first_name_col": "Prénom",
+    "first_name_col": "Prénom participant",
     "club_col": "Club",
-    "handling_col": "Handler?",
+    "handling_col": "Handler",
     "nb_runs": 5,
-    "last_name_col": "Nom",
+    "last_name_col": "Nom participant",
     "age_col": "Age",
     "handler": "Oui",
     "number_of_skills": 3,
-    "nickname_col": "Pseudo",
+    "nickname_col": pseudo",
     "gender_col": "Genre",
     "middle": "Non",
-    "first_skill_col": 8,
+    "first_skill_col": 45,
     "email_col": "Email"
 }
