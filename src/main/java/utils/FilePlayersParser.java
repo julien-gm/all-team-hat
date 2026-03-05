@@ -69,34 +69,35 @@ public class FilePlayersParser implements PlayersParserInterface {
             // Reading with headers so we can get the values via the name
             // and they can be in any order (as long as the skills are last)
             Player player = new Player(record.get(this.nicknameColName));
-            player.setLastName(record.get(this.lastnameColName));
-            player.setFirstName(record.get(this.firstnameColName));
-            if (record.isSet(this.emailColName)) {
-                player.setEmail(record.get(this.emailColName));
-            }
-            player.setClub(record.get(this.clubColName));
-            player.setAge(Integer.parseInt(record.get(this.ageColName)));
-            player.setGender(record.get(this.genderColName).toUpperCase().startsWith("F") ? Player.Gender.FEMME
-                    : Player.Gender.HOMME);
-            String handler = record.get(this.handlingColName);
-            player.setHandler(handler.equals(this.handler) ? Player.Handler.YES
-                    : handler.equals(this.middle) ? Player.Handler.NO : Player.Handler.MAYBE);
 
-            // Getting skills
-            // Skipping the first 8 columns that we just read
-            Iterator<String> iterator = record.iterator();
-            for (int i = 0; i < firstSkillCol; i++) {
-                iterator.next();
-            }
-            int skillNumber = 0;
             try {
+                player.setLastName(record.get(this.lastnameColName));
+                player.setFirstName(record.get(this.firstnameColName));
+                if (record.isSet(this.emailColName)) {
+                    player.setEmail(record.get(this.emailColName));
+                }
+                player.setClub(record.get(this.clubColName));
+                player.setAge(Integer.parseInt(record.get(this.ageColName)));
+                player.setGender(record.get(this.genderColName).toUpperCase().startsWith("F") ? Player.Gender.FEMME
+                        : Player.Gender.HOMME);
+                String handler = record.get(this.handlingColName);
+                player.setHandler(handler.equals(this.handler) ? Player.Handler.YES
+                        : handler.equals(this.middle) ? Player.Handler.NO : Player.Handler.MAYBE);
+
+                // Getting skills
+                // Skipping the first 8 columns that we just read
+                Iterator<String> iterator = record.iterator();
+                for (int i = 0; i < firstSkillCol; i++) {
+                    iterator.next();
+                }
+                int skillNumber = 0;
                 while (iterator.hasNext() && skillNumber < nbSkills) {
                     String value = iterator.next();
                     player.getSkillsList().add(Double.parseDouble(value));
                     skillNumber++;
                 }
             } catch (NumberFormatException e) {
-                System.err.println(String.format("Warning, %s (%s) has no skill defined. Skipping.",
+                System.err.println(String.format("Warning, %s (%s) has no skill or age defined. Skipping.",
                         player.getNickName(), player.getEmail()));
                 break;
             }
