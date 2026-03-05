@@ -77,7 +77,7 @@ public class FilePlayersParser implements PlayersParserInterface {
             player.setClub(record.get(this.clubColName));
             player.setAge(Integer.parseInt(record.get(this.ageColName)));
             player.setGender(
-                    record.get(this.genderColName).startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
+                    record.get(this.genderColName).toUpperCase().startsWith("F") ? Player.Gender.FEMME : Player.Gender.HOMME);
             String handler = record.get(this.handlingColName);
             player.setHandler(handler.equals(this.handler) ? Player.Handler.YES
                     : handler.equals(this.middle) ? Player.Handler.NO : Player.Handler.MAYBE);
@@ -89,10 +89,15 @@ public class FilePlayersParser implements PlayersParserInterface {
                 iterator.next();
             }
             int skillNumber = 0;
-            while (iterator.hasNext() && skillNumber < nbSkills) {
-                String value = iterator.next();
-                player.getSkillsList().add(Double.parseDouble(value));
-                skillNumber++;
+            try {
+                while (iterator.hasNext() && skillNumber < nbSkills) {
+                    String value = iterator.next();
+                    player.getSkillsList().add(Double.parseDouble(value));
+                    skillNumber++;
+                }
+            } catch (NumberFormatException e) {
+                System.err.println(String.format("Warning, %s (%s) has no skill defined. Skipping.", player.getNickName(), player.getEmail()));
+                break;
             }
             setTeamMate(allPlayers, record, player);
             if (record.isSet(DAY)) {
