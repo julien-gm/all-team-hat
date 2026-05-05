@@ -20,7 +20,7 @@ with col2:
         on_change=update_config # Fonction appelée lors du changement
     )
 
-config = load_config(f"src/{config_name}")
+config = load_config(config_name)
 
 st.divider()
 # Trois colonnes pour l'interface
